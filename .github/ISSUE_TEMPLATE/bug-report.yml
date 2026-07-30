@@ -1,0 +1,18 @@
+name: 🐛 Broken link / bad catalog entry
+description: A file is missing, miscategorized, or a CATALOG.tsv row is wrong
+labels: ["bug"]
+body:
+  - type: input
+    id: path
+    attributes:
+      label: File or CATALOG.tsv row affected
+      placeholder: library/engineering-core/tdd-guide/SKILL.md
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong?
+      placeholder: e.g. path doesn't exist, wrong category, duplicate of X, frontmatter missing source_url...
+    validations:
+      required: true

@@ -1,8 +1,9 @@
-# 🧠 Master Skills Library — Index
+# 🧠 The Mega Skill Library — Index
 
 > **35,802 organized assets** harvested from **186 repositories**,
-> categorized into **22 domains**. Generated from your GitHub stars
-> plus curated additions from the wider agent-skills ecosystem.
+> categorized into **22 domains**, curated from across the wider
+> agent-skills ecosystem. New here? Start with the
+> **[Quick start](README.md#-quick-start)** in the README.
 
 ## What's here
 

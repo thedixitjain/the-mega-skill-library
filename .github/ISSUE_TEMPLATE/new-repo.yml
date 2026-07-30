@@ -1,0 +1,32 @@
+name: 🆕 Suggest a repo to harvest
+description: Point us at a GitHub repo with skills/agents/commands/prompts/rules worth adding
+labels: ["new-repo"]
+body:
+  - type: input
+    id: repo-url
+    attributes:
+      label: Repo URL
+      placeholder: https://github.com/owner/repo
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of content does it have?
+      multiple: true
+      options:
+        - Agent Skills (SKILL.md)
+        - Subagent definitions
+        - Slash commands
+        - System prompts / prompt corpus
+        - CLAUDE.md / AGENTS.md / .cursorrules
+        - Awesome-list / cheatsheet / handbook
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else worth knowing?
+      placeholder: Why it's good, roughly how many assets, license concerns, etc.
+    validations:
+      required: false
