@@ -1,0 +1,167 @@
+---
+name: create-prp
+description: "Generate comprehensive PRP (Product Requirements & Plans) with thorough research and validation"
+allowed-tools: "TodoWrite, Read, Write, Glob, Grep, Bash, Task, WebSearch, WebFetch"
+category: product-and-pm
+source_repo: croffasia/cc-blueprint-toolkit
+source_path: "claude/commands/generate-prp.md"
+source_url: https://github.com/croffasia/cc-blueprint-toolkit/blob/HEAD/claude/commands/generate-prp.md
+---
+
+
+# Create PRP
+
+## Feature file: $ARGUMENTS
+
+Generate PRP (Product Requirements & Plans) through validated research and codebase analysis.
+
+## Workflow Summary
+
+Two-phase approach: validate completeness (Phase 1), then research (Phase 2).
+
+**CRITICAL**: PRP must contain ALL context - research findings, documentation URLs, code examples. The executor agent sees only the final PRP document, not your research process.
+
+## Research Process
+
+**Phase 1: Initial Discovery & Task Validation** (Validate task completeness
+before deep research)
+
+1. **Preflight Analysis** (Use subagent: `bp:preflight-prp`)
+   - Quick scan of project structure for similar features/patterns
+   - Analyze user's task description for business logic completeness
+   - Identify gaps in user requirements and missing business logic details:
+     - User flows and interaction patterns
+     - Data requirements and relationships
+     - Integration points with existing features
+     - Edge cases and error scenarios
+     - UI/UX expectations and constraints
+   - **Language Guidelines for Questions**: 
+     - Ask clarification questions in the same language the user wrote the initial task
+     - Wait for user responses and analyze thoroughly
+   - Generate targeted clarification questions if gaps identified
+   - Make proceed/clarify recommendation with clear reasoning
+
+2. **Decision Gate**:
+   - **IF** bp:preflight-prp recommends PROCEED → Continue to Phase 2
+   - **IF** bp:preflight-prp identifies gaps → Stop and ask clarifying
+     questions
+   - **ONLY** continue to comprehensive research after user provides missing
+     details
+   - Use surface discovery findings to inform Phase 2 research focus
+
+**Phase 2: Comprehensive Research Phase** (After task validation - Codebase
+first, then smart external research)
+
+1. **Codebase Analysis** (Use subagent: `bp:codebase-research`)
+   - Search for similar features/patterns in the codebase
+   - Identify files to reference in PRP
+   - Note existing conventions to follow
+   - Check test patterns for validation approach
+   - **CRITICAL**: Document what components/libraries/patterns already exist
+   - **ASSESS**: Determine knowledge gaps that truly need external research
+
+2. **Smart External Research Decision** (Evaluate AFTER codebase analysis)
+
+   **FIRST: Analyze codebase findings to determine if external research is
+   needed:**
+
+   **SKIP External Research if:**
+   - ✅ Similar components/patterns found in codebase (internal project
+     components)
+   - ✅ Clear implementation path from existing code
+   - ✅ Standard CRUD/UI operations using existing patterns
+   - ✅ Internal utility functions/services already available
+
+   **PROCEED with External Research ONLY if:**
+   - ❌ New external npm/library integration needed (get current docs)
+   - ❌ Existing external library usage but complex/undocumented features
+     needed
+   - ❌ Complex algorithm or pattern not in codebase
+   - ❌ Security/performance considerations beyond current code
+   - ❌ External API integration without existing examples
+   - ❌ **No similar patterns/components found in codebase** (need external
+     examples)
+
+   **If External Research is needed** (Use subagent: `bp:research-agent`):
+   - Focus ONLY on missing knowledge gaps identified above
+   - External npm/library documentation for NEW packages or complex features
+   - Best practices for COMPLEX patterns not in codebase
+   - Security considerations for NEW external integrations
+   - **AVOID**: Researching internal project components (use codebase instead)
+   - **Agent returns all findings directly in response context**
+
+3. **Technical Clarification** (Use if needed after research completion)
+   - **ONLY** for technical implementation details, not business logic
+   - Specific patterns to mirror and where to find them?
+   - Integration requirements and where to find them?
+   - Which existing service to use and its file path?
+   - Confirm if external research is truly needed for identified gaps
+
+## Language Guidelines
+
+### User Interaction Language
+- **Questions & Communication**: Ask all clarification questions in the same language the user wrote the initial task
+- **Analysis & Discussion**: Continue using the user's language throughout the discovery and research phases
+
+### PRP Document Language  
+- **Final Document**: Always write the PRP document in English for consistency and international team compatibility
+- **User Response Translation**: When incorporating user responses into the PRP, translate them to English while preserving the original meaning
+- **Code Examples**: Always use English comments and variable names in technical examples
+- **Technical Terms**: Use standard English technical terminology in the final document
+
+## PRP Generation
+
+**IMPORTANT**: Read and follow the template structure from `docs/templates/prp_document_template.md` exactly.
+
+If template doesn't exist, tell user to run `/bp:init` first to install templates.
+
+**CRITICAL BEFORE WRITING**:
+1. Complete all research phases (Phase 1 and Phase 2)
+2. Gather ALL context from codebase analysis
+3. Document validation commands from project config files
+4. THEN write the PRP following the template structure
+
+## Output
+
+Save as: `docs/prps/{feature-name}.md`
+
+## Quality Checklist
+
+- [ ] All necessary context included
+- [ ] Validation gates are executable by AI
+- [ ] References existing patterns
+- [ ] Clear implementation path
+- [ ] Error handling documented
+
+Score the PRP on a scale of 1-10 (confidence level to succeed in one-pass
+implementation using claude codes)
+
+## Task Breakdown Generation
+
+**Final Step: Generate Implementation Tasks**
+
+After completing the PRP document, automatically generate a detailed task breakdown:
+
+1. **Task Decomposition** (Use subagent: `bp:team-lead-task-breakdown`)
+   - Analyze the completed PRP document
+   - Break down the implementation into manageable development tasks
+   - Apply work breakdown structure (WBS) principles
+   - Create appropriately-sized tasks for team capacity
+   - Define clear dependencies and critical path
+   - Generate acceptance criteria using Given-When-Then format
+   - Save task breakdown to `docs/tasks/{feature-name}.md`
+
+2. **Integration with PRP**
+   - Reference the task breakdown document in the PRP
+   - Update PRP document to include link to `docs/tasks/{feature-name}.md`
+   - Ensure alignment between PRP requirements and task definitions
+   - Provide clear handoff to development team
+
+This ensures the PRP includes both comprehensive requirements AND actionable implementation tasks ready for development sprints.
+
+Remember: The goal is one-pass implementation success through comprehensive
+context AND clear task decomposition.
+
+---
+
+**Source:** [`croffasia/cc-blueprint-toolkit`](https://github.com/croffasia/cc-blueprint-toolkit) → `claude/commands/generate-prp.md`

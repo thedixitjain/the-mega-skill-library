@@ -1,0 +1,75 @@
+---
+name: architecture-paradigm-cqrs-es
+description: "Applies CQRS and Event Sourcing for read/write separation and audit trails. Use when designing systems with complex domain logic or full state-change history."
+allowed-tools: "[]"
+category: engineering-core
+source_repo: athola/claude-night-market
+source_path: "plugins/archetypes/skills/architecture-paradigm-cqrs-es/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/archetypes/skills/architecture-paradigm-cqrs-es/SKILL.md
+---
+
+# The CQRS and Event Sourcing Paradigm
+
+
+## When To Use
+
+- Designing event-sourced systems with complex domain logic
+- Systems requiring full audit trails of state changes
+
+## When NOT To Use
+
+- Simple CRUD applications without complex domain logic
+- Small projects where event sourcing adds unnecessary complexity
+
+## When to Employ This Paradigm
+- When read and write workloads have vastly different performance characteristics or scaling requirements.
+- When all business events must be captured in a durable, immutable history or audit trail.
+- When a business needs to rebuild projections of data or support temporal queries (e.g., "What did the state of this entity look like yesterday?").
+
+## Adoption Steps
+1. **Identify Aggregates**: Following Domain-Driven Design principles, specify the bounded contexts and the business invariants that each command must enforce on an aggregate.
+2. **Model Commands and Events**: Define the schemas and validation rules for all commands and the events they produce. Document a clear strategy for versioning and schema evolution.
+3. **Implement the Write Side (Command Side)**: Command handlers are responsible for loading an aggregate's event stream, executing business logic, and atomically appending new events to the stream.
+4. **Build Projections to the Read Side**: Create separate read models (projections) that are fed by subscriptions to the event stream. Implement back-pressure and retry policies for these subscriptions.
+5. **validate Full Observability**: Implement detailed logging that includes event IDs, sequence numbers, and metrics for tracking the lag time of each projection.
+
+## Key Deliverables
+- An Architecture Decision Record (ADR) detailing the aggregates, the chosen event store technology, the projection strategy, and the expected data consistency model (e.g., eventual consistency SLAs).
+- A suite of tests for command handlers that use in-memory event streams, complemented by integration tests for the projections.
+- Operational tooling for replaying events, taking state snapshots for performance, and managing schema migrations.
+
+## Risks & Mitigations
+- **High Operational Overhead**:
+  - **Mitigation**: Bugs related to event ordering and replays can be difficult to diagnose. Invest heavily in automation, Dead-Letter Queues (DLQs) for failed events, and regular "chaos engineering" drills to test resilience.
+- **Challenges of Eventual Consistency**:
+  - **Mitigation**: Users may be confused by delays between performing an action and seeing the result. Clearly document the SLAs for read model updates and manage user-facing expectations accordingly, for example, by providing immediate feedback on the command side.
+- **Schema Drift**:
+  - **Mitigation**: An unplanned change to an event schema can break consumers. Enforce the use of a formal schema registry and implement version gates in the CI/CD pipeline to prevent the emission of unvalidated event versions.
+
+## Concrete Components
+
+These vocabulary items name the concrete tools and abstractions
+that show up when the paradigm is implemented. They are not
+required dependencies and they are not part of the skill's
+``tools:`` frontmatter (which is reserved for Claude Code tool
+restrictions). Use this list to disambiguate during architecture
+discussions.
+
+- ``event-store``: append-only log of domain events; the system of record from which projections are built
+- ``message-broker``: carries commands and integration events between bounded contexts
+- ``projection-builder``: rebuilds read-side views by replaying the event store
+
+## Exit Criteria
+
+- [ ] An ADR is produced naming the aggregates, the chosen event store technology, the projection
+  strategy, and the eventual-consistency SLA for each read model.
+- [ ] Command handler tests use in-memory event streams and pass before any persistence adapter
+  is wired.
+- [ ] A schema registry or versioning policy for event schemas is documented, and a CI gate
+  prevents emission of event versions not registered in that policy.
+- [ ] Operational tooling for event replay and state snapshots is identified (not just mentioned)
+  before the write-side is declared production-ready.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/archetypes/skills/architecture-paradigm-cqrs-es/SKILL.md`

@@ -1,0 +1,42 @@
+-- Sparkline SVG Measure
+-- dataType: Text, dataCategory: ImageUrl
+-- Generates a line sparkline for the last 12 months
+-- Target visual: Table or Matrix (imageHeight: 30, imageWidth: 100)
+
+Sparkline SVG =
+VAR _Values =
+    ADDCOLUMNS(
+        CALCULATETABLE(
+            VALUES('Date'[Month]),
+            DATESINPERIOD('Date'[Date], MAX('Date'[Date]), -12, MONTH)
+        ),
+        "@Value", [Sales Amount]
+    )
+
+VAR _XMin = MIN('Date'[Month])
+VAR _XMax = MAX('Date'[Month])
+VAR _YMin = MINX(_Values, [@Value])
+VAR _YMax = MAXX(_Values, [@Value])
+
+VAR _Points =
+    CONCATENATEX(
+        ADDCOLUMNS(
+            _Values,
+            "@X", INT(100 * DIVIDE('Date'[Month] - _XMin, _XMax - _XMin)),
+            "@Y", INT(30 * DIVIDE([@Value] - _YMin, _YMax - _YMin))
+        ),
+        [@X] & "," & (30 - [@Y]),
+        " ",
+        'Date'[Month]
+    )
+
+VAR _Prefix = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30'>"
+VAR _Line = "<polyline fill='none' stroke='#5B8DBE' stroke-width='2' points='" & _Points & "'/>"
+VAR _Suffix = "</svg>"
+
+RETURN
+    IF(
+        HASONEVALUE('Product'[Category]),
+        _Prefix & _Line & _Suffix,
+        BLANK()
+    )

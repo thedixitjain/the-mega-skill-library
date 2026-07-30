@@ -1,0 +1,101 @@
+---
+name: sem-integration
+description: "Provides sem semantic-diff detection, install-on-first-use, and fallback patterns. Use when building skills that consume git diff output."
+category: marketing-and-growth
+source_repo: athola/claude-night-market
+source_path: "plugins/leyline/skills/sem-integration/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/leyline/skills/sem-integration/SKILL.md
+---
+
+
+# sem Integration
+
+Foundation patterns for using
+[sem](https://github.com/Ataraxy-Labs/sem) semantic
+diffs in night-market skills.
+
+## When To Use
+
+Consult this skill when building or modifying skills that
+consume git diff output. It provides the detection,
+installation, and fallback patterns.
+
+## When NOT To Use
+
+- Direct sem CLI usage (just run `sem diff` yourself)
+- Skills that don't consume diff output
+
+## Detection Pattern
+
+Check sem availability once per session:
+
+```bash
+# Detection (cache per session)
+_sem_check() {
+  local cache="${CLAUDE_CODE_TMPDIR:-/tmp}/sem-available"
+  if [ -f "$cache" ]; then
+    cat "$cache"
+    return
+  fi
+  if command -v sem &>/dev/null; then
+    echo "1" | tee "$cache"
+  else
+    echo "0" | tee "$cache"
+  fi
+}
+```
+
+When `_sem_check` returns `0`, offer installation.
+See `modules/detection.md` for install-on-first-use
+logic and platform-specific commands.
+
+## Semantic Diff Pattern
+
+Primary path (sem available):
+
+```bash
+sem diff --format json <baseline>
+```
+
+Fallback path (sem unavailable):
+
+```bash
+git diff --name-only --diff-filter=A <baseline>
+git diff --name-only --diff-filter=M <baseline>
+git diff --name-only --diff-filter=D <baseline>
+git diff --name-only --diff-filter=R <baseline>
+```
+
+See `modules/fallback.md` for output normalization
+that produces the same entity schema from both paths.
+
+## Impact Analysis Pattern
+
+Primary path (sem available):
+
+```bash
+sem impact --json <file-or-entity>
+```
+
+Fallback path (sem unavailable): use rg/grep to trace
+callers by filename. See `modules/fallback.md`.
+
+## Exit Criteria
+
+- [ ] `_sem_check` result cached per session at
+  `${CLAUDE_CODE_TMPDIR:-/tmp}/sem-available`; detection command
+  runs at most once per session regardless of how many skills
+  invoke it
+- [ ] When sem is unavailable, install offer presented and fallback
+  path used automatically (`git diff --name-only --diff-filter=`
+  variants); no silent failure
+- [ ] Fallback output normalized to the same entity schema as sem
+  JSON output per `modules/fallback.md`; consumers downstream
+  see the same structure from both paths
+- [ ] Skills consuming this integration declare
+  `dependencies: [leyline:sem-integration]` in frontmatter
+  rather than reimplementing the detection pattern
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/leyline/skills/sem-integration/SKILL.md`

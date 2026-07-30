@@ -1,0 +1,43 @@
+---
+name: create-widget
+description: "Create a Flutter widget with proper state management and Material/Cupertino design."
+category: mobile-and-platform
+source_repo: rohitg00/awesome-claude-code-toolkit
+source_path: "plugins/flutter-mobile/commands/create-widget.md"
+source_url: https://github.com/rohitg00/awesome-claude-code-toolkit/blob/HEAD/plugins/flutter-mobile/commands/create-widget.md
+---
+
+
+Create a Flutter widget with proper state management and Material/Cupertino design.
+
+## Steps
+
+
+1. Define the widget requirements:
+2. Choose the widget type:
+3. Implement the widget:
+4. Apply theming:
+5. Add responsiveness:
+6. Add animations if needed:
+7. Write widget tests using testWidgets.
+
+## Format
+
+
+```
+Widget: <name>
+Type: <Stateless|Stateful>
+Parameters:
+  - <name>: <type> (<required|optional>)
+```
+
+
+## Rules
+
+- Use const constructors whenever possible.
+- Follow Flutter naming conventions (PascalCase for widgets).
+- Extract complex build methods into separate widgets.
+
+---
+
+**Source:** [`rohitg00/awesome-claude-code-toolkit`](https://github.com/rohitg00/awesome-claude-code-toolkit) → `plugins/flutter-mobile/commands/create-widget.md`

@@ -1,0 +1,52 @@
+---
+name: awesome-cursorrules-htmx-flask-cursorrules-prompt-file
+description: "Cursor rules for HTMX development with Flask integration."
+category: prompt-engineering
+source_repo: PatrickJS/awesome-cursorrules
+source_path: "rules/htmx-flask-cursorrules-prompt-file.mdc"
+source_url: https://github.com/PatrickJS/awesome-cursorrules/blob/HEAD/rules/htmx-flask-cursorrules-prompt-file.mdc
+---
+
+// HTMX with Flask .cursorrules
+
+// HTMX and Flask best practices
+
+const htmxFlaskBestPractices = [
+  "Use Flask's render_template for server-side rendering",
+  "Implement Flask-WTF for form handling",
+  "Utilize Flask's url_for for generating URLs",
+  "Use Flask's jsonify for JSON responses",
+  "Implement Flask-SQLAlchemy for database operations",
+  "Utilize Flask's Blueprint for modular applications",
+];
+
+// Folder structure
+
+const folderStructure = `
+app/
+  templates/
+  static/
+    css/
+    js/
+  models/
+  routes/
+  __init__.py
+config.py
+run.py
+`;
+
+// Additional instructions
+
+const additionalInstructions = `
+1. Use Jinja2 templating with HTMX attributes
+2. Implement proper CSRF protection with Flask-WTF
+3. Utilize Flask's request object for handling HTMX requests
+4. Use Flask-Migrate for database migrations
+5. Implement proper error handling and logging
+6. Follow Flask's application factory pattern
+7. Use environment variables for configuration
+`;
+
+---
+
+**Source:** [`PatrickJS/awesome-cursorrules`](https://github.com/PatrickJS/awesome-cursorrules) → `rules/htmx-flask-cursorrules-prompt-file.mdc`

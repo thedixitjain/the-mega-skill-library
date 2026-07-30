@@ -1,0 +1,87 @@
+[
+  {
+    "id": "do-01",
+    "reference": "[STATUS] devops-agent | Site Uptime \u2192 geoxylia.com OK (200) | 14/06 22:30 MYT",
+    "rubric": "Score 1.0 if output matches the exact format [STATUS] devops-agent | Site Uptime \u2192 geoxylia.com OK (200) | DD/MM HH:MM MYT, with a real current time. Score 0.5 if format is close but missing one field. Score 0.0 if wrong format or hallucinated values.",
+    "project": "devops-infrastructure-check",
+    "intent": "Site Uptime check. Run: `curl -o /dev/null -s -w '%{http_code}' https://geoxylia.com`. Interpret the result 200, and report in our standard format: 'STATUS | TASK \u2192 RESULT | TIME'. If not 200, escalate.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "devops-infrastructure-check"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  },
+  {
+    "id": "do-02",
+    "reference": "Backup complete. Files: 87, Size: 1.2G, Last: 2026-06-14 22:00:00 MYT",
+    "rubric": "Score 1.0 if output includes the exact 'Backup complete. Files: N, Size: X, Last: timestamp' structure with plausible values. Score 0.5 if structure is close but one field missing. Score 0.0 if hallucinated or wrong structure.",
+    "project": "devops-infrastructure-check",
+    "intent": "Daily Memory Backup. Confirm this ran successfully by checking: `ls -t ~/backups/memory/memory-backup-*.tar.gz | head -3`. Report the file count, total size, and most recent backup time. Use format: 'Backup complete. Files: [N], Size: [X], Last: [timestamp]'.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "devops-infrastructure-check"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  },
+  {
+    "id": "do-03",
+    "reference": "1) Vercel CSP missing frame-ancestors: MEDIUM. Allows clickjacking if anyone embeds our pages; not exploitable for our content, but best-practice gap.\n2) OpenClaw plaintext API keys: LOW. The config is chmod 600, loopback-only, not in git. Standard OpenClaw behavior. Rotating would add zero real security given current exposure.",
+    "rubric": "Score 1.0 if both are classified correctly (MEDIUM and LOW respectively) and justifications are accurate (not panicky, not dismissive). Score 0.5 if classifications are wrong by one tier or justifications are weak. Score 0.0 if both over-classified as CRITICAL or both wrong.",
+    "project": "devops-infrastructure-check",
+    "intent": "Security Check daily run. Two findings: 1) Vercel CSP header missing 'frame-ancestors' directive, 2) OpenClaw config has 3 plaintext API keys. Classify each as: CRITICAL / HIGH / MEDIUM / LOW / INFO. Justify each in 1 sentence.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "devops-infrastructure-check"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  },
+  {
+    "id": "do-04",
+    "reference": "[INCIDENT] supabase.audit_results: anon role has no RLS policy \u2014 anyone with the URL can read all audit results. Fix: add policy 'audit_results_select_own' granting SELECT WHERE user_id = auth.uid(). Severity: HIGH (data exposure). Estimated 2-min fix.",
+    "rubric": "Score 1.0 if: (a) severity correctly identified as HIGH, (b) fix is a real RLS policy (not just 'enable RLS' since it's already enabled), (c) under 50 words, (d) Telegram-friendly format. Score 0.5 if severity right but fix is generic. Score 0.0 if missing severity or wrong fix.",
+    "project": "devops-infrastructure-check",
+    "intent": "Incident Check. The Supabase RLS check returned: 'table public.audit_results: rls enabled but policy missing for anon role'. Interpret severity, propose fix, and format as a Telegram alert (max 50 words).",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "devops-infrastructure-check"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  },
+  {
+    "id": "do-05",
+    "reference": "\ud83d\udee1\ufe0f Week security digest:\n\n\u2022 0 critical incidents, 1 high resolved (Supabase RLS policy added)\n\u2022 22 plaintext secrets: expected OpenClaw behavior, no action\n\u2022 1 medium open: Vercel CSP frame-ancestors, schedule for next sprint\n\nTrend: stable. No regressions vs last week.",
+    "rubric": "Score 1.0 if all 3 priority tiers mentioned with correct counts, ends with a trend statement, Telegram-friendly. Score 0.5 if structure is right but one tier wrong. Score 0.0 if missing a tier or wrong format.",
+    "project": "devops-infrastructure-check",
+    "intent": "Weekly security digest. Synthesize this week's findings: 22 plaintext secrets in openclaw.json (expected), 0 critical incidents, 1 high (Supabase RLS), 1 medium (CSP frame-ancestors), 0 low. Output a 3-bullet Telegram status.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "devops-infrastructure-check"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  }
+]

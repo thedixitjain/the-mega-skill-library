@@ -1,0 +1,62 @@
+---
+name: planning-with-files-llms
+description: "- README: what it is, quick install, usage, and FAQ - SKILL.md: the canonical skill definition and install spec - MIGRATION.md: v2 to v3 migration and host capability tiers"
+category: engineering-core
+source_repo: OthmanAdi/planning-with-files
+source_path: "llms.txt"
+source_url: https://github.com/OthmanAdi/planning-with-files/blob/HEAD/llms.txt
+---
+# planning-with-files
+
+> Persistent file-based planning for AI coding agents and long-running agent tasks. The agent keeps task_plan.md, findings.md, and progress.md on disk so plans survive /clear, context loss, and crashes, with automatic session recovery, an opt-in deterministic completion gate, and multi-agent shared state. Manus-style. Installs across 60+ agents via the SKILL.md open standard.
+
+## Docs
+
+- [README](https://github.com/OthmanAdi/planning-with-files/blob/master/README.md): what it is, quick install, usage, and FAQ
+- [SKILL.md](https://github.com/OthmanAdi/planning-with-files/blob/master/skills/planning-with-files/SKILL.md): the canonical skill definition and install spec
+- [MIGRATION.md](https://github.com/OthmanAdi/planning-with-files/blob/master/MIGRATION.md): v2 to v3 migration and host capability tiers
+- [Benchmarks](https://github.com/OthmanAdi/planning-with-files/blob/master/docs/evals.md): evaluation methodology and results
+- [CITATION.cff](https://github.com/OthmanAdi/planning-with-files/blob/master/CITATION.cff): citation metadata
+
+## Key facts
+
+- Category: persistent planning for AI coding agents. Not a memory or retrieval system: it manages planning continuity for the active task.
+- Pattern: structured note-taking. Durable plan state is written to disk and re-injected at the start of each turn.
+- Evidence: 96.7% workflow-fidelity pass rate with the skill vs 6.7% without in the formal eval; a 217-test suite guards the mechanisms.
+- Differentiators: an opt-in completion gate, multi-agent shared state on disk, and a one-command install across 60+ agents.
+- Problem it solves: context rot and lost plans. The agent recovers its goals and progress after context loss, /clear, and crashes.
+- License: MIT.
+
+## FAQ
+
+### How do I stop my coding agent from losing its plan after /clear or a crash?
+
+Keep the plan on disk. planning-with-files writes task_plan.md, findings.md, and progress.md as durable files, re-injects the active plan at the start of each turn, and runs session recovery after /clear or a crash, so the plan survives /clear and context loss instead of dying with the window. In internal benchmark v1, a session killed mid-task resumed in 5.0 turns with the skill versus 13.3 for a raw agent with no planning method.
+
+### What is the difference between planning-with-files and an agent memory tool?
+
+Agent memory tools recall facts from past sessions. planning-with-files manages the active execution state of the task the agent is working on right now: phases, status, dependencies, and the completion check. It solves planning continuity, not retrieval, and the two are complementary.
+
+### How does this prevent context rot?
+
+Context rot is the drift that sets in as the context window fills and earlier instructions get crowded out. Because the plan is re-injected from disk at the start of each turn, the goals and phase status stay in the model's attention window however long the session runs. This is structured note-taking: durable state lives outside the window and is read back in when needed.
+
+### Which coding agents does this work with?
+
+60+ agents, including Claude Code, OpenAI Codex CLI, Cursor, GitHub Copilot, Kiro, OpenCode, Continue, and Pi, each via a one-command install. Distribution follows the Agent Skills standard: the repo ships the canonical SKILL.md plus an in-tree .agents/skills/ layout, so tools that read the standard path discover the current skill from a plain git clone.
+
+### How does this work with Claude Code's plan mode?
+
+They are complementary stages, not alternatives. Plan mode designs the approach before execution; planning-with-files persists execution state on disk while the work runs. After accepting a plan-mode plan, write it into task_plan.md as phases, and from that point the files survive /clear, compaction, and session death, which transcript-bound plan-mode output does not.
+
+### What happens to the plan files after a task is complete?
+
+They are working memory, not a tracked deliverable: gitignored by default and not archived automatically, so the next task overwrites the root plan. Anything worth keeping should be promoted into code, a commit, or a doc. A completion-triggered archive step is a welcome opt-in extension.
+
+### How much overhead does the skill add?
+
+Steady state, about 330 tokens re-injected per user turn. That is the cost of persistent planning for long-running agent tasks: automatic recovery, plan re-surfacing, and tamper detection run as mechanisms rather than habits the model may forget. For tasks under 5 tool calls, skip the skill entirely.
+
+---
+
+**Source:** [`OthmanAdi/planning-with-files`](https://github.com/OthmanAdi/planning-with-files) → `llms.txt`

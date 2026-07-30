@@ -1,0 +1,9 @@
+<!-- Harvested from https://github.com/ashishpatel26/500-AI-Agents-Projects/blob/HEAD/agents/01-web-research-agent/requirements.txt -->
+> **Source:** [`ashishpatel26/500-AI-Agents-Projects`](https://github.com/ashishpatel26/500-AI-Agents-Projects) → `agents/01-web-research-agent/requirements.txt`
+
+langchain==0.3.0
+langchain-core==0.3.0
+langchain-openai==0.2.0
+langchain-tavily==0.1.0
+langgraph==0.2.0
+python-dotenv==1.0.1

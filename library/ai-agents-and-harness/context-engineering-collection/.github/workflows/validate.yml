@@ -1,0 +1,77 @@
+name: Validate Researcher Operating System
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install validation dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Compile researcher scripts
+        run: |
+          python -m py_compile \
+            researcher/scripts/skill_frontmatter.py \
+            researcher/scripts/tests/test_skill_frontmatter.py \
+            researcher/scripts/validate_platform_compat.py \
+            researcher/scripts/validate_repo.py \
+            researcher/scripts/validate_run.py \
+            researcher/scripts/research_loop.py \
+            researcher/scripts/novelty_check.py \
+            researcher/scripts/compare_skill_revisions.py \
+            researcher/scripts/check_activation_cases.py \
+            researcher/scripts/run_benchmarks.py \
+            researcher/scripts/skill_health.py \
+            researcher/scripts/loop_common.py \
+            researcher/scripts/loop_discover.py \
+            researcher/scripts/loop_step.py \
+            researcher/scripts/loop_daily.py \
+            researcher/scripts/loop_status.py \
+            examples/long-horizon-prompt-lab/scripts/build_lab.py \
+            examples/long-horizon-prompt-lab/scripts/validate_site.py
+
+      - name: Unit tests (frontmatter parser)
+        run: python -m unittest researcher.scripts.tests.test_skill_frontmatter
+
+      - name: Build and validate long-horizon prompting site
+        run: |
+          python examples/long-horizon-prompt-lab/scripts/build_lab.py
+          python examples/long-horizon-prompt-lab/scripts/validate_site.py
+          git diff --exit-code -- \
+            examples/long-horizon-prompt-lab/data/prompt-pairs.json \
+            examples/long-horizon-prompt-lab/ui/data.js \
+            examples/long-horizon-prompt-lab/ui/prompts/
+          test -z "$(git status --porcelain --untracked-files=all -- \
+            examples/long-horizon-prompt-lab/data/prompt-pairs.json \
+            examples/long-horizon-prompt-lab/ui/data.js \
+            examples/long-horizon-prompt-lab/ui/prompts/)"
+
+      - name: Platform compatibility (Agent Skills reference)
+        run: python researcher/scripts/validate_platform_compat.py --require-reference-validator
+
+      - name: Validate repository (strict)
+        run: python researcher/scripts/validate_repo.py --strict
+
+      - name: Skill health (strict)
+        run: python researcher/scripts/skill_health.py --strict --no-history
+
+      - name: Activation regression tests
+        run: python researcher/scripts/check_activation_cases.py
+
+      - name: Adversarial benchmark harness
+        run: python researcher/scripts/run_benchmarks.py

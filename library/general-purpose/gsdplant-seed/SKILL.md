@@ -1,0 +1,31 @@
+---
+name: gsdplant-seed
+description: "Capture a forward-looking idea with trigger conditions — surfaces automatically at the right milestone"
+allowed-tools: "Read Write Edit Bash AskUserQuestion"
+category: general-purpose
+source_repo: davepoon/buildwithclaude
+source_path: "plugins/gsd/skills/plant-seed/SKILL.md"
+source_url: https://github.com/davepoon/buildwithclaude/blob/HEAD/plugins/gsd/skills/plant-seed/SKILL.md
+---
+
+
+<objective>
+Capture an idea that's too big for now but should surface automatically when the right
+milestone arrives. Seeds solve context rot: instead of a one-liner in Deferred that nobody
+reads, a seed preserves the full WHY, WHEN to surface, and breadcrumbs to details.
+
+Creates: .planning/seeds/SEED-NNN-slug.md
+Consumed by: /gsd:new-milestone (scans seeds and presents matches)
+</objective>
+
+<execution_context>
+@${CLAUDE_PLUGIN_ROOT}/workflows/plant-seed.md
+</execution_context>
+
+<process>
+Execute the plant-seed workflow from @${CLAUDE_PLUGIN_ROOT}/workflows/plant-seed.md end-to-end.
+</process>
+
+---
+
+**Source:** [`davepoon/buildwithclaude`](https://github.com/davepoon/buildwithclaude) → `plugins/gsd/skills/plant-seed/SKILL.md`

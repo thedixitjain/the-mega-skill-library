@@ -1,0 +1,150 @@
+---
+name: blast-radius
+description: "Analyzes code change impact with risk scoring and affected-node mapping. Use before merging to understand what a change touches and what lacks test coverage."
+allowed-tools: "[]"
+category: testing-and-qa
+source_repo: athola/claude-night-market
+source_path: "plugins/pensive/skills/blast-radius/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/pensive/skills/blast-radius/SKILL.md
+---
+
+
+# Blast Radius Analysis
+
+Analyze the impact of current code changes using the
+code knowledge graph.
+
+## When NOT To Use
+
+- Reading the changed code for defects (use `pensive:bug-review`)
+- The code graph is missing or stale (use `gauntlet:graph-build`)
+
+## Prerequisites
+
+This skill requires the **gauntlet** plugin for graph
+data. Check if it's available:
+
+```bash
+GRAPH_QUERY=$(find ~/.claude/plugins -name "graph_query.py" -path "*/gauntlet/*" 2>/dev/null | head -1)
+```
+
+**If gauntlet is not installed** (GRAPH_QUERY is empty):
+Fall back to a manual impact analysis using `git diff`
+and `grep` to trace imports and call sites. Skip graph
+steps and go directly to step 3 (manual mode).
+
+**If gauntlet is installed but no graph.db exists**:
+Tell the user: "Run `/gauntlet-graph build` first."
+
+## Steps
+
+1. **Show current changes**: Run `git diff --stat` to
+   show the user what files changed.
+
+2. **Run impact analysis** (requires gauntlet):
+   ```bash
+   python3 "$GRAPH_QUERY" \
+       --action impact --base-ref HEAD --depth 2
+   ```
+
+   **Fallback tier 1 (sem available, no gauntlet)**:
+   Use sem for cross-file dependency tracing:
+   ```bash
+   if command -v sem &>/dev/null; then
+     sem impact --json <changed-file>
+   fi
+   ```
+
+   This traces real function-level dependencies instead
+   of filename matching. See `leyline:sem-integration`
+   for detection patterns.
+
+   **Fallback tier 2 (no sem, no gauntlet)**: Trace
+   callers of changed functions with rg (or grep):
+   ```bash
+   # Prefer rg for speed; fall back to grep
+   if command -v rg &>/dev/null; then
+     git diff --name-only HEAD | while read f; do
+       stem="${f%.*}"; stem="${stem##*/}"
+       [ -z "$stem" ] && continue  # skip dotfiles (.gitignore etc.)
+       rg -l "$stem" . 2>/dev/null
+     done | sort -u
+   else
+     git diff --name-only HEAD | while read f; do
+       stem="${f%.*}"; stem="${stem##*/}"
+       [ -z "$stem" ] && continue  # skip dotfiles (.gitignore etc.)
+       grep -rl "$stem" . 2>/dev/null
+     done | sort -u
+   fi
+   ```
+
+   Note: this searches all file types. For Python-only
+   projects, add `--type py` to `rg` or `--include="*.py"`
+   to `grep` to reduce false positives.
+
+3. **Display results in priority order**:
+
+   Format the output as a table:
+   ```
+   Risk  | Node                    | File          | Anchor                          | Reason
+   0.85  | auth.py::verify_token   | auth.py:45    | `def verify_token(token):`      | untested, security
+   0.62  | db.py::execute_query    | db.py:112     | `cursor.execute(query, params)` | high fan-in
+   0.41  | api.py::handle_request  | api.py:78     | `def handle_request(req):`      | flow participant
+   ```
+
+   The `Anchor` column is the verbatim source text at the cited line.
+   It lets a reviewer confirm the finding without re-running the tool.
+
+4. **Highlight untested functions**: List any affected
+   functions that lack test coverage (no TESTED_BY edge).
+
+5. **Show overall risk**: Display the overall risk level
+   (low/medium/high) based on the maximum risk score.
+
+6. **Suggest actions**:
+   - For high-risk nodes: "Consider adding tests before
+     merging"
+   - For security-sensitive nodes: "Review authentication
+     and authorization logic carefully"
+   - For high-fan-in nodes: "Changes here affect many
+     callers; verify backward compatibility"
+
+### Verify Findings Are Grounded (`blast-radius:findings-verified`)
+
+Every finding must cite a real location and a verbatim anchor. Write
+findings to `.review/findings.json` and confirm each citation resolves:
+
+```bash
+python plugins/imbue/scripts/citation_verifier.py \
+  --findings .review/findings.json --repo-root .
+```
+
+Drop or label `UNVERIFIED` any finding the verifier fails (exit `1`); only
+verified findings enter the report. See `Skill(imbue:review-core)` Step 5
+and `Skill(imbue:structured-output)` for the schema.
+
+## Exit Criteria
+
+- [ ] Results table lists every affected node with a `File` (file:line)
+      and verbatim `Anchor` column.
+- [ ] Overall risk level (low/medium/high) is displayed based on the
+      maximum risk score.
+- [ ] Every reported finding carries a `Location` + verbatim `Anchor`
+      confirmed by `citation_verifier.py` (exit `0`), or unverified
+      findings were dropped or labeled `UNVERIFIED`.
+
+## Risk Scoring Model
+
+Five weighted factors (sum capped at 1.0):
+
+| Factor | Weight | Meaning |
+|--------|--------|---------|
+| Test gap | 0.30 | No test coverage |
+| Security | 0.20 | Auth/crypto/SQL keywords |
+| Flow participation | 0.25 | Part of execution flows |
+| Cross-community | 0.15 | Called from other modules |
+| Caller count | 0.10 | High fan-in function |
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/pensive/skills/blast-radius/SKILL.md`

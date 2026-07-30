@@ -1,0 +1,181 @@
+---
+name: context-hub-llms
+description: "- doc: API/SDK reference documentation. Versioned, language-specific. Entry file: DOC.md - skill: Task recipes, automation patterns, coding playbooks. Standalone. Entry file: SKILL.md"
+category: backend-and-data
+source_repo: andrewyng/context-hub
+source_path: "llms.txt"
+source_url: https://github.com/andrewyng/context-hub/blob/HEAD/llms.txt
+---
+# Context Hub (chub)
+
+> CLI tool for searching and fetching LLM-optimized documentation and skills. Install: npm install -g @aisuite/chub
+
+## Content Types
+
+- doc: API/SDK reference documentation. Versioned, language-specific. Entry file: DOC.md
+- skill: Task recipes, automation patterns, coding playbooks. Standalone. Entry file: SKILL.md
+
+## Commands
+
+### chub search [query]
+Search docs and skills. No query lists all entries.
+
+Flags:
+  --tags <csv>        Filter by tags (comma-separated)
+  --json              JSON output with { total, results[] }
+
+Examples:
+  chub search                         # list everything
+  chub search "stripe"                # fuzzy search by name/description
+  chub search stripe/payments         # exact id returns full detail
+  chub search --tags automation       # filter by tag
+
+### chub get <ids...>
+Fetch one or more docs or skills by ID. Auto-detects type (doc vs skill). Auto-infers language when only one is available.
+
+Flags:
+  --lang <language>   Language variant (js, py, ts, etc.)
+  --version <version> Specific doc version
+  --full              Fetch all files, not just the entry point
+  --file <paths>      Fetch specific file(s) by path (comma-separated)
+  -o, --output <path> Write to file or directory
+  --json              JSON output with { id, type, content, path, additionalFiles?, annotation? }
+
+Examples:
+  chub get stripe/api                           # single doc (auto-infers lang if only one)
+  chub get openai/chat-api --lang py            # specific language
+  chub get pw-community/login-flows             # fetch a skill
+  chub get stripe/api openai/chat-api           # multiple entries
+  chub get acme/widgets --file references/advanced.md   # specific reference file
+  chub get acme/widgets --full                  # all files
+  chub get stripe/api -o .context/stripe.md     # save to file
+
+Behavior:
+  - When additional reference files exist beyond the entry point, output includes a footer listing them
+  - Use --file to fetch specific reference files without fetching everything
+  - If an annotation exists for the entry, it is appended after the content
+
+### chub annotate [id] [note]
+Attach persistent notes to a doc or skill. Notes appear on future `chub get` calls.
+
+Flags:
+  --clear             Remove annotation for this entry
+  --list              List all annotations
+  --json              JSON output
+
+Examples:
+  chub annotate stripe/api "Use idempotency keys for POST requests"   # set note
+  chub annotate stripe/api                     # view current note
+  chub annotate stripe/api "Updated note"      # replaces previous note
+  chub annotate stripe/api --clear             # remove note
+  chub annotate --list                         # list all annotations
+
+Storage: ~/.chub/annotations/ (local, per-machine)
+
+### chub feedback [id] [rating] [comment]
+Rate a doc or skill (up/down). Sent to the registry for maintainers.
+
+Flags:
+  --label <label>     Feedback label (repeatable). Valid: accurate, well-structured, helpful, good-examples, outdated, inaccurate, incomplete, wrong-examples, wrong-version, poorly-structured
+  --lang <language>   Language variant
+  --file <file>       Specific file within the entry
+  --agent <name>      AI tool name
+  --model <model>     LLM model name
+  --status            Show telemetry status
+  --json              JSON output
+
+Examples:
+  chub feedback stripe/api up "Clear examples"
+  chub feedback openai/chat down --label outdated --label wrong-examples
+
+### chub update
+Download or refresh the cached registry.
+
+### chub cache status|clear
+Manage the local cache. `status` shows cache info, `clear` removes cached content.
+
+### chub build <content-dir>
+Build a registry from a local content directory.
+
+Flags:
+  -o, --output <path>     Output directory (default: <content-dir>/dist)
+  --base-url <url>        Base URL for remote serving
+  --validate-only         Validate without building
+  --json                  JSON output
+
+## Agent Workflow
+
+Recommended pattern for AI agents using Context Hub:
+
+1. SEARCH: Find relevant documentation
+   chub search "stripe payments" --json | jq -r '.results[0].id'
+
+2. FETCH: Get the documentation
+   chub get stripe/api --lang js
+
+3. USE: Read the content, write code based on it
+
+4. ANNOTATE: Record what you learned for future sessions
+   chub annotate stripe/api "Webhook verification requires raw body, not parsed JSON"
+
+5. NEXT SESSION: Fetch again — your annotation appears automatically
+   chub get stripe/api --lang js
+   # Content is followed by your previous annotation
+
+This loop means agents improve over time. Annotations persist across sessions.
+
+## Annotation Best Practices
+
+After using a doc to complete a task, annotate what you learned that wasn't obvious from the doc itself:
+- Environment-specific gotchas ("requires raw body for webhook verification")
+- Version-specific notes ("v3 API requires different auth header format")
+- Project-specific context ("we use the batch endpoint, not individual calls")
+- Error resolutions ("rate limit errors need exponential backoff with jitter")
+
+Do NOT annotate information that's already clearly stated in the doc.
+
+## Piping Patterns
+
+# Search, pick first result, fetch
+ID=$(chub search "stripe" --json | jq -r '.results[0].id')
+chub get "$ID" --lang js -o .context/stripe.md
+
+# Fetch multiple docs at once
+chub get openai/chat stripe/api -o .context/
+
+# Check what additional files are available
+chub get acme/widgets --json | jq '.additionalFiles'
+
+# Fetch a specific reference file
+chub get acme/widgets --file references/advanced.md
+
+# List all your annotations
+chub annotate --list --json
+
+## Key Behaviors
+
+- Auto-detect type: `chub get` works for both docs and skills. No need to specify type.
+- Auto-infer language: If a doc has only one language variant, --lang is not required.
+- Multi-language prompt: If a doc has multiple languages and --lang is not specified, the CLI lists available languages.
+- Incremental fetch: Default fetch returns only the entry file. A footer lists additional reference files. Use --file for selective fetch, --full for everything.
+- Annotations on fetch: If an annotation exists for an entry, it appears at the end of `chub get` output in both human and JSON modes.
+- Multi-source: Config supports multiple sources (URLs and local paths). On ID collision, prefix with source name: `chub get internal:openai/chat`.
+- JSON everywhere: All commands support --json for structured output.
+
+## Configuration
+
+File: ~/.chub/config.yaml
+
+sources:
+  - name: community
+    url: https://cdn.aichub.org/v1
+  - name: internal
+    path: /path/to/local/docs
+
+source: "official,maintainer,community"   # trust policy
+refresh_interval: 86400                   # cache TTL in seconds
+telemetry: true                           # anonymous analytics (opt out: false or CHUB_TELEMETRY=0)
+
+---
+
+**Source:** [`andrewyng/context-hub`](https://github.com/andrewyng/context-hub) → `llms.txt`

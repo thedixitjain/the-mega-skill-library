@@ -1,0 +1,108 @@
+---
+name: token-conservation
+description: "Enforces token quota management at session start with conservation and compression checks. Use at the start of every session or before large context loads."
+category: business-and-finance
+source_repo: athola/claude-night-market
+source_path: "plugins/conserve/skills/token-conservation/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/conserve/skills/token-conservation/SKILL.md
+---
+
+# Token Conservation Workflow
+
+## When To Use
+- Run at the start of every session and whenever prompt sizes or tool calls begin to spike.
+- Mandatory before launching long-running analyses, wide diffs, or massive context loads.
+
+## When NOT To Use
+
+- Context-optimization already handles the scenario
+- Simple queries with minimal context
+
+## Required TodoWrite Items
+1. `token-conservation:quota-check`
+2. `token-conservation:context-plan`
+3. `token-conservation:delegation-check`
+4. `token-conservation:compression-review`
+5. `token-conservation:logging`
+
+## Step 1 – Quota Check (`quota-check`)
+- Record current session duration and weekly usage (from `/status` or notebook).
+  Note the 5-hour rolling cap and weekly cap highlighted in the Claude community notice.
+- Capture remaining budget and set a max token target for this task.
+
+## Step 2 – Context Plan (`context-plan`)
+- **Set a discovery read budget BEFORE reading any files.** Count each `Read` call
+  and each content-mode `Grep` as one read. Glob and files-with-matches Grep are free.
+  - Implement from spec/requirements: **max 8 reads**
+  - Bug fix at known location: **max 5 reads**
+  - Refactor with known scope: **max 1 read per file being changed**
+  - Open exploration: **max 15 reads**
+- **Read order** (most valuable first): spec/requirements, files to modify,
+  imports/interfaces, then stop and start writing.
+- **When budget is spent**: ask the user if more context is needed. Do NOT
+  self-authorize additional reads. Only explicit user approval overrides the budget.
+- Prefer `Read` with `offset`/`limit` params or `Grep` tool over loading whole files.
+  A `Read` targeting <50 lines counts as 0.5 reads. Avoid `cat`/`sed`/`awk` via Bash:
+  Claude Code 2.1.21+ steers toward native file tools (Read, Edit, Write, Grep, Glob).
+- **PDFs (Claude Code 2.1.30+)**: Use `Read` with `pages: "1-5"` for targeted PDF reading
+  instead of loading entire documents. Large PDFs (>10 pages) return a lightweight
+  reference when @-mentioned, so use the `pages` parameter to read specific sections.
+  Hard limits: **100 pages max, 20MB max per PDF**. Exceeding these previously locked
+  sessions permanently (fixed in 2.1.31).
+- Convert prose instructions into bullet lists before prompting so only essential
+  info hits the model.
+
+## Step 3 – Delegation Check (`delegation-check`)
+- Evaluate whether compute-intensive tasks can go to Qwen MCP or other external
+  tooling (use `qwen-delegation` skill if needed).
+- For local work, favor deterministic scripts (formatters, analyzers) instead
+  of LLM reasoning when possible.
+
+## Step 4 – Compression Review (`compression-review`)
+- Summarize prior steps/results before adding new context.
+  Remove redundant history, collapse logs, and avoid reposting identical code.
+- Use `prompt caching` ideas: reference prior outputs instead of restating them
+  when the model has already processed the information (cite snippet IDs).
+- Decide whether the current thread should be compacted:
+  - If only recent context is stale, use **"Summarize from here"** (Claude Code 2.1.32+)
+    via the message selector to partially summarize the conversation. This preserves
+    recent context while compressing older portions
+  - If the active workflow is finished and earlier context will not be reused,
+    instruct the user to run `/new`
+  - If progress requires the existing thread but the window is bloated,
+    prompt them to run `/compact` before continuing
+- **Automatic memory** (Claude Code 2.1.32+): Claude now records and recalls session
+  memories automatically. This adds minor token overhead but improves cross-session
+  continuity. No action needed: be aware it contributes to baseline context usage.
+
+## Step 5 – Logging (`logging`)
+
+Document the conservation tactics that were applied and note the remaining
+token budget. If the budget is low, explicitly warn the user and propose secondary
+plans. Record any recommendations made regarding the use of `/new` or `/compact`,
+or justify why neither was necessary, to inform future context-handling decisions.
+
+## Output Expectations
+- A short explanation of token-saving steps, delegated tasks, and remaining runway.
+- Concrete next-action list that keeps the conversation lean (e.g.):
+  - "next turn: provide only failing test output lines 40-60"
+- Explicit reminder about `/new` or `/compact` whenever you determine it would save
+  tokens (otherwise state that no reset/compaction is needed yet).
+
+## Exit Criteria
+
+- [ ] All 5 TodoWrite items created and checked off in order:
+  `quota-check`, `context-plan`, `delegation-check`,
+  `compression-review`, `logging`
+- [ ] Discovery read budget set before the first `Read` call, with
+  the task type (spec/bug/refactor/exploration) and max-reads
+  limit recorded
+- [ ] Output summary states the remaining token runway (or warns
+  "budget low") and includes an explicit `/new` or `/compact`
+  recommendation, or a justification for why neither is needed
+- [ ] No additional file reads taken after the read budget is
+  exhausted without explicit user approval in the same session
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/conserve/skills/token-conservation/SKILL.md`

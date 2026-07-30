@@ -1,0 +1,85 @@
+---
+name: architecture-paradigm-modular-monolith
+description: "Applies modular monolith with enforced internal boundaries. Use when teams want service-level autonomy without distributed system overhead."
+allowed-tools: "[]"
+category: engineering-core
+source_repo: athola/claude-night-market
+source_path: "plugins/archetypes/skills/architecture-paradigm-modular-monolith/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/archetypes/skills/architecture-paradigm-modular-monolith/SKILL.md
+---
+
+# The Modular Monolith Paradigm
+
+
+## When To Use
+
+- Organizing large codebases into well-bounded modules
+- Teams wanting microservice boundaries without distributed complexity
+
+## When NOT To Use
+
+- Already distributed as microservices
+- Tiny applications where module boundaries add unnecessary complexity
+
+## When to Employ This Paradigm
+- When you desire team autonomy similar to that of microservices, but without the operational overhead of a distributed system.
+- When release velocity is slowed by tangled dependencies between internal modules.
+- When a monolithic architecture is simpler to operate today, but there is a clear need to evolve toward a service-based model in the future.
+
+## Adoption Steps
+1. **Identify Modules**: Define module boundaries that align with distinct business capabilities or Bounded Contexts from Domain-Driven Design.
+2. **Encapsulate Internals**: Use language-level visibility modifiers (e.g., public/private), separate packages, or namespaces to hide the implementation details of each module.
+3. **Expose Public Contracts**: Each module should expose its functionality through well-defined facades, APIs, or events. Forbid direct database table access or direct implementation calls between modules.
+4. **Enforce Architectural Fitness**: Implement automated tests that fail the build if forbidden dependencies or package references are introduced between modules.
+5. **Plan for Evolution**: Continuously track metrics such as change coupling and deployment scope to make informed decisions about if and when to split a module into a separate service.
+
+## Key Deliverables
+- An Architecture Decision Record (ADR) that maps module boundaries and defines the rules for any shared code.
+- Formal contract documentation (e.g., OpenAPI specs, event schemas) for every interaction point between modules.
+- Automated dependency checks and dedicated CI/CD jobs for each module to enforce boundaries.
+
+## Risks & Mitigations
+- **Regression to a "Big Ball of Mud"**:
+  - **Mitigation**: Without strict enforcement, module boundaries will inevitably erode. Treat any boundary violation as a build-breaking error and maintain a disciplined approach to code reviews.
+- **Shared Database Hotspots**:
+  - **Mitigation**: High contention on a shared database can become a bottleneck. Introduce clear schema ownership, use view-based access to restrict data visibility, or implement data replication strategies to reduce coupling.
+## Troubleshooting
+
+### Common Issues
+
+**Skill not loading**
+Check YAML frontmatter syntax and required fields
+
+**Token limits exceeded**
+Use progressive disclosure - move details to modules
+
+**Modules not found**
+Verify module paths in SKILL.md are correct
+
+## Concrete Components
+
+These vocabulary items name the concrete tools and abstractions
+that show up when the paradigm is implemented. They are not
+required dependencies and they are not part of the skill's
+``tools:`` frontmatter (which is reserved for Claude Code tool
+restrictions). Use this list to disambiguate during architecture
+discussions.
+
+- ``dependency-analyzer``: module dependency graph builder for spotting forbidden edges
+- ``module-boundary-enforcer``: fails the build when a module imports across a boundary
+- ``refactoring-planner``: ranks modules by extraction-readiness for a future split
+
+## Exit Criteria
+
+- [ ] An ADR maps module boundaries to business capabilities, defines rules for shared code, and
+  states the conditions under which a module would be extracted into a separate service.
+- [ ] Each module exposes functionality only through documented facades, APIs, or events; direct
+  database table access between modules is absent (verified by schema ownership review).
+- [ ] Automated dependency checks fail the CI build on any forbidden cross-module import, and at
+  least one such violation test case is documented.
+- [ ] Change-coupling metrics (modules that always change together) are tracked and any module
+  pair with > 50% coupling is flagged as a candidate for boundary review.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/archetypes/skills/architecture-paradigm-modular-monolith/SKILL.md`

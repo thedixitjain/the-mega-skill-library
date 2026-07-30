@@ -1,0 +1,19 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/agents_sdk/multi-agent-portfolio-collaboration/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/agents_sdk/multi-agent-portfolio-collaboration/requirements.txt`
+
+openai
+openai-agents
+fredapi
+yfinance
+pandas
+numpy
+matplotlib
+seaborn
+scipy
+cvxpy
+arch
+mpmath
+tabulate
+requests
+pydantic
+logging

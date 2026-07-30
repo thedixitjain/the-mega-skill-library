@@ -1,0 +1,71 @@
+---
+name: architecture-paradigm-pipeline
+description: "Applies pipes-and-filters for sequential data transformations. Use when data flows through discrete stages like ETL, streaming analytics, or CI/CD pipelines."
+allowed-tools: "[]"
+category: devops-and-infra
+source_repo: athola/claude-night-market
+source_path: "plugins/archetypes/skills/architecture-paradigm-pipeline/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/archetypes/skills/architecture-paradigm-pipeline/SKILL.md
+---
+
+# The Pipeline (Pipes and Filters) Paradigm
+
+## When to Employ This Paradigm
+- When data must flow through a fixed sequence of discrete transformations, such as in ETL jobs, streaming analytics, or CI/CD pipelines.
+- When reusing individual processing stages is needed, either independently or to scale bottleneck stages separately from others.
+- When failure isolation between stages is a critical requirement.
+
+## When NOT To Use
+
+- Interactive request/response systems (use
+  `archetypes:architecture-paradigm-client-server`)
+- Stages that must share mutable state, which the pattern cannot express
+
+## Adoption Steps
+1. **Define Filters**: Design each stage (filter) to perform a single, well-defined transformation. Each filter must have a clear input and output data schema.
+2. **Connect via Pipes**: Connect the filters using "pipes," which can be implemented as streams, message queues, or in-memory channels. validate these pipes support back-pressure and buffering.
+3. **Maintain Stateless Filters**: Where possible, design filters to be stateless. Any required state should be persisted externally or managed at the boundaries of the pipeline.
+4. **Instrument Each Stage**: Implement monitoring for each filter to track key metrics such as latency, throughput, and error rates.
+5. **Orchestrate Deployments**: Design the deployment strategy to allow each stage to be scaled horizontally and upgraded independently.
+
+## Key Deliverables
+- An Architecture Decision Record (ADR) documenting the filters, the chosen pipe technology, the error-handling strategy, and the tools for replaying data.
+- A suite of contract tests for each filter, plus integration tests that cover representative end-to-end pipeline executions.
+- Observability dashboards that visualize stage-level Key Performance Indicators (KPIs).
+
+## Risks & Mitigations
+- **Single-Stage Bottlenecks**:
+  - **Mitigation**: Implement auto-scaling for individual filters. If a single filter remains a bottleneck, consider refactoring it into a more granular sub-pipeline.
+- **Schema Drift Between Stages**:
+  - **Mitigation**: Centralize schema definitions in a shared repository and enforce compatibility tests as part of the CI/CD process to prevent breaking changes.
+- **Back-Pressure Failures**:
+  - **Mitigation**: Conduct rigorous load testing to simulate high-volume scenarios. Validate that buffering, retry logic, and back-pressure mechanisms behave as expected under stress.
+
+## Concrete Components
+
+These vocabulary items name the concrete tools and abstractions
+that show up when the paradigm is implemented. They are not
+required dependencies and they are not part of the skill's
+``tools:`` frontmatter (which is reserved for Claude Code tool
+restrictions). Use this list to disambiguate during architecture
+discussions.
+
+- ``stream-processor``: the runtime that executes a filter (e.g. Flink, Apache Beam, Faust)
+- ``message-queue``: the durable pipe between filters (e.g. Kafka, RabbitMQ, in-memory channel)
+- ``data-validator``: schema-checks every record at filter input and output
+
+## Exit Criteria
+
+- [ ] An ADR documents every filter in the pipeline, the chosen pipe technology, the
+  error-handling strategy (DLQ, retry count, dead-letter routing), and the data replay
+  mechanism.
+- [ ] Each filter has a contract test covering its input and output schema; schema drift between
+  adjacent filters is caught by a CI compatibility check.
+- [ ] Observability dashboards are configured showing per-stage latency, throughput, and error
+  rate before the pipeline is promoted to production.
+- [ ] Load testing validates that back-pressure and buffering mechanisms prevent data loss at
+  2x the expected peak throughput.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/archetypes/skills/architecture-paradigm-pipeline/SKILL.md`

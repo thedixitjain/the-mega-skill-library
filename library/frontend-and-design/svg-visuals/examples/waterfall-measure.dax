@@ -1,0 +1,69 @@
+-- SVG Waterfall Chart
+-- Author: Kurt Buhler / Data Goblins (PowerBI MacGuyver Toolbox)
+-- Target: Table / Matrix (Image size: H25 x W100)
+-- Placeholders: Replace __ACTUAL_MEASURE, __GROUPBY_COLUMN with your fields
+-- Note: Uses OFFSET/GENERATEALL for cumulative positioning -- requires Power BI 2023+
+
+-- Input field config
+VAR _Actual = __ACTUAL_MEASURE
+VAR _LabelFont = "Segoe UI"
+VAR _LabelWeight = "600"
+VAR _LabelSize = "11"
+
+-- Chart Config
+VAR _BarMax = 100
+VAR _BarMin = 0
+VAR _Scope = ALLSELECTED ( __GROUPBY_COLUMN )
+
+-- Color config
+VAR _BarFillColor =
+    IF ( HASONEVALUE ( __GROUPBY_COLUMN ), "#dad9d8", "#878582" )
+VAR _LabelColor =
+    IF ( HASONEVALUE ( __GROUPBY_COLUMN ), "#87858299", "#EBEBEB" )
+
+-- Number formatting
+VAR _NumberFormat =
+    SWITCH (
+        TRUE (),
+        _Actual <= 1E3,  FORMAT ( _Actual, "#,0" ),
+        _Actual <= 1E6,  FORMAT ( _Actual, "#,0, K" ),
+        _Actual <= 1E9,  FORMAT ( _Actual, "#,0,, M" ),
+        _Actual <= 1E12, FORMAT ( _Actual, "#,0,,, bn" )
+    )
+
+-- Cumulative positioning via OFFSET
+VAR _ByCategory =
+    ADDCOLUMNS ( _Scope, "@Actual", __ACTUAL_MEASURE )
+VAR _FilterTable =
+    SELECTCOLUMNS ( _Scope, "@CategoryPR", __GROUPBY_COLUMN, "@ActualPR", __ACTUAL_MEASURE )
+VAR _ResultTable =
+    GENERATEALL ( _ByCategory, OFFSET ( -1, _FilterTable, ORDERBY ( [@ActualPR] ) ) )
+VAR _CumulationPR = FILTER ( _ResultTable, [@ActualPR] >= _Actual )
+VAR _CumulativeAmountPR = SUMX ( _CumulationPR, [@Actual] )
+VAR _Total = SUMX ( _ByCategory, [@Actual] )
+VAR _CumulativePercentagePR = DIVIDE ( _CumulativeAmountPR, _Total )
+VAR _PercentageByCategoryPR = IF ( HASONEVALUE ( __GROUPBY_COLUMN ), _CumulativePercentagePR )
+
+-- Normalize
+VAR _AxisRange = _BarMax - _BarMin
+VAR _ActualNormalized = DIVIDE ( _Actual, _Total ) * _AxisRange
+VAR _StartPos = _PercentageByCategoryPR * _AxisRange
+VAR _EndPos = MIN ( _StartPos + _ActualNormalized, 99 )
+
+-- SVG elements
+VAR _SvgPrefix = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg'>"
+VAR _Sort = "<desc>" & FORMAT ( _Actual, "000000000000" ) & "</desc>"
+VAR _ActualBar  = "<rect x='" & MAX ( _StartPos, 0 ) & "' y='3' width='" & _ActualNormalized & "' height='75%' fill='" & _BarFillColor & "'/>"
+VAR _ConnectorStart  = "<rect x='" & _StartPos & "' y='0' width='0.5' height='100%' fill='#333333'/>"
+VAR _ConnectorEnd = "<rect x='" & _EndPos & "' y='0' width='0.5' height='100%' fill='#333333'/>"
+VAR _ActualLabelRS = "<text x='" & _EndPos + 4 & "' y='16' font-family='" & _LabelFont & "' font-size='" & _LabelSize & "' font-weight='" & _LabelWeight & "' text-anchor='start' fill='" & _LabelColor & "'>" & _NumberFormat & "</text>"
+VAR _ActualLabelLS = "<text x='" & _StartPos - 4 & "' y='16' font-family='" & _LabelFont & "' font-size='" & _LabelSize & "' font-weight='" & _LabelWeight & "' text-anchor='end' fill='" & _LabelColor & "'>" & _NumberFormat & "</text>"
+VAR _ActualLabel = IF ( _EndPos > _AxisRange * 0.5, _ActualLabelLS, _ActualLabelRS )
+VAR _SvgSuffix = "</svg>"
+
+VAR _SVG =
+    _SvgPrefix & _Sort
+    & _ActualBar & _ConnectorStart & _ConnectorEnd & _ActualLabel
+    & _SvgSuffix
+
+RETURN _SVG

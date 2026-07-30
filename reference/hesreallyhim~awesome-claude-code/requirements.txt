@@ -1,0 +1,7 @@
+<!-- Harvested from https://github.com/hesreallyhim/awesome-claude-code/blob/HEAD/requirements.txt -->
+> **Source:** [`hesreallyhim/awesome-claude-code`](https://github.com/hesreallyhim/awesome-claude-code) → `requirements.txt`
+
+# Runtime dependencies for README generation, the category tooling, and the
+# link/ticker scripts. Install with: venv/bin/python -m pip install -r requirements.txt
+PyYAML
+requests

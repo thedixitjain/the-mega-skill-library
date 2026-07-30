@@ -1,0 +1,67 @@
+---
+name: amocrm-api-control
+description: "Безопасная OAuth-авторизация amoCRM, чтение схемы аккаунта и сверка заявок по источнику, времени, статусу, ответственному и внешней ссылке."
+category: backend-and-data
+source_repo: hashgraph-online/awesome-codex-plugins
+source_path: "plugins/nebelov/yandex-direct-for-all/skills/amocrm-api-control/SKILL.md"
+source_url: https://github.com/hashgraph-online/awesome-codex-plugins/blob/HEAD/plugins/nebelov/yandex-direct-for-all/skills/amocrm-api-control/SKILL.md
+---
+
+
+# Управление amoCRM через программный интерфейс
+
+## Граница задачи
+
+Навык предназначен для получения и обновления OAuth-токенов, чтения воронок, статусов и полей, а также сверки заявок. Любые изменения бизнес-данных требуют отдельного плана, точной области, подтверждения и чтения после записи.
+
+## Перед созданием интеграции
+
+1. Используй уже существующую интеграцию, если она есть.
+2. Создание закрытой интеграции в нетехническом аккаунте может иметь последствия для технической поддержки; покажи владельцу актуальное предупреждение из интерфейса amoCRM.
+3. `redirect_uri` должен точно совпадать с адресом интеграции. Местный приёмник слушает только `127.0.0.1` и проверяет точные путь и `state`.
+
+## Закрытые файлы
+
+Все файлы интеграции, `state`, кода авторизации и токенов должны иметь права `0600`, а их папки — `0700`. Секрет, код и токен не передавай аргументом и не печатай.
+
+Ожидаемая схема файла интеграции:
+
+```json
+{
+  "subdomain": "ACCOUNT_SUBDOMAIN",
+  "client_id": "PUBLIC_INTEGRATION_ID",
+  "client_secret": "PRIVATE_INTEGRATION_SECRET",
+  "redirect_uri": "EXACT_REGISTERED_REDIRECT_URI"
+}
+```
+
+## Порядок OAuth
+
+1. Создай случайное состояние и сохрани его в закрытом файле.
+2. Запусти `scripts/amocrm_local_callback_server.py` с явными `--state-file` и `--output`.
+3. Открой адрес согласия, содержащий тот же `state`.
+4. Приёмник сохранит только код, а не полный адрес.
+5. Запусти `scripts/exchange_amocrm_token.py` с `--integration-file`, `--authorization-code-file` и `--token-file`. Для обновления используй `--refresh` без файла кода.
+6. После успешного первого обмена удали одноразовый файл кода.
+
+## Чтение схемы и сверка
+
+`scripts/fetch_amocrm_schema.py` проходит постраничную выдачу и сохраняет схему аккаунта в закрытой папке. Повтор той же страницы считается ошибкой.
+
+Для сверки каждая строка обязана иметь поля:
+
+- `source` — источник;
+- `occurred_at` — время события;
+- `status` — статус;
+- `responsible` — ответственный;
+- `external_link` — внешняя ссылка, используемая как ключ сопоставления.
+
+Результат разделяет совпадение, расхождение и строку, присутствующую только во втором источнике.
+
+## Граница публикации
+
+Не публикуй поддомены аккаунтов, учётные данны, токены, контакты, заявки, домены и местные пути. Для испытаний используй только синтетические данны.
+
+---
+
+**Source:** [`hashgraph-online/awesome-codex-plugins`](https://github.com/hashgraph-online/awesome-codex-plugins) → `plugins/nebelov/yandex-direct-for-all/skills/amocrm-api-control/SKILL.md`

@@ -1,0 +1,4 @@
+<!-- Harvested from https://github.com/NirDiamant/GenAI_Agents/blob/HEAD/data/Taskifier data/school-assignment-history.txt -->
+> **Source:** [`NirDiamant/GenAI_Agents`](https://github.com/NirDiamant/GenAI_Agents) → `data/Taskifier data/school-assignment-history.txt`
+
+I had problem sets from classes every week. Those problem sets usually consist of 5 problems, starting the simplest to the hardest. Usually I do the simplest first because it helps me stack up familiarity for the challenging questions later on.

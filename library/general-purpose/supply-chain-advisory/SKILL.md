@@ -1,0 +1,119 @@
+---
+name: supply-chain-advisory
+description: "Audits dependency supply chains for bad versions, lockfile drift, and artifact integrity. Use when adding deps, handling incidents, or releasing a plugin."
+category: general-purpose
+source_repo: athola/claude-night-market
+source_path: "plugins/leyline/skills/supply-chain-advisory/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/leyline/skills/supply-chain-advisory/SKILL.md
+---
+
+
+## Overview
+
+Supply chain attacks bypass traditional code review by compromising upstream
+dependencies. This skill provides patterns for detecting, preventing, and
+responding to compromised packages in Python ecosystems.
+
+## When To Use
+
+- After a supply chain advisory is published
+- When auditing dependencies for a new or existing project
+- During incident response for a suspected compromise
+- When adding the SessionStart hook to a project
+
+## When NOT To Use
+
+- General CVE triage unrelated to dependency supply chain
+- Application-level vulnerability scanning (use a SAST tool)
+- License compliance audits (different concern)
+
+## Known-Bad Versions Blocklist
+
+The blocklist is at `${CLAUDE_SKILL_DIR}/known-bad-versions.json`.
+It is consumed by:
+
+1. **SessionStart hook**: warns per-session when compromised
+   versions detected
+2. **`make supply-chain-scan`**: CI/local scanning target
+3. **This skill**: manual audit guidance
+
+### Blocklist Format
+
+```json
+{
+  "package_name": [{
+    "versions": ["x.y.z"],
+    "date": "YYYY-MM-DD",
+    "description": "What the attack did",
+    "indicators": ["files or patterns to search for"],
+    "source": "advisory URL",
+    "severity": "critical|high|medium"
+  }]
+}
+```
+
+### Adding a New Entry
+
+1. Add the entry to `${CLAUDE_SKILL_DIR}/known-bad-versions.json`
+2. Add version exclusions (`!=x.y.z`) to affected `pyproject.toml` files
+3. Document in `docs/dependency-audit.md` under Supply Chain Incidents
+4. Run `make supply-chain-scan` to verify detection works
+
+## Quick Scan Commands
+
+### Check all lockfiles on machine for known-bad versions
+
+```bash
+# Scan uv.lock files for a specific compromised version
+grep -r "package_name.*version" --include="uv.lock" /path/to/projects
+
+# Search for malicious artifacts
+find /path/to/projects -name "suspicious_file.pth" 2>/dev/null
+
+# Check installed versions in virtualenvs
+find /path/to/projects -path "*/.venv/lib/*/PACKAGE*/METADATA" \
+  -exec grep "^Version:" {} +
+```
+
+### Verify lockfile hash integrity
+
+`uv.lock` includes SHA256 hashes for every package. If a package is
+re-published with different content under the same version, `uv sync`
+will fail with a hash mismatch. This is your strongest automatic defense.
+
+## Defense Layers
+
+| Layer | Tool | Catches |
+|-------|------|---------|
+| **Lockfile hashes** | uv.lock SHA256 | Tampered re-published versions |
+| **Version exclusions** | pyproject.toml `!=` | Known-bad versions on fresh resolve |
+| **SessionStart hook** | sanctum hook | Per-session warning for compromised deps |
+| **CI scanning** | OSV, Safety | CVE database, and advisory matching |
+| **Artifact scanning** | make supply-chain-scan | Malicious files (.pth, scripts) |
+
+## Limitations
+
+- Zero-day supply chain attacks have no prior advisory: lockfile hashes
+  are the only automatic defense during the attack window
+- Safety/CVE databases lag behind real-world compromises
+- OSV provides broader coverage but is still reactive
+
+## Exit Criteria
+
+- [ ] `${CLAUDE_SKILL_DIR}/known-bad-versions.json` checked against
+  all lockfiles in scope; any match reported with package name,
+  bad version, severity, and advisory URL
+- [ ] When a new known-bad entry is added: version exclusion
+  (`!=x.y.z`) added to the affected `pyproject.toml`, entry
+  documented in `docs/dependency-audit.md`, and
+  `make supply-chain-scan` run to confirm detection works
+- [ ] `uv.lock` SHA256 hash integrity verified; `uv sync` failure
+  on hash mismatch surfaces as an explicit supply-chain warning
+  rather than a generic install error
+- [ ] Artifact scan checks for malicious file patterns (`.pth`
+  files, unexpected scripts) in virtualenv paths before the
+  session proceeds
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/leyline/skills/supply-chain-advisory/SKILL.md`

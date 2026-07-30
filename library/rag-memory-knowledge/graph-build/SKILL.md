@@ -1,0 +1,87 @@
+---
+name: graph-build
+description: "Builds or updates the code knowledge graph via tree-sitter AST and SQLite. Use when setting up the graph before search or blast-radius analysis."
+category: rag-memory-knowledge
+source_repo: athola/claude-night-market
+source_path: "plugins/gauntlet/skills/graph-build/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/gauntlet/skills/graph-build/SKILL.md
+---
+
+
+# Build Code Knowledge Graph
+
+Build or update the `.gauntlet/graph.db` knowledge graph
+for the current codebase.
+
+## Steps
+
+1. **Detect target**: Use the current working directory
+   or a user-specified path.
+
+2. **Check for existing graph**: If `.gauntlet/graph.db`
+   exists, run an incremental update. Otherwise, run a
+   full build.
+
+3. **Run the build script**:
+
+   For full build:
+   ```bash
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/graph_build.py <dir>
+   ```
+
+   For incremental update:
+   ```bash
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/graph_build.py <dir> --incremental
+   ```
+
+4. **Report results**: Show the JSON output including
+   files parsed, nodes created, edges created, and
+   duration.
+
+5. **Suggest next steps**: Recommend searching the graph
+   or running blast radius analysis.
+
+## When To Use
+
+- At the start of a session to build structural awareness
+- After significant code changes to update the graph
+- Before running blast radius analysis or flow tracing
+- When the user asks about codebase structure
+
+## When NOT To Use
+
+- Querying a graph that already exists (use `gauntlet:graph-search`)
+- Building the challenge knowledge base (use `gauntlet:extract`)
+
+## What Gets Parsed
+
+The graph extracts nodes (File, Class, Function, Type,
+Test) and edges (CALLS, IMPORTS_FROM, INHERITS, CONTAINS,
+IMPLEMENTS, TESTED_BY) from 20+ languages including
+Python, JavaScript, TypeScript, Go, Rust, Java, C/C++,
+Ruby, and PHP.
+
+## Storage
+
+- Database: `.gauntlet/graph.db` (SQLite with WAL mode)
+- Auto-creates `.gauntlet/.gitignore` to prevent commits
+- Incremental updates use SHA-256 hashing to skip
+  unchanged files
+
+## Exit Criteria
+
+- [ ] `.gauntlet/graph.db` exists and is a valid SQLite file after
+  the skill completes; `.gauntlet/.gitignore` exists to prevent
+  the database from being committed
+- [ ] Build report JSON includes all four keys: `files_parsed`,
+  `nodes_created`, `edges_created`, `duration`; values are
+  non-zero for non-empty codebases
+- [ ] Incremental update path used when `.gauntlet/graph.db` already
+  exists (script invoked with `--incremental`); full build only
+  on first run
+- [ ] Next-step suggestions presented to the user: search the graph
+  or run blast-radius analysis
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/gauntlet/skills/graph-build/SKILL.md`

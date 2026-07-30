@@ -1,0 +1,119 @@
+---
+name: workflow-diagram
+description: "Generates a Mermaid workflow diagram showing process steps, decisions, and state transitions. Use when documenting CI/CD pipelines or lifecycle processes."
+category: devops-and-infra
+source_repo: athola/claude-night-market
+source_path: "plugins/cartograph/skills/workflow-diagram/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/cartograph/skills/workflow-diagram/SKILL.md
+---
+
+
+# Workflow Diagram
+
+Generate a Mermaid flowchart showing process workflows,
+pipelines, or state machines from code or documentation.
+
+## When To Use
+
+- Visualizing CI/CD or deployment pipelines
+- Documenting multi-step development workflows
+- Mapping state machines or lifecycle processes
+- Answering "what steps happen when X runs?"
+
+## When NOT To Use
+
+- Data moving between components (use `cartograph:data-flow`)
+- Component structure (use `cartograph:architecture-diagram`)
+
+## Workflow
+
+### Step 1: Explore the Codebase
+
+Dispatch the codebase explorer agent:
+
+```
+Agent(cartograph:codebase-explorer)
+Prompt: Explore [scope] and return a structural model.
+Focus on process steps, conditional logic, state
+transitions, and pipeline stages for a workflow diagram.
+Look for: Makefiles, CI configs, hook chains, command
+sequences, and lifecycle methods.
+```
+
+### Step 2: Generate Mermaid Syntax
+
+Transform the structural model into a Mermaid flowchart
+with decision nodes and process steps.
+
+**Rules for workflow diagrams**:
+
+- Use `flowchart TD` for sequential processes
+- Use `flowchart LR` for pipelines with parallel tracks
+- Use shapes to distinguish step types:
+  - `[Rectangle]` for process steps
+  - `{Diamond}` for decision points
+  - `([Stadium])` for start/end states
+  - `[[Subroutine]]` for sub-processes
+  - `((Circle))` for join/sync points
+- Use `-->|label|` for transition conditions
+- Group parallel tracks into subgraphs
+- Color-code by outcome:
+  - Default for happy path
+  - Dotted (`-.->`) for error/fallback paths
+  - Thick (`==>`) for critical path
+- Limit to 20 nodes maximum
+
+**Example output**:
+
+```mermaid
+flowchart TD
+    start([Start: PR Created])
+    lint[Run Linters]
+    test[Run Tests]
+    review{Code Review}
+    approve[Approved]
+    changes[Request Changes]
+    merge([Merge to Main])
+
+    start --> lint --> test
+    test --> review
+    review -->|pass| approve --> merge
+    review -->|fail| changes -.-> lint
+```
+
+### Step 3: Render via MCP
+
+Call the Mermaid Chart MCP to render:
+
+```
+mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram
+  prompt: "Workflow diagram of [scope/process]"
+  mermaidCode: [generated syntax]
+  diagramType: "flowchart"
+  clientName: "claude-code"
+```
+
+If rendering fails, fix syntax and retry (max 2 retries).
+
+### Step 4: Present Results
+
+Show the rendered diagram with a brief description of
+the workflow stages and decision points (2-3 sentences).
+
+## Exit Criteria
+
+- [ ] Mermaid `flowchart` syntax generated containing at least one
+      diamond `{Decision}` node representing a conditional branch
+- [ ] `mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram`
+      called and returns without error (or retry attempted and result
+      reported)
+- [ ] Error/fallback paths rendered as dotted arrows (`-.->`) distinct
+      from happy-path arrows when error paths exist in the source
+- [ ] Node count is at most 20; if more steps exist, sub-processes
+      are collapsed into `[[Subroutine]]` nodes
+- [ ] A 2-3 sentence description of workflow stages and decision
+      points is shown alongside the diagram
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/cartograph/skills/workflow-diagram/SKILL.md`

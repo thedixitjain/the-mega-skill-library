@@ -1,0 +1,27 @@
+{
+  "autosize": {"type": "fit", "contains": "padding"},
+  "view": {"stroke": "transparent"},
+  "font": "Segoe UI",
+  "axis": {
+    "ticks": false,
+    "grid": false,
+    "domain": false,
+    "labelFontSize": 11,
+    "titleFontSize": 12
+  },
+  "axisQuantitative": {
+    "tickCount": 5,
+    "grid": true,
+    "gridColor": "#E8E8E8",
+    "gridDash": [2, 4]
+  },
+  "legend": {
+    "orient": "top",
+    "labelFontSize": 11
+  },
+  "title": {
+    "fontSize": 14,
+    "font": "Segoe UI Semibold",
+    "anchor": "start"
+  }
+}

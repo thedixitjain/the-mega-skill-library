@@ -1,0 +1,37 @@
+---
+name: claude-memory-kit
+description: "Persistent memory system for Claude Code. Two-layer architecture (hot cache + knowledge wiki), safety hooks, /close-day end-of-day synthesis. Zero external dependencies."
+category: rag-memory-knowledge
+source_repo: rohitg00/awesome-claude-code-toolkit
+source_path: "skills/claude-memory-kit/SKILL.md"
+source_url: https://github.com/rohitg00/awesome-claude-code-toolkit/blob/HEAD/skills/claude-memory-kit/SKILL.md
+---
+
+
+# Claude Memory Kit
+
+Your Claude agent remembers everything across sessions and projects.
+
+## What it does
+
+- **Persistent memory** — MEMORY.md hot cache + knowledge wiki with [[wikilinks]]
+- **Multi-project support** — per-project backlogs and context isolation
+- **Safety hooks** — prevent context loss during compression and long sessions
+- **`/close-day`** — one command captures your entire day
+- **`/tour`** — interactive guided walkthrough
+
+## Quick Start
+
+```bash
+git clone https://github.com/awrshift/claude-memory-kit.git my-project
+cd my-project
+claude
+```
+
+## Built from production
+
+700+ sessions across 7 projects. Adapted from Karpathy/Cole Medin's knowledge base pattern, simplified for daily CLI use.
+
+---
+
+**Source:** [`rohitg00/awesome-claude-code-toolkit`](https://github.com/rohitg00/awesome-claude-code-toolkit) → `skills/claude-memory-kit/SKILL.md`

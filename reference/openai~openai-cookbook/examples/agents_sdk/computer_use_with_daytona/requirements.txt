@@ -1,0 +1,5 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/agents_sdk/computer_use_with_daytona/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/agents_sdk/computer_use_with_daytona/requirements.txt`
+
+openai-agents
+daytona

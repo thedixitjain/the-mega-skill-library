@@ -1,0 +1,93 @@
+---
+name: jar-contribution-framing
+description: "Use when turning empirical results into an explicit contribution to accounting knowledge for a Journal of Accounting Research (JAR) manuscript — stating what we now know about how accounting information is produced, disclosed, audited, or used, and why it matters economically. Frames the contribution; it does not run the analysis (jar-data-analysis) or polish prose (jar-writing-style)."
+category: research-and-academic
+source_repo: brycewang-stanford/Awesome-Journal-Skills
+source_path: "Journal-of-Accounting-Research-Skills/skills/jar-contribution-framing/SKILL.md"
+source_url: https://github.com/brycewang-stanford/Awesome-Journal-Skills/blob/HEAD/Journal-of-Accounting-Research-Skills/skills/jar-contribution-framing/SKILL.md
+---
+
+
+# Contribution Framing (jar-contribution-framing)
+
+## When to trigger
+
+- You have clean, identified results but the "so what for accounting" is thin
+- A referee says "the contribution is incremental" or "this confirms what we knew"
+- The discussion section restates results without stating what we learned
+- You need intro and discussion contribution sentences that survive referees
+
+## What counts as a contribution at JAR
+
+JAR rewards research that changes our understanding of **how accounting information is produced, disclosed, audited, regulated, or used in markets and contracts**. A publishable contribution typically does one of: (a) identifies a previously unestablished **causal** effect of an accounting/disclosure/regulatory feature; (b) **adjudicates** between competing economic theories using a setting that separates them; (c) documents an economically important **mechanism** (not just a reduced-form correlation); or (d) introduces a **new measure or setting** that reopens a literature. The increment must be economically consequential — for investors, analysts, creditors, auditors, standard-setters, or managers — not merely statistically detectable.
+
+## Write the contribution explicitly
+
+- **One contribution sentence.** "We show that [accounting feature] causally affects [outcome] through [mechanism], using [identifying variation]." Put a version in the intro and the discussion.
+- **Relative to the closest paper.** State the increment over the 2-3 nearest studies (from jar-literature-positioning), not over a generic gap.
+- **Economic magnitude.** Translate the coefficient into something a referee feels (basis points of spread, percentage of a standard deviation, dollars), not just a star.
+- **Implications.** Spell out what changes for theory, for empirical accounting practice, and — where relevant — for standard-setters/regulators (a recurring JAR audience).
+- **Boundaries.** State the scope conditions and what the design cannot identify; honest limits strengthen credibility.
+
+## Match the framing to the track
+
+For a **Ray Ball JAR Annual Conference** submission the contribution should speak to the year's theme and to a broad accounting audience; for a **Registered Report**, frame the contribution around the *question and design* (since acceptance is outcome-independent), making a well-identified null genuinely informative.
+
+## Checklist
+
+- [ ] A single, explicit contribution sentence appears in both intro and discussion
+- [ ] The increment is stated relative to the closest prior papers
+- [ ] Economic magnitude is interpreted, not just statistical significance
+- [ ] Implications for theory, practice, and (where relevant) regulators are drawn
+- [ ] Scope conditions and what the design cannot identify are stated
+- [ ] The framing matches the track (regular / conference theme / Registered Report)
+
+## Anti-patterns
+
+- **Restating results** as if description were contribution.
+- **"First to study X"** as the contribution (novelty ≠ importance).
+- **Significance without magnitude**: stars with no economic interpretation.
+- **Overclaiming causality** beyond what the identification supports.
+- **Ignoring the nearest paper**, leaving the increment ambiguous.
+
+## Before/after: the contribution sentence
+
+- **Before (description as contribution):** "We find that firms with higher disclosure quality have lower bid-ask spreads, consistent with prior literature."
+- **After (identified, magnitude-bearing contribution):** "Using the staggered adoption of [mandate] as identifying variation, we show that mandated disclosure causally narrows bid-ask spreads by roughly 8% of a within-firm standard deviation, operating through reduced adverse selection rather than changed trading volume — evidence that the disclosure channel, not a liquidity-provision channel, drives the information-environment result."
+
+The after sentence carries the identifying variation, the economic magnitude, the mechanism, and the adjudication in one breath — the shape a JAR discussion section is expected to defend.
+
+## Worked magnitude translations (referees want to *feel* the effect)
+
+| Raw output | Referee-legible framing |
+|------------|-------------------------|
+| "β = 0.012, p < 0.01" | "an 8% of within-firm-SD change in spread" |
+| "significant coefficient on treatment" | "≈ 3 bps of the average 40 bps quoted spread" |
+| "positive association with cost of capital" | "≈ 15 bps of annual implied cost of equity" |
+
+## Track-fit checklist
+
+- [ ] Regular submission: contribution speaks to a specific accounting conversation, not a method.
+- [ ] Ray Ball Conference: contribution ties to the year's theme and a broad accounting audience.
+- [ ] Registered Report: contribution is framed around the *question and design*, so a well-identified null is genuinely informative (acceptance is outcome-independent).
+
+## Output format
+
+```
+【Contribution sentence】one sentence (causal / adjudication / mechanism / new measure)
+【Increment vs. closest work】[...]
+【Economic magnitude】interpreted (bps / %SD / dollars)
+【Implications】theory / empirical practice / standard-setters
+【Scope & limits】what the design cannot identify
+【Track framing】regular / Ray Ball theme / Registered Report
+【Next step】jar-tables-figures or jar-writing-style
+```
+
+## Resources
+
+- [`../../resources/official-source-map.md`](../../resources/official-source-map.md) — official JAR/Chicago Booth/Wiley URLs (accessed 2026-06-01)
+- [`../../resources/external_tools.md`](../../resources/external_tools.md) — data sources and tooling
+
+---
+
+**Source:** [`brycewang-stanford/Awesome-Journal-Skills`](https://github.com/brycewang-stanford/Awesome-Journal-Skills) → `Journal-of-Accounting-Research-Skills/skills/jar-contribution-framing/SKILL.md`

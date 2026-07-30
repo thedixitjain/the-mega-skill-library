@@ -1,0 +1,7 @@
+{
+  "generator": "codex-sync",
+  "source_skill": "skills/agent-mail",
+  "layout": "modular",
+  "source_hash": "2eda6493d5fd3a918b4e844f31cb72bdee10f4887b23bda3132f74cdfbdbf29b",
+  "generated_hash": "5d427d2d180a2d5db10fea1bdc98f79adf11c5a827dfb6c3ce26cdd0819d66af"
+}

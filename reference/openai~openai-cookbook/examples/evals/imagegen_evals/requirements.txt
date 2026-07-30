@@ -1,0 +1,5 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/evals/imagegen_evals/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/evals/imagegen_evals/requirements.txt`
+
+openai==2.15.0
+pandas==2.3.3

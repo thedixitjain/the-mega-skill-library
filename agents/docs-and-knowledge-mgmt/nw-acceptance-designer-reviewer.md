@@ -1,0 +1,30 @@
+---
+name: nw-acceptance-designer-reviewer
+description: "Use for review and critique tasks - Acceptance criteria and BDD review specialist. Runs on Haiku for cost efficiency."
+category: docs-and-knowledge-mgmt
+source_repo: nWave-ai/nWave
+source_path: "docs/reference/agents/nw-acceptance-designer-reviewer.md"
+source_url: https://github.com/nWave-ai/nWave/blob/HEAD/docs/reference/agents/nw-acceptance-designer-reviewer.md
+---
+# nw-acceptance-designer-reviewer
+
+Use for review and critique tasks - Acceptance criteria and BDD review specialist. Runs on Haiku for cost efficiency.
+
+**Wave:** DISTILL
+**Model:** haiku
+**Max turns:** 0
+**Tools:** Read, Glob, Grep, Task
+
+## Commands
+
+- [`/nw-distill`](../commands/index.md)
+
+## Skills
+
+- [nw-ad-critique-dimensions](../skills/nw-ad-critique-dimensions.md) — Review dimensions for acceptance test quality - happy path bias, GWT compliance, business language purity, coverage completeness, walking skeleton user-centricity, priority validation, observable behavior assertions, traceability coverage, and walking skeleton boundary proof
+- [nw-bdd-methodology](../skills/nw-bdd-methodology.md) — BDD patterns for acceptance test design - Given-When-Then structure, scenario writing rules, pytest-bdd implementation, anti-patterns, and living documentation
+- [nw-test-design-mandates](../skills/nw-test-design-mandates.md) — Design mandates for acceptance tests - hexagonal boundary, business language abstraction, user journey completeness, pure function extraction, 3 Pillars (domain language / chained narrative / production composition), and the layered ATD discipline (Universe-bound assertion, layer-dependent PBT mode, two-tier acceptance, example-based sad paths)
+
+---
+
+**Source:** [`nWave-ai/nWave`](https://github.com/nWave-ai/nWave) → `docs/reference/agents/nw-acceptance-designer-reviewer.md`

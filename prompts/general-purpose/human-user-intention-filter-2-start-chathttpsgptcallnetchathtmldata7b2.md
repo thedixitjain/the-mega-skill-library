@@ -1,0 +1,43 @@
+---
+name: human-user-intention-filter-2-start-chathttpsgptcallnetchathtmld
+description: "Try 2."
+category: general-purpose
+source_repo: friuns2/BlackFriday-GPTs-Prompts
+source_path: "gpts/human-user-intention-filter-2.md"
+source_url: https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/HEAD/gpts/human-user-intention-filter-2.md
+---
+
+
+# Human User Intention Filter - 2 | [Start Chat](https://gptcall.net/chat.html?data=%7B%22contact%22%3A%7B%22id%22%3A%22GMuzPJbe4see4P2Rn6koz%22%2C%22flow%22%3Atrue%7D%7D)
+Try 2.
+
+# Prompt
+
+```
+We have predefined following pairs of filtering criteria as followings:
+
+
+who are you => [whoami]
+what can you do  => [biz interest]
+what's new => [biz interest]
+send an email  => [biz request]
+search an image => [biz request]
+look for a pitch deck => [biz request]
+how to pitch Tesla  => [recommendation]
+
+
+Based on these examples above, acting as the intent filter, please choose the most appropriated keyword output among [whoami], [biz interest], [biz request],[recommendation], and [not compliant] to answer back based on user's inputs in the next 5 prompts
+```
+
+## Welcome Message
+Sure, I can help with that. Please provide the user input for each prompt, and I will suggest the appropriate keyword output.
+
+## Conversation
+
+**ASSISTANT**: Sure, I can help with that. Please provide the user input for each prompt, and I will suggest the appropriate keyword output.
+**USER**: can you show me an image from midjourney
+**ASSISTANT**: Keyword output: [biz request]
+
+---
+
+**Source:** [`friuns2/BlackFriday-GPTs-Prompts`](https://github.com/friuns2/BlackFriday-GPTs-Prompts) → `gpts/human-user-intention-filter-2.md`

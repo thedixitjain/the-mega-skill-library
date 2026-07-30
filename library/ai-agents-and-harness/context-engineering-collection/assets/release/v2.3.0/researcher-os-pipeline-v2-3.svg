@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Research-to-Skill Operating System</title>
+  <desc id="desc">File-based loop for turning external research into audited skill changes</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0B1020"/>
+      <stop offset="100%" stop-color="#172033"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <text x="48" y="58" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700">Research-to-Skill Operating System</text>
+  <text x="48" y="86" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="14">File-based loop for turning external research into audited skill changes</text>
+
+<rect x="48" y="120" width="1304" height="560" rx="26" fill="#111827" stroke="#263449" stroke-width="1" opacity="1" filter="url(#shadow)"/>
+<rect x="92" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#60A5FA" stroke-width="2"/>
+<text x="167.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Discover</text>
+<text x="167.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">source registry</text>
+<text x="167.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">manual seed</text>
+<line x1="250" y1="385.0" x2="262" y2="385.0" stroke="#60A5FA" stroke-width="3"/>
+<polygon points="262,378.0 262,392.0 273,385.0" fill="#60A5FA"/>
+<rect x="270" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#22D3EE" stroke-width="2"/>
+<text x="345.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Retrieve</text>
+<text x="345.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">bounded HTTP</text>
+<text x="345.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">evidence files</text>
+<line x1="428" y1="385.0" x2="440" y2="385.0" stroke="#22D3EE" stroke-width="3"/>
+<polygon points="440,378.0 440,392.0 451,385.0" fill="#22D3EE"/>
+<rect x="448" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#34D399" stroke-width="2"/>
+<text x="523.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Evaluate</text>
+<text x="523.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">locked rubrics</text>
+<text x="523.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">deterministic gates</text>
+<line x1="606" y1="385.0" x2="618" y2="385.0" stroke="#34D399" stroke-width="3"/>
+<polygon points="618,378.0 618,392.0 629,385.0" fill="#34D399"/>
+<rect x="626" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#FBBF24" stroke-width="2"/>
+<text x="701.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Extract</text>
+<text x="701.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">mechanisms</text>
+<text x="701.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">claims</text>
+<line x1="784" y1="385.0" x2="796" y2="385.0" stroke="#FBBF24" stroke-width="3"/>
+<polygon points="796,378.0 796,392.0 807,385.0" fill="#FBBF24"/>
+<rect x="804" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#A78BFA" stroke-width="2"/>
+<text x="879.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Update</text>
+<text x="879.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">skills</text>
+<text x="879.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">corpus index</text>
+<line x1="962" y1="385.0" x2="974" y2="385.0" stroke="#A78BFA" stroke-width="3"/>
+<polygon points="974,378.0 974,392.0 985,385.0" fill="#A78BFA"/>
+<rect x="982" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#F472B6" stroke-width="2"/>
+<text x="1057.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Verify</text>
+<text x="1057.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">activation</text>
+<text x="1057.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">benchmarks</text>
+<line x1="1140" y1="385.0" x2="1152" y2="385.0" stroke="#F472B6" stroke-width="3"/>
+<polygon points="1152,378.0 1152,392.0 1163,385.0" fill="#F472B6"/>
+<rect x="1160" y="325" width="150" height="120" rx="20" fill="#172033" stroke="#38BDF8" stroke-width="2"/>
+<text x="1235.0" y="363" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" font-weight="800" text-anchor="middle">Prepare PR</text>
+<text x="1235.0" y="397" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">human review</text>
+<text x="1235.0" y="417" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" text-anchor="middle">release notes</text>
+<rect x="110" y="185" width="1180" height="64" rx="18" fill="#0F172A" stroke="#2F3B52"/>
+<text x="132" y="224" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="700" text-anchor="start">Locked surfaces: rubrics, validators, benchmark fixtures, merge policy</text>
+<rect x="110" y="525" width="1180" height="64" rx="18" fill="#0F172A" stroke="#2F3B52"/>
+<text x="132" y="564" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="700" text-anchor="start">Durable state: run-state.json, THREAD.md, JSONL ledgers, parked review queue</text>
+<text x="110" y="640" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="600" text-anchor="start">Design rule: autonomous loops can draft and validate; irreversible release actions stay human-controlled.</text>
+</svg>

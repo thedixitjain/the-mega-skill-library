@@ -1,0 +1,196 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.2.0/schema.json",
+  "name": "kpi_order_lines_vs_py",
+  "position": {
+    "x": 40,
+    "y": 40,
+    "z": 0,
+    "height": 180,
+    "width": 560
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Orders"
+                    }
+                  },
+                  "Property": "Order Lines"
+                }
+              },
+              "queryRef": "Orders.Order Lines",
+              "nativeQueryRef": "Order Lines"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Schema": "extension",
+                      "Entity": "Orders"
+                    }
+                  },
+                  "Property": "Order Lines (PY)"
+                }
+              },
+              "queryRef": "Orders.Order Lines (PY)",
+              "nativeQueryRef": "Order Lines (PY)"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"$schema\": \"https://vega.github.io/schema/vega-lite/v5.json\", \"data\": {\"name\": \"dataset\"}, \"transform\": [{\"calculate\": \"datum[''Order Lines'']\", \"as\": \"value\"}, {\"calculate\": \"datum[''Order Lines (PY)'']\", \"as\": \"target\"}, {\"calculate\": \"(datum.value - datum.target) / datum.target\", \"as\": \"change\"}], \"layer\": [{\"mark\": {\"type\": \"text\", \"fontSize\": 48, \"fontWeight\": \"bold\", \"align\": \"center\"}, \"encoding\": {\"text\": {\"field\": \"value\", \"type\": \"quantitative\", \"format\": \",.0f\"}, \"color\": {\"condition\": {\"test\": \"datum.change >= 0\", \"value\": \"#118DFF\"}, \"value\": \"#E66C37\"}, \"y\": {\"value\": 90}}}, {\"mark\": {\"type\": \"text\", \"fontSize\": 14, \"align\": \"center\"}, \"encoding\": {\"text\": {\"value\": \"Order Lines vs PY\"}, \"color\": {\"value\": \"#666666\"}, \"y\": {\"value\": 30}}}, {\"mark\": {\"type\": \"text\", \"fontSize\": 16, \"align\": \"center\"}, \"encoding\": {\"text\": {\"field\": \"change\", \"type\": \"quantitative\", \"format\": \"+.1%\"}, \"color\": {\"condition\": {\"test\": \"datum.change >= 0\", \"value\": \"#118DFF\"}, \"value\": \"#E66C37\"}, \"y\": {\"value\": 140}}}]}'"
+                }
+              }
+            },
+            "enableTooltips": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"autosize\":{\"type\":\"fit\",\"contains\":\"padding\"},\"view\":{\"stroke\":\"transparent\"},\"font\":\"Segoe UI\"}'"
+                }
+              }
+            },
+            "isNewDialogOpen": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "enableContextMenu": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableHighlight": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "enableSelection": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "selectionMaxDataPoints": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            },
+            "logLevel": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            },
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'5.20.1'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "stateManagement": [
+        {
+          "properties": {
+            "viewportHeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "170D"
+                }
+              }
+            },
+            "viewportWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "550D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "editor": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "theme": {
+              "expr": {
+                "Literal": {
+                  "Value": "'light'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "developer": [
+        {
+          "properties": {
+            "version": {
+              "expr": {
+                "Literal": {
+                  "Value": "'1.7.1.0'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

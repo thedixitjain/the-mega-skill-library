@@ -1,0 +1,111 @@
+---
+name: resolve-threads
+description: "Batch-resolve unresolved PR/MR review threads via GraphQL API (GitHub/GitLab)"
+category: backend-and-data
+source_repo: athola/claude-night-market
+source_path: "plugins/sanctum/commands/resolve-threads.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/sanctum/commands/resolve-threads.md
+---
+
+
+# Resolve PR Review Threads
+
+Quickly resolve all unresolved review threads on a PR after fixes have been addressed.
+
+## When To Use
+
+- **Runs automatically** at the end of `/fix-pr` (Phase 7)
+- After manually addressing PR review comments outside `/fix-pr`
+- To clean up resolved conversations before merge
+- As a standalone verification command
+
+## When NOT To Use
+
+- Simple changes that don't need the full workflow
+- Work already completed through another sanctum command
+
+## Workflow
+
+### Step 1: Identify Target PR
+
+```bash
+# GitHub - if no PR specified, use current branch
+gh pr view --json number,url -q '.number'
+
+# GitLab
+glab mr view --json iid -q '.iid'
+```
+
+### Step 2: Fetch Unresolved Threads
+
+```bash
+# Replace OWNER, REPO, PR_NUMBER with actual values
+gh api graphql -f query='
+query {
+  repository(owner: "OWNER", name: "REPO") {
+    pullRequest(number: PR_NUMBER) {
+      reviewThreads(first: 100) {
+        nodes {
+          id
+          isResolved
+          path
+          line
+          comments(first: 1) {
+            nodes { body }
+          }
+        }
+      }
+    }
+  }
+}'
+```
+
+### Step 3: Resolve Each Thread
+
+For each unresolved thread:
+
+```bash
+gh api graphql -f query='
+mutation {
+  resolveReviewThread(input: {threadId: "PRRT_xxx"}) {
+    thread { isResolved }
+  }
+}'
+```
+
+### Step 4: Verify Resolution
+
+```bash
+# Should return 0
+gh api graphql -f query='...' \
+  --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)] | length'
+```
+
+## Output
+
+```markdown
+### Thread Resolution Summary
+
+| Status | Count |
+|--------|-------|
+| Resolved | 15 |
+| Already resolved | 3 |
+| Failed | 0 |
+
+All 18 review threads are now resolved.
+```
+
+## Notes
+
+- Requires GitHub CLI with GraphQL access
+- Does NOT reply to threads - use `/fix-pr` for reply + resolve
+- Safe to run multiple times (idempotent)
+
+## See Also
+
+- `/fix-pr` - Full workflow for addressing PR comments (reply + resolve)
+- `/pr-review` - Review a PR and post findings as GitHub comments
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/sanctum/commands/resolve-threads.md`

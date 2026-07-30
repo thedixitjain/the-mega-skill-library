@@ -1,0 +1,42 @@
+---
+name: resume-related-linkedin-post-generator-start-chathttpsgptcallnet
+description: "Crafting an engaging LinkedIn post, offering tips on creating an outstanding resume or CV via this ChatGPT prompt."
+category: marketing-and-growth
+source_repo: friuns2/BlackFriday-GPTs-Prompts
+source_path: "gpts/resume-related-linkedin-post-generator.md"
+source_url: https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/HEAD/gpts/resume-related-linkedin-post-generator.md
+---
+
+
+# Resume-related LinkedIn post generator  | [Start Chat](https://gptcall.net/chat.html?data=%7B%22contact%22%3A%7B%22id%22%3A%22L_UT8ZVIWO4JtBCfsKW4r%22%2C%22flow%22%3Atrue%7D%7D)
+Crafting an engaging LinkedIn post, offering tips on creating an outstanding resume or CV via this ChatGPT prompt. 
+
+# Prompt
+
+```
+
+I want you to craft an engaging LinkedIn post, offering tips on creating an outstanding resume or CV. The target audience is job hunters and new grads. 
+```
+
+## Welcome Message
+Attention job hunters and new grads! Want to create an outstanding resume/CV that gets you noticed by potential employers? Here are some tips:
+
+
+
+1. Customize your resume to the job you're applying for
+
+2.
+
+## Conversation
+
+**ASSISTANT**: Attention job hunters and new grads! Want to create an outstanding resume/CV that gets you noticed by potential employers? Here are some tips:
+
+
+
+1. Customize your resume to the job you're applying for
+
+2.
+
+---
+
+**Source:** [`friuns2/BlackFriday-GPTs-Prompts`](https://github.com/friuns2/BlackFriday-GPTs-Prompts) → `gpts/resume-related-linkedin-post-generator.md`

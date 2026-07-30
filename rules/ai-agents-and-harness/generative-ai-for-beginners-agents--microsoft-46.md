@@ -1,0 +1,332 @@
+---
+name: generative-ai-for-beginners-agents
+description: "ที่เก็บข้อมูลนี้ประกอบด้วยหลักสูตร 21 บทที่ครอบคลุม สอนพื้นฐาน Generative AI และการพัฒนาแอปพลิเคชัน หลักสูตรนี้ออกแบบมาสำหรับผู้เริ่มต้นและครอบคลุมตั้งแต่แนวคิดพื้นฐานจนถึงการสร้างแอปพลิเคชันที่พร้อมใช้งานในระบบจริง"
+category: ai-agents-and-harness
+source_repo: microsoft/generative-ai-for-beginners
+source_path: "translations/th/AGENTS.md"
+source_url: https://github.com/microsoft/generative-ai-for-beginners/blob/HEAD/translations/th/AGENTS.md
+---
+# AGENTS.md
+
+## ภาพรวมโครงการ
+
+ที่เก็บข้อมูลนี้ประกอบด้วยหลักสูตร 21 บทที่ครอบคลุม สอนพื้นฐาน Generative AI และการพัฒนาแอปพลิเคชัน หลักสูตรนี้ออกแบบมาสำหรับผู้เริ่มต้นและครอบคลุมตั้งแต่แนวคิดพื้นฐานจนถึงการสร้างแอปพลิเคชันที่พร้อมใช้งานในระบบจริง
+
+**เทคโนโลยีหลัก:**
+- Python 3.9+ พร้อมไลบรารี: `openai`, `python-dotenv`, `tiktoken`, `azure-ai-inference`, `pandas`, `numpy`, `matplotlib`
+- TypeScript/JavaScript กับ Node.js และไลบรารี: `openai` (Azure OpenAI ผ่าน endpoint v1 + Responses API), `@azure-rest/ai-inference` (Microsoft Foundry Models)
+- Azure OpenAI Service, OpenAI API, และ Microsoft Foundry Models (GitHub Models กำลังจะยกเลิกสิ้นเดือนกรกฎาคม 2026)
+- Jupyter Notebooks สำหรับการเรียนรู้อย่างโต้ตอบ
+- Dev Containers สำหรับสภาพแวดล้อมการพัฒนาที่สอดคล้องกัน
+
+**โครงสร้างที่เก็บข้อมูล:**
+- โฟลเดอร์บทเรียนที่มีตัวเลข 21 โฟลเดอร์ (00-21) ซึ่งมี README, ตัวอย่างโค้ด, และงานมอบหมาย
+- หลายการใช้งาน: ตัวอย่าง Python, TypeScript และบางครั้งตัวอย่าง .NET
+- โฟลเดอร์แปลภาษาที่มีเวอร์ชันกว่า 40 ภาษา
+- การกำหนดค่ากลางผ่านไฟล์ `.env` (ใช้ `.env.copy` เป็นเทมเพลต)
+
+## คำสั่งการตั้งค่า
+
+### การตั้งค่าเริ่มต้นที่เก็บข้อมูล
+
+```bash
+# โคลนที่เก็บข้อมูล
+git clone https://github.com/microsoft/generative-ai-for-beginners.git
+cd generative-ai-for-beginners
+
+# คัดลอกเทมเพลตสภาพแวดล้อม
+cp .env.copy .env
+# แก้ไขไฟล์ .env ด้วยคีย์ API และจุดเชื่อมต่อของคุณ
+```
+
+### การตั้งค่าสภาพแวดล้อม Python
+
+```bash
+# สร้างสภาพแวดล้อมเสมือน
+python3 -m venv venv
+
+# เปิดใช้งานสภาพแวดล้อมเสมือน
+# บน macOS/Linux:
+source venv/bin/activate
+# บน Windows:
+venv\Scripts\activate
+
+# ติดตั้ง dependencies
+pip install -r requirements.txt
+```
+
+### การตั้งค่า Node.js/TypeScript
+
+```bash
+# ติดตั้ง dependencies ระดับ root (สำหรับเครื่องมือจัดการเอกสาร)
+npm install
+
+# สำหรับตัวอย่าง TypeScript ของแต่ละบทเรียน ให้ไปที่บทเรียนที่ต้องการ:
+cd 06-text-generation-apps/typescript/recipe-app
+npm install
+```
+
+### การตั้งค่า Dev Container (แนะนำ)
+
+ที่เก็บข้อมูลนี้มีการกำหนดค่า `.devcontainer` สำหรับ GitHub Codespaces หรือ VS Code Dev Containers:
+
+1. เปิดที่เก็บข้อมูลใน GitHub Codespaces หรือ VS Code พร้อมส่วนขยาย Dev Containers
+2. Dev Container จะทำโดยอัตโนมัติ:
+   - ติดตั้ง dependencies ของ Python จาก `requirements.txt`
+   - รันสคริปต์ post-create (`.devcontainer/post-create.sh`)
+   - ตั้งค่าเคอร์เนล Jupyter
+
+## กระบวนการพัฒนา
+
+### ตัวแปรสภาพแวดล้อม
+
+บทเรียนทั้งหมดที่ต้องการเข้าถึง API ใช้ตัวแปรสภาพแวดล้อมที่กำหนดไว้ใน `.env`:
+
+- `OPENAI_API_KEY` - สำหรับ OpenAI API
+- `AZURE_OPENAI_API_KEY` - สำหรับ Azure OpenAI ใน Microsoft Foundry (Azure OpenAI Service ตอนนี้เป็นส่วนหนึ่งของ Microsoft Foundry: https://ai.azure.com)
+- `AZURE_OPENAI_ENDPOINT` - URL endpoint ของ Azure OpenAI (endpoint แหล่งข้อมูล Foundry)
+- `AZURE_OPENAI_DEPLOYMENT` - ชื่อการปรับใช้โมเดลสนทนา
+- `AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT` - ชื่อการปรับใช้โมเดล embeddings
+- `AZURE_OPENAI_API_VERSION` - เวอร์ชัน API (ค่าเริ่มต้น: `2024-10-21`)
+- `HUGGING_FACE_API_KEY` - สำหรับโมเดล Hugging Face
+- `AZURE_INFERENCE_ENDPOINT` - endpoint ของ Microsoft Foundry Models (แคตตาล็อกโมเดลผู้ให้บริการหลายราย)
+- `AZURE_INFERENCE_CREDENTIAL` - กุญแจ API ของ Microsoft Foundry Models (แทนที่ `GITHUB_TOKEN` ที่กำลังจะหมดอายุ)
+
+### การรันตัวอย่าง Python
+
+```bash
+# ไปที่ไดเรกทอรีบทเรียน
+cd 06-text-generation-apps/python
+
+# รันสคริปต์ Python
+python aoai-app.py
+```
+
+### การรันตัวอย่าง TypeScript
+
+```bash
+# ไปที่ไดเรกทอรีแอป TypeScript
+cd 06-text-generation-apps/typescript/recipe-app
+
+# สร้างโค้ด TypeScript
+npm run build
+
+# รันแอปพลิเคชัน
+npm start
+```
+
+### การรัน Jupyter Notebooks
+
+```bash
+# เริ่ม Jupyter ที่รูทของรีโพซิทอรี
+jupyter notebook
+
+# หรือใช้ VS Code พร้อมส่วนขยาย Jupyter
+```
+
+### การทำงานกับประเภทบทเรียนที่แตกต่างกัน
+
+- **บทเรียน "Learn"**: เน้นเอกสาร README.md และแนวคิด
+- **บทเรียน "Build"**: รวมตัวอย่างโค้ดที่ทำงานได้ใน Python และ TypeScript
+- แต่ละบทเรียนมี README.md ที่มีทฤษฎี การสาธิตโค้ด และลิงก์ไปยังเนื้อหาวิดีโอ
+
+## แนวทางสไตล์โค้ด
+
+### Python
+
+- ใช้ `python-dotenv` สำหรับการจัดการตัวแปรสภาพแวดล้อม
+- นำเข้าไลบรารี `openai` สำหรับการโต้ตอบกับ API
+- ใช้ `pylint` สำหรับการ lint (ตัวอย่างบางอันมี `# pylint: disable=all` เพื่อความเรียบง่าย)
+- ปฏิบัติตามมาตรฐานการตั้งชื่อ PEP 8
+- เก็บข้อมูลรับรอง API ในไฟล์ `.env` ห้ามเก็บในโค้ด
+
+### TypeScript
+
+- ใช้แพ็คเกจ `dotenv` สำหรับตัวแปรสภาพแวดล้อม
+- การตั้งค่า TypeScript ใน `tsconfig.json` สำหรับแต่ละแอป
+- ใช้แพ็คเกจ `openai` สำหรับ Azure OpenAI (ชี้ลูกค้าไปยัง endpoint `/openai/v1/` และเรียก `client.responses.create`); ใช้ `@azure-rest/ai-inference` สำหรับ Microsoft Foundry Models
+- ใช้ `nodemon` สำหรับการพัฒนาด้วยการโหลดอัตโนมัติ
+- สร้างก่อนรัน: `npm run build` แล้ว `npm start`
+
+### แนวปฏิบัติทั่วไป
+
+- รักษาตัวอย่างโค้ดให้ง่ายและเหมาะสำหรับการเรียนรู้
+- ใส่คอมเมนต์เพื่ออธิบายแนวคิดสำคัญ
+- โค้ดของแต่ละบทเรียนควรเป็นอิสระและใช้งานได้
+- ใช้การตั้งชื่อที่สอดคล้องกัน: `aoai-` สำหรับ Azure OpenAI, `oai-` สำหรับ OpenAI API, `githubmodels-` สำหรับ Microsoft Foundry Models (เก็บ prefix เดิมจากยุค GitHub Models)
+
+## แนวทางการจัดทำเอกสาร
+
+### สไตล์ Markdown
+
+- URL ทั้งหมดต้องถูกครอบด้วยรูปแบบ `[text](../../url)` โดยไม่มีช่องว่างเพิ่มเติม
+- ลิงก์สัมพัทธ์ต้องเริ่มด้วย `./` หรือ `../`
+- ลิงก์ทุกลิงก์ที่ไปยังโดเมนของ Microsoft ต้องมี tracking ID: `?WT.mc_id=academic-105485-koreyst`
+- หลีกเลี่ยง locale แบบเฉพาะประเทศใน URL (เช่น หลีกเลี่ยง `/en-us/`)
+- ภาพถูกเก็บไว้ในโฟลเดอร์ `./images` พร้อมชื่อที่บรรยาย
+- ใช้อักษรภาษาอังกฤษ ตัวเลข และขีดในชื่อไฟล์
+
+### การสนับสนุนการแปล
+
+- ที่เก็บนี้รองรับกว่า 40 ภาษาโดยใช้ GitHub Actions อัตโนมัติ
+- การแปลถูกเก็บในโฟลเดอร์ `translations/`
+- ห้ามส่งงานแปลที่ไม่สมบูรณ์
+- ไม่รับงานแปลที่ใช้เครื่องแปลโดยอัตโนมัติ
+- ภาพที่แปลแล้วถูกเก็บในโฟลเดอร์ `translated_images/`
+
+## การทดสอบและการตรวจสอบ
+
+### การตรวจสอบก่อนส่ง
+
+ที่เก็บนี้ใช้ GitHub Actions สำหรับการตรวจสอบ ก่อนส่ง PR:
+
+1. **ตรวจสอบลิงก์ Markdown**:
+   ```bash
+   # ขั้นตอน validate-markdown.yml ตรวจสอบ:
+   # - เส้นทางสัมพัทธ์ที่เสียหาย
+   # - รหัสติดตามที่ขาดหายไปในเส้นทาง
+   # - รหัสติดตามที่ขาดหายไปใน URL
+   # - URL ที่มีภูมิภาคประเทศ
+   # - URL ภายนอกที่เสียหาย
+   ```
+
+2. **การทดสอบด้วยมือ**:
+   - ทดสอบตัวอย่าง Python: เปิดใช้งาน venv และรันสคริปต์
+   - ทดสอบตัวอย่าง TypeScript: รัน `npm install`, `npm run build`, `npm start`
+   - ตรวจสอบว่าตัวแปรสภาพแวดล้อมถูกตั้งค่าอย่างถูกต้อง
+   - ตรวจสอบว่ากุญแจ API ใช้งานได้กับตัวอย่างโค้ด
+
+3. **ตัวอย่างโค้ด**:
+   - ตรวจสอบให้แน่ใจว่าโค้ดทั้งหมดรันได้ไม่มีข้อผิดพลาด
+   - ทดสอบทั้งกับ Azure OpenAI และ OpenAI API เมื่อต้องใช้
+   - ตรวจสอบตัวอย่างที่ใช้งานกับ Microsoft Foundry Models เมื่อรองรับ
+
+### ไม่มีการทดสอบอัตโนมัติ
+
+นี่คือที่เก็บเพื่อการศึกษา เน้นบทเรียนและตัวอย่าง ไม่มีการทดสอบหน่วยหรือการทดสอบรวม Validation เป็นหลัก:
+- การทดสอบตัวอย่างโค้ดด้วยมือ
+- การตรวจสอบ Markdown โดย GitHub Actions
+- การตรวจสอบเนื้อหาการศึกษาจากชุมชน
+
+## แนวทาง Pull Request
+
+### ก่อนส่ง
+
+1. ทดสอบการเปลี่ยนแปลงโค้ดทั้งใน Python และ TypeScript เมื่อต้องใช้
+2. รันการตรวจสอบ Markdown (โดยอัตโนมัติเมื่อสร้าง PR)
+3. ตรวจสอบว่ามี tracking ID ในทุก URL ของ Microsoft
+4. ตรวจสอบว่าลิงก์สัมพัทธ์ถูกต้อง
+5. ตรวจสอบการอ้างอิงภาพอย่างถูกต้อง
+
+### รูปแบบหัวข้อ PR
+
+- ใช้หัวข้อที่ชัดเจน: `[Lesson 06] แก้ไขตัวอย่าง Python พิมพ์ผิด` หรือ `อัพเดต README สำหรับบทเรียน 08`
+- อ้างอิงปัญหาเมื่อจำเป็น: `Fixes #123`
+
+### คำอธิบาย PR
+
+- อธิบายว่ามีการเปลี่ยนแปลงอะไรและทำไม
+- ลิงก์ไปยังปัญหาที่เกี่ยวข้อง
+- สำหรับการเปลี่ยนแปลงโค้ด ให้ระบุว่าทดสอบตัวอย่างใดบ้าง
+- สำหรับ PR แปล ให้นำเข้าทุกไฟล์เพื่อแปลให้สมบูรณ์
+
+### ข้อกำหนดการมีส่วนร่วม
+
+- ลงนาม Microsoft CLA (อัตโนมัติเมื่อสร้าง PR ครั้งแรก)
+- Fork ที่เก็บข้อมูลไปยังบัญชีของคุณก่อนทำการเปลี่ยนแปลง
+- หนึ่ง PR ต่อการเปลี่ยนแปลงเชิงตรรกะ (อย่ารวมการแก้ไขที่ไม่เกี่ยวข้อง)
+- รักษา PR ให้โฟกัสและเล็กที่สุดเมื่อเป็นไปได้
+
+## กระบวนการทำงานทั่วไป
+
+### การเพิ่มตัวอย่างโค้ดใหม่
+
+1. ไปยังโฟลเดอร์บทเรียนที่เหมาะสม
+2. สร้างตัวอย่างในโฟลเดอร์ย่อย `python/` หรือ `typescript/`
+3. ปฏิบัติตามการตั้งชื่อ: `{provider}-{example-name}.{py|ts|js}`
+4. ทดสอบด้วยข้อมูลรับรอง API จริง
+5. จัดทำเอกสารตัวแปรสภาพแวดล้อมใหม่ใน README ของบทเรียน
+
+### การอัปเดตเอกสาร
+
+1. แก้ไข README.md ในโฟลเดอร์บทเรียน
+2. ปฏิบัติตามแนวทาง Markdown (tracking ID, ลิงก์สัมพัทธ์)
+3. การอัปเดตการแปลดำเนินการโดย GitHub Actions (ห้ามแก้ไขด้วยมือ)
+4. ทดสอบว่าลิงก์ทั้งหมดถูกต้อง
+
+### การทำงานกับ Dev Containers
+
+1. ที่เก็บมีไฟล์ `.devcontainer/devcontainer.json`
+2. สคริปต์ post-create ติดตั้ง dependencies Python อัตโนมัติ
+3. ส่วนขยายสำหรับ Python และ Jupyter ได้ตั้งค่าไว้ล่วงหน้า
+4. สภาพแวดล้อมอิงจาก `mcr.microsoft.com/devcontainers/universal:2.11.2`
+
+## การปรับใช้และการเผยแพร่
+
+นี่คือที่เก็บเรียนรู้ - ไม่มีขั้นตอนการปรับใช้ หลักสูตรจะถูกใช้โดย:
+
+1. **ที่เก็บ GitHub**: เข้าถึงโค้ดและเอกสารโดยตรง
+2. **GitHub Codespaces**: สภาพแวดล้อม dev ทันทีพร้อมตั้งค่าล่วงหน้า
+3. **Microsoft Learn**: เนื้อหาอาจถูกเผยแพร่สู่แพลตฟอร์มเรียนรู้อย่างเป็นทางการ
+4. **docsify**: เว็บไซต์เอกสารสร้างจาก Markdown (ดู `docsifytopdf.js` และ `package.json`)
+
+### การสร้างเว็บไซต์เอกสาร
+
+```bash
+# สร้าง PDF จากเอกสาร (ถ้าจำเป็น)
+npm run convert
+```
+
+## การแก้ปัญหา
+
+### ปัญหาทั่วไป
+
+**ข้อผิดพลาดการนำเข้า Python**:
+- ตรวจสอบให้แน่ใจว่าเปิดใช้งาน virtual environment แล้ว
+- รัน `pip install -r requirements.txt`
+- ตรวจสอบว่าเวอร์ชัน Python เป็น 3.9 ขึ้นไป
+
+**ข้อผิดพลาดการสร้าง TypeScript**:
+- รัน `npm install` ในไดเรกทอรีแอปเฉพาะ
+- ตรวจสอบว่าเวอร์ชัน Node.js เข้ากันได้
+- ลบ `node_modules` และติดตั้งใหม่ถ้าจำเป็น
+
+**ข้อผิดพลาดการรับรองความถูกต้อง API**:
+- ตรวจสอบว่าไฟล์ `.env` มีอยู่และค่าถูกต้อง
+- ตรวจสอบว่ากุญแจ API ถูกต้องและไม่หมดอายุ
+- ตรวจสอบว่า URL endpoint ถูกต้องสำหรับภูมิภาคของคุณ
+
+**ตัวแปรสภาพแวดล้อมหายไป**:
+- คัดลอก `.env.copy` เป็น `.env`
+- กรอกค่าทั้งหมดที่จำเป็นสำหรับบทเรียนที่ทำงานอยู่
+- รีสตาร์ทแอปพลิเคชันหลังจากอัปเดต `.env`
+
+## แหล่งข้อมูลเพิ่มเติม
+
+- [คู่มือการตั้งค่าหลักสูตร](./00-course-setup/README.md?WT.mc_id=academic-105485-koreyst)
+- [แนวทางการมีส่วนร่วม](./CONTRIBUTING.md)
+- [จรรยาบรรณการใช้โค้ด](./CODE_OF_CONDUCT.md)
+- [นโยบายความปลอดภัย](./SECURITY.md)
+- [Azure AI Discord](https://aka.ms/genai-discord?WT.mc_id=academic-105485-koreyst)
+- [ชุดตัวอย่างโค้ดขั้นสูง](https://aka.ms/genai-beg-code?WT.mc_id=academic-105485-koreyst)
+
+## หมายเหตุเฉพาะโครงการ
+
+- นี่คือ **ที่เก็บเพื่อการศึกษา** เน้นการเรียนรู้ ไม่ใช่โค้ดสำหรับระบบจริง
+- ตัวอย่างออกแบบให้เรียบง่ายและเน้นการสอนแนวคิด
+- คุณภาพโค้ดสมดุลกับความชัดเจนทางการศึกษา
+- แต่ละบทเรียนเป็นอิสระและสามารถทำเสร็จได้ด้วยตัวเอง
+- ที่เก็บรองรับผู้ให้บริการ API หลายราย: Azure OpenAI, OpenAI, Microsoft Foundry Models และผู้ให้บริการออฟไลน์เช่น Foundry Local และ Ollama
+- เนื้อหาเป็นหลายภาษาโดยมีเวิร์กโฟลว์แปลอัตโนมัติ
+- มีชุมชนที่ใช้งานบน Discord สำหรับคำถามและสนับสนุน
+
+---
+
+<!-- CO-OP TRANSLATOR DISCLAIMER START -->
+**ปฏิเสธความรับผิดชอบ**:
+เอกสารนี้ได้รับการแปลโดยใช้บริการแปลภาษา AI [Co-op Translator](https://github.com/Azure/co-op-translator) ขณะที่เราพยายามให้ความถูกต้อง โปรดทราบว่าการแปลโดยอัตโนมัติอาจมีข้อผิดพลาดหรือความไม่ถูกต้อง เอกสารต้นฉบับในภาษาต้นทางควรถูกพิจารณาเป็นแหล่งข้อมูลที่เชื่อถือได้ สำหรับข้อมูลที่สำคัญ แนะนำให้ใช้การแปลโดยมนุษย์มืออาชีพ เราไม่รับผิดชอบต่อความเข้าใจผิดหรือการตีความที่ผิดพลาดที่เกิดขึ้นจากการใช้การแปลนี้
+<!-- CO-OP TRANSLATOR DISCLAIMER END -->
+
+---
+
+**Source:** [`microsoft/generative-ai-for-beginners`](https://github.com/microsoft/generative-ai-for-beginners) → `translations/th/AGENTS.md`

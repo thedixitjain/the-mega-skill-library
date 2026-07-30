@@ -1,0 +1,193 @@
+{
+  "skill_name": "sealos-deploy",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I want to deploy uptime-kuma to Sealos, GitHub: https://github.com/louislam/uptime-kuma",
+      "expected_output": "High readiness score (7+), identifies Node.js project with external services, recommends proceeding with deployment",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-nodejs", "description": "Correctly identifies the project as Node.js"},
+        {"name": "score-above-4", "description": "Readiness score is >= 4 (deployable threshold)"},
+        {"name": "detects-external-db", "description": "Detects external database dependency (SQLite/MariaDB)"},
+        {"name": "produces-structured-report", "description": "Output contains a structured assessment report with dimensions and scores"},
+        {"name": "creates-log-file", "description": "Creates a deploy log file at ~/.sealos/logs/"}
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "/sealos-deploy https://github.com/sharkdp/bat",
+      "expected_output": "Eligibility gate identifies a CLI-only target, reports an ineligible decision with evidence, and stops before readiness scoring, Dockerfile generation, build, template, or deploy without writing project files",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-cli-tool", "description": "Correctly identifies bat as a CLI tool / non-web application"},
+        {"name": "eligibility-ineligible", "description": "Classifies the selected target as ineligible before readiness scoring"},
+        {"name": "recommends-stop", "description": "Explicitly recommends NOT deploying / STOP"},
+        {"name": "stops-before-build", "description": "Does not generate a Dockerfile, build image, generate template, or deploy"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/sealos-deploy",
+      "expected_output": "Eligibility gate cannot establish a supported deployment unit for the skills/tooling repository and fails closed before readiness scoring or build",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-skill-pack", "description": "Identifies the current repository as a skills pack or tooling repo rather than a standalone web app"},
+        {"name": "eligibility-unresolved", "description": "Returns ineligible or needs_review because no supported deployment unit is proven"},
+        {"name": "recommends-stop", "description": "Explicitly recommends NOT deploying / STOP"},
+        {"name": "stops-before-build", "description": "Does not generate a Dockerfile, build image, generate template, or deploy"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Help me deploy alist to Sealos, project URL: https://github.com/alist-org/alist",
+      "expected_output": "High readiness score (8+), identifies Go web application with REST API and WebDAV server, recommends CONTINUE",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-go", "description": "Correctly identifies the project as Go language"},
+        {"name": "score-above-4", "description": "Readiness score is >= 4 (deployable threshold)"},
+        {"name": "identifies-http-server", "description": "Identifies this as an HTTP server / web service"},
+        {"name": "produces-structured-report", "description": "Output contains a structured assessment report"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to deploy lobe-chat to Sealos: https://github.com/lobehub/lobe-chat",
+      "expected_output": "High readiness score (10+), identifies Next.js monorepo with pnpm workspaces, recommends CONTINUE",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-nextjs", "description": "Correctly identifies the project as Next.js"},
+        {"name": "score-above-4", "description": "Readiness score is >= 4 (deployable threshold)"},
+        {"name": "detects-monorepo-or-workspace", "description": "Detects pnpm monorepo / workspace structure"},
+        {"name": "produces-structured-report", "description": "Output contains a structured assessment report"}
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "/sealos-deploy https://github.com/jgraph/drawio-desktop",
+      "expected_output": "Eligibility gate identifies an Electron desktop-only unit, reports DESKTOP_GUI_ONLY evidence, and stops before readiness scoring, Dockerfile generation, build, template, or deploy without writing project files",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-desktop-app", "description": "Correctly identifies drawio-desktop as an Electron / desktop GUI application"},
+        {"name": "eligibility-ineligible", "description": "Returns an ineligible desktop_gui decision with DESKTOP_GUI_ONLY evidence"},
+        {"name": "recommends-stop", "description": "Explicitly recommends NOT deploying / STOP"},
+        {"name": "stops-before-build", "description": "Does not score readiness, generate a Dockerfile, build image, generate template, or deploy"}
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Deploy vaultwarden to Sealos: https://github.com/dani-garcia/vaultwarden",
+      "expected_output": "Maximum readiness score (12/12), identifies Rust web application with Rocket framework and existing Dockerfile, recommends CONTINUE",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-rust", "description": "Correctly identifies the project as Rust language"},
+        {"name": "score-above-4", "description": "Readiness score is >= 4 (deployable threshold)"},
+        {"name": "identifies-web-service", "description": "Identifies this as a web service / HTTP server"},
+        {"name": "produces-structured-report", "description": "Output contains a structured assessment report"}
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/sealos-deploy https://github.com/pallets/flask",
+      "expected_output": "Eligibility gate identifies Flask itself as a framework/library rather than a deployable application and stops before readiness scoring or build",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-library", "description": "Correctly identifies Flask as a framework/library, not a standalone deployable app"},
+        {"name": "eligibility-ineligible", "description": "Classifies the selected target as a library or otherwise unresolved, not as a web service"},
+        {"name": "explains-not-standalone", "description": "Explains why this repository is not directly deployable as a service"},
+        {"name": "stops-before-build", "description": "Does not generate a Dockerfile, build image, generate template, or deploy"}
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Help me deploy mealie (home recipe management): https://github.com/mealie-recipes/mealie",
+      "expected_output": "High readiness score (8+), identifies Python FastAPI application with PostgreSQL support, recommends CONTINUE",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-python", "description": "Correctly identifies the project as Python"},
+        {"name": "score-above-4", "description": "Readiness score is >= 4 (deployable threshold)"},
+        {"name": "detects-external-db", "description": "Detects PostgreSQL database dependency"},
+        {"name": "produces-structured-report", "description": "Output contains a structured assessment report"}
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "/sealos-deploy https://github.com/spring-projects/spring-petclinic",
+      "expected_output": "Good readiness score (6+), identifies Java Spring Boot application with port 8080 and Actuator endpoints, recommends CONTINUE",
+      "files": [],
+      "assertions": [
+        {"name": "identifies-java", "description": "Correctly identifies the project as Java / Spring Boot"},
+        {"name": "score-above-4", "description": "Readiness score is >= 4 (deployable threshold)"},
+        {"name": "identifies-web-service", "description": "Identifies this as a web application on port 8080"},
+        {"name": "produces-structured-report", "description": "Output contains a structured assessment report"}
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "/sealos-deploy https://github.com/toeverything/affine",
+      "expected_output": "Runs the workload eligibility gate before Phase 0.5 template matching; after an eligible result, writes template-match.json and continues normally when no materialized template exists",
+      "files": [],
+      "assertions": [
+        {"name": "runs-eligibility-first", "description": "Resolves a supported deployment target before template matching or Phase 1 scoring"},
+        {"name": "runs-template-fast-path", "description": "Checks configured GitHub repo to Sealos template mappings after eligibility and before Phase 1 assessment"},
+        {"name": "writes-template-match", "description": "Writes .sealos/template-match.json for both matched and unmatched outcomes"},
+        {"name": "does-not-false-positive", "description": "Does not skip source analysis/build/template generation unless a matched template is materialized"}
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "The application URL works, but Launchpad does not show a public address. Diagnose the Sealos template and live deployment.",
+      "expected_output": "Runs the Launchpad public-network check, validates numeric root Ingress backend port and Service port matching, compares the App URL host, and inventories manager-labeled resources before proposing a template repair.",
+      "files": [],
+      "assertions": [
+        {"name": "runs-launchpad-network-check", "description": "Uses sealos-launchpad-network.mjs or the equivalent Launchpad API contract before declaring success"},
+        {"name": "checks-numeric-ingress-port", "description": "Requires backend.service.port.number on the root Prefix Ingress and matches it to Service.spec.ports[].port"},
+        {"name": "compares-app-url-host", "description": "Compares the App URL host with the Launchpad public or custom domain"},
+        {"name": "inventories-live-resources", "description": "Checks manager-labeled Ingresses, Services, ready endpoints, App, Instance, and orphan resource footprint"},
+        {"name": "protects-sensitive-data", "description": "Keeps kubeconfig, environment values, and Secret data out of diagnostic output"}
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Classify this deployment target before continuing: package.json has scripts.start='node server.js', dependencies.express='^5', and devDependencies.electron='^35'. There are no Electron scripts, desktop API imports, or desktop packaging files.",
+      "expected_output": "Treats Electron as an uncorroborated dependency signal rather than a desktop entry point, identifies the Express start command as a web_service candidate, and allows deployment eligibility to pass",
+      "files": [],
+      "assertions": [
+        {"name": "does-not-reject-on-dependency-alone", "description": "Does not return desktop_gui or DESKTOP_GUI_ONLY solely because Electron appears in devDependencies"},
+        {"name": "uses-server-entrypoint-evidence", "description": "Uses the Express dependency plus node server start command as affirmative web-service evidence"},
+        {"name": "eligibility-passes", "description": "Returns an eligible web_service decision and permits readiness assessment to continue"}
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Generate the Sealos Template phase for a Mastodon-style app whose analysis classifies SMTP_PORT as an optional input with the default string \"587\". Expose it as spec.inputs.smtp_port, keep infrastructure replicas and ports numeric, and validate the generated artifact before deployment.",
+      "expected_output": "Generates a Template whose SMTP port default remains the YAML string \"587\", preserves numeric Kubernetes infrastructure fields, and runs the docker-to-sealos quality gate against .sealos/template/index.yaml so R052 blocks an unquoted default before deployment.",
+      "files": [],
+      "assertions": [
+        {"name": "smtp-default-is-string", "description": "Emits spec.inputs.smtp_port.default as a quoted YAML string such as \"587\", never as the numeric scalar 587"},
+        {"name": "input-reference-is-declared", "description": "Declares spec.inputs.smtp_port and references that declared input from the Mastodon SMTP_PORT environment value"},
+        {"name": "infrastructure-numbers-stay-numeric", "description": "Keeps Kubernetes replicas, container ports, and Service ports as numeric YAML fields"},
+        {"name": "validates-generated-artifact", "description": "Runs quality_gate.py with --artifacts pointing to .sealos/template/index.yaml before configuration or deployment"},
+        {"name": "rejects-unquoted-input-default", "description": "Treats R052 or the equivalent string-type validation failure as blocking and fixes the template before continuing"}
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "/sealos-deploy https://github.com/danny-avila/LibreChat，使用官方多组件 Compose；模板中 RAG 固定使用 OpenAI embeddings，并且 PostgreSQL 需要 vector 扩展。只允许使用该 skill 已有的产物。",
+      "expected_output": "Generates the existing Sealos template artifact with pinned component images, official health probes, valid runtime credentials, and a database final-state gate; the complete docker-to-sealos quality gate passes against the exact final template before deployment, with no new artifact type introduced",
+      "files": [],
+      "assertions": [
+        {"name": "pins-component-images", "description": "Resolves :latest or floating LibreChat component tags to an explicit version tag or digest"},
+        {"name": "uses-official-rag-health", "description": "Uses /health on port 8000 for LibreChat RAG probes instead of probing /"},
+        {"name": "validates-format-constrained-credentials", "description": "Does not use bare random() defaults for LibreChat CREDS_KEY/CREDS_IV hex contracts"},
+        {"name": "requires-selected-provider-credential", "description": "OpenAI embeddings is paired with a non-empty required OpenAI credential rather than an optional empty input"},
+        {"name": "gates-rag-on-vector-state", "description": "RAG has an initContainer gate that waits for PostgreSQL and verifies the vector extension before startup"},
+        {"name": "classifies-mongodb-as-database", "description": "Converts the official mongo:8.0.20 service into the pinned MongoDB KubeBlocks Cluster contract"},
+        {"name": "rejects-raw-mongodb-workload", "description": "Emits no MongoDB Deployment, StatefulSet, DaemonSet, Job, CronJob, or standalone Service"},
+        {"name": "does-not-assume-ghcr-private", "description": "Does not add imagePullSecrets solely because an image is hosted on GHCR"},
+        {"name": "fails-closed-before-deploy", "description": "Runs the complete docker-to-sealos quality gate after final template mutation and does not deploy while the gate is failing"},
+        {"name": "keeps-existing-artifact-inventory", "description": "Introduces no generated artifact type beyond the full deploy skill's existing artifact inventory"}
+      ]
+    }
+  ]
+}

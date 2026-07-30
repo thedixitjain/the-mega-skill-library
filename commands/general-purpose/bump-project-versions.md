@@ -1,0 +1,56 @@
+---
+name: bump-project-versions
+description: "Bump project versions using git-workspace-review and version-updates skills."
+category: general-purpose
+source_repo: athola/claude-night-market
+source_path: "plugins/sanctum/commands/update-version.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/sanctum/commands/update-version.md
+---
+
+
+# Bump Project Versions
+
+Before changing any version numbers, load the required skills in order:
+
+1. Run `Skill(sanctum:git-workspace-review)` to capture repository status and diffs, completing its `TodoWrite` items.
+2. Run `Skill(sanctum:version-updates)` and follow its checklist (context, targets, edits, docs, verification).
+
+## Workflow
+
+### Phase 1: Update Config Files
+- Determine the desired version (the default bump is a patch). If the user passed an explicit version, record it before editing files.
+- **Option 1 (Automated)**: Use `plugins/sanctum/scripts/update_versions.py <version> --dry-run` to preview, then run without `--dry-run` to apply
+  - Automatically finds and updates all version files including nested ones (e.g., `plugins/memory-palace/hooks/pyproject.toml`)
+  - Supports pyproject.toml, Cargo.toml, package.json, plugin.json, metadata.json
+  - Excludes virtual environments and build directories
+- **Option 2 (Manual)**: Update all relevant configuration files manually
+
+### Phase 2: Update Documentation Files
+Version numbers appear in documentation that the automated script does NOT update:
+
+| File | What to Update |
+|------|----------------|
+| `CHANGELOG.md` | Add new version section with date and changes |
+| `docs/api-overview.md` | Plugin inventory table, individual plugin version headers |
+| `book/src/reference/capabilities-reference.md` | Version-specific feature annotations |
+| Plugin `README.md` files | Version references in examples |
+
+**Scan for stale versions:**
+```bash
+# Find docs referencing the OLD version (replace X.Y.Z)
+rg "X\.Y\.Z" docs/ book/ plugins/*/README.md --glob "*.md"
+# fallback: grep -r "X\.Y\.Z" docs/ book/ plugins/*/README.md --include="*.md"
+```
+
+### Phase 3: Verification
+- Run any required tests or builds, then show the resulting `git diff` to confirm the changes.
+- Verify no stale version references remain in documentation.
+
+## Manual Execution
+If a skill cannot be loaded, follow these steps:
+- Manually gather `git status -sb` and the list of files containing version strings.
+- Apply the version bump, update documentation, and verify with tests and diffs before summarizing the outcome.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/sanctum/commands/update-version.md`

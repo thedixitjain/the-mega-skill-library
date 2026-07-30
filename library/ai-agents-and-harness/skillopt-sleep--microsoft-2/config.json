@@ -1,0 +1,30 @@
+{
+  "_comment": "OpenClaw adaptation of skillopt-sleep. Edit and run via run_sleep.py",
+
+  "claude_home": "/home/ethanclaw/.openclaw/agents",
+  "invoked_project": "/home/ethanclaw/.openclaw/workspace",
+  "projects": "invoked",
+  "lookback_hours": 168,
+
+  "max_tasks_per_night": 12,
+  "max_tokens_per_night": 800000,
+  "holdout_fraction": 0.34,
+  "val_fraction": 0.34,
+  "test_fraction": 0.0,
+
+  "backend": "openclaw-deepseek",
+  "model": "deepseek-v4-pro",
+  "gate_mode": "on",
+  "edit_budget": 3,
+  "gate_metric": "mixed",
+  "gate_mixed_weight": 0.5,
+  "replay_mode": "fresh",
+  "evolve_memory": true,
+  "evolve_skill": true,
+  "llm_mine": false,
+
+  "auto_adopt": false,
+  "managed_skill_name": "skillopt-sleep-learned",
+  "redact_secrets": true,
+  "seed": 42
+}

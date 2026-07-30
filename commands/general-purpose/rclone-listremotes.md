@@ -1,0 +1,64 @@
+---
+name: rclone-listremotes
+description: "List all the remotes in the config file and defined in environment variables."
+category: general-purpose
+source_repo: sickn33/agentic-awesome-skills
+source_path: "skills/rclone-cli/references/commands/rclone_listremotes.md"
+source_url: https://github.com/sickn33/agentic-awesome-skills/blob/HEAD/skills/rclone-cli/references/commands/rclone_listremotes.md
+---
+
+
+> **Official documentation:** [https://rclone.org/commands/rclone_listremotes/](https://rclone.org/commands/rclone_listremotes/)
+# rclone listremotes
+
+List all the remotes in the config file and defined in environment variables.
+
+## Synopsis
+
+Lists all the available remotes from the config file, or the remotes matching
+an optional filter.
+
+Prints the result in human-readable format by default, and as a simple list of
+remote names, or if used with flag `--long` a tabular format including
+the remote names, types and descriptions. Using flag `--json` produces
+machine-readable output instead, which always includes all attributes - including
+the source (file or environment).
+
+Result can be filtered by a filter argument which applies to all attributes,
+and/or filter flags specific for each attribute. The values must be specified
+according to regular rclone filtering pattern syntax.
+
+```
+rclone listremotes [<filter>] [flags]
+```
+
+## Options
+
+```
+      --description string   Filter remotes by description
+  -h, --help                 help for listremotes
+      --json                 Format output as JSON
+      --long                 Show type and description in addition to name
+      --name string          Filter remotes by name
+      --order-by string      Instructions on how to order the result, e.g. 'type,name=descending'
+      --source string        Filter remotes by source, e.g. 'file' or 'environment'
+      --type string          Filter remotes by type
+```
+
+See the [global flags page](/flags/) for global options not listed here.
+
+## See Also
+
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable ul-style line-length -->
+
+* [rclone](/commands/rclone/)	 - Show help for rclone commands, flags and backends.
+
+
+<!-- markdownlint-restore -->
+
+---
+
+**Source:** [`sickn33/agentic-awesome-skills`](https://github.com/sickn33/agentic-awesome-skills) → `skills/rclone-cli/references/commands/rclone_listremotes.md`
+
+**Also appears in:** `sickn33/agentic-awesome-skills/plugins/agentic-awesome-skills/skills/rclone-cli/references/commands/rclone_listremotes.md`, `sickn33/agentic-awesome-skills/plugins/agentic-awesome-skills-claude/skills/rclone-cli/references/commands/rclone_listremotes.md`

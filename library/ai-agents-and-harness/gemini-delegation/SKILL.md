@@ -1,0 +1,101 @@
+---
+name: gemini-delegation
+description: "Delegates tasks to Gemini CLI implementing delegation-core for Google's models. Use when delegation-core selects Gemini or 1M+ token context is needed."
+allowed-tools: "gemini-cli"
+category: ai-agents-and-harness
+source_repo: athola/claude-night-market
+source_path: "plugins/conjure/skills/gemini-delegation/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/conjure/skills/gemini-delegation/SKILL.md
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [When to Use](#when-to-use)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Gemini-Specific Details](#gemini-specific-details)
+
+
+# Gemini CLI Delegation
+
+## Overview
+
+This skill implements `conjure:delegation-core` for the Gemini CLI.
+It provides Gemini-specific authentication, quota management,
+and command construction.
+
+For shared delegation patterns, see `Skill(conjure:delegation-core)`.
+
+## When To Use
+
+- After `Skill(conjure:delegation-core)` determines Gemini is suitable
+- When you need Gemini's large context window (1M+ tokens)
+- For batch processing, summarization, or pattern extraction tasks
+- If the `gemini` CLI is installed and authenticated
+
+## When NOT To Use
+
+- Choosing which provider to delegate to (use `conjure:delegation-core`)
+- Qwen was the selected provider (use `conjure:qwen-delegation`)
+
+## Prerequisites
+
+**Installation:**
+```bash
+# Verify installation
+gemini --version
+
+# Check authentication
+gemini auth status
+
+# Login if needed
+gemini auth login
+
+# Or set API key
+export GEMINI_API_KEY="your-key"
+```
+**Verification:** Run the command with `--help` flag to verify availability.
+
+## Quick Start
+
+### Basic Command
+```bash
+# File analysis
+gemini -p "@path/to/file Analyze this code"
+
+# Multiple files
+gemini -p "@src/**/*.py Summarize these files"
+
+# With specific model
+gemini --model gemini-3-pro -p "..."
+
+# JSON output
+gemini --output-format json -p "..."
+```
+
+### Save Output
+```bash
+gemini -p "..." > delegations/gemini/$(date +%Y%m%d_%H%M%S).md
+```
+
+## Gemini-Specific Details
+
+For Gemini-specific models, CLI options, cost reference,
+and troubleshooting, see `modules/gemini-specifics.md`.
+
+## Exit Criteria
+
+- [ ] `gemini --version` and `gemini auth status` both exit 0 before any task is delegated;
+  missing installation or failed authentication is reported and stops execution.
+- [ ] The delegated task output is saved to
+  `delegations/gemini/YYYYMMDD_HHMMSS.md` (timestamp format matching the Quick Start example),
+  and that file exists on disk after the delegation completes.
+- [ ] If `conjure:delegation-core` selected a different provider (Qwen or local), this skill
+  is not invoked; Gemini delegation only runs when delegation-core explicitly routes to Gemini.
+- [ ] Tasks requiring > 1M tokens in context are flagged before submission; the skill reports
+  the estimated token count and confirms it falls within Gemini's supported window.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/conjure/skills/gemini-delegation/SKILL.md`

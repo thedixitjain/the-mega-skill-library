@@ -1,0 +1,8 @@
+<!-- Harvested from https://github.com/markodenic/web-development-resources/blob/HEAD/robots.txt -->
+> **Source:** [`markodenic/web-development-resources`](https://github.com/markodenic/web-development-resources) → `robots.txt`
+
+User-agent: *
+Allow: /
+
+# Link to your XML Sitemap to help search engines index your pages faster
+Sitemap: https://web-dev-resources.com/sitemap.xml

@@ -1,0 +1,200 @@
+<!doctype html>
+<!-- Copyright 2026 Anthropic PBC -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>competitor-digest — agent schema</title>
+<!-- overview.css is copied once into my-agent/ alongside this page; link stays relative -->
+<link rel="stylesheet" href="overview.css">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── top bar: identity + live state + stat strip ── -->
+  <div class="topbar">
+    <div class="ident">
+      <div class="sigil">🤖</div>
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <h1>competitor-digest</h1>
+          <!-- swap to: <span class="statepill live"><span class="led live"></span>DEPLOYED · LIVE</span> once launched -->
+          <span class="statepill planned"><span class="led planned"></span>PLANNED · NOT LAUNCHED</span>
+        </div>
+        <div class="byline">Claude Managed Agent · Lamis Mukta · Acme Analytics · created 2026-06-14</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-k">Model</div><div class="stat-v">claude-opus-4-8</div></div>
+      <div class="stat"><div class="stat-k">Runs</div><div class="stat-v">Mon 7:00 <span class="dim">PT</span></div></div>
+      <!-- once live, every ID on this page links to its Console deep link, e.g.
+           <a class="console" href="https://platform.claude.com/workspaces/<workspace>/agents/<AGENT_ID>">agent_…</a>
+           (same pattern for /sessions/<id> and /deployments/<id>; swap <workspace> for the founder's) -->
+      <div class="stat"><div class="stat-k">Agent</div><div class="stat-v"><span class="dim">at launch</span></div></div>
+      <div class="stat"><div class="stat-k">Deployment</div><div class="stat-v"><span class="dim">after first pass</span></div></div>
+    </div>
+  </div>
+
+  <!-- the founder's own words from the interview — quote or closely paraphrase; never invent specifics (time spent, frequency) they didn't state -->
+  <p class="problem">Every Monday I spend ~3 hours pulling competitor pricing and feature changes into a digest for the team.</p>
+
+  <!-- ── schema: trigger → worker (in its environment) → output & grading ── -->
+  <p class="lane-label">System schema</p>
+  <div class="pipeline">
+
+    <div class="col">
+      <p class="col-title">Trigger</p>
+      <!-- The trigger node matches how the agent actually starts:
+           · scheduled  → 🗓️ Deployment node (this example)
+           · on-demand  → ▶️ "On-demand session" as the primary node (meta: manual · LAUNCH.md), with
+                          "🗓️ Deployment — not scheduled, see the version rail" as a one-line footer or ghost node
+           · event-driven → 🔌 "Triggered by your app" node (their backend calls POST /sessions or /deployments/<id>/run),
+                          with the call shape named in the body -->
+      <div class="node key grow">
+        <div class="node-head"><span class="node-icon">🗓️</span><h2>Deployment</h2><span class="node-meta">cron · <b>0 7 * * 1</b></span></div>
+        <div class="node-body">
+          <div class="field"><div class="field-k">schedule · expression / timezone</div><strong>Every Monday · 7:00 AM</strong> <span class="sub small">America/Los_Angeles</span></div>
+          <div class="field"><div class="field-k">Status</div><span class="tag">created after the first run passes</span></div>
+          <div class="field"><div class="field-k">initial_events</div><p class="small sub">Each firing replays the 🎯 outcome (right) into a fresh ▶️ session in the sandbox — nobody at a keyboard.</p></div>
+        </div>
+        <div class="node-foot">▶️ Also runs on demand any time — <code>LAUNCH.md</code> fires the same agent with the same outcome.</div>
+      </div>
+    </div>
+
+    <div class="joint" aria-hidden="true"></div>
+
+    <div class="col">
+      <p class="col-title">Worker</p>
+      <div class="env-frame">
+        <span class="env-tab">📦 environment · type: cloud · networking: unrestricted · packages: none</span>
+
+        <div class="node key">
+          <div class="node-head"><span class="node-icon">🤖</span><h2>Agent — competitor-digest</h2><span class="node-meta"><b>claude-opus-4-8</b> · v1 at launch</span></div>
+          <div class="node-body">
+            <div class="field"><div class="field-k">system · the job</div>
+              <p class="small">Researches the 5 named competitors' public sites, pricing pages, and changelogs; writes a weekly digest to <code>/mnt/session/outputs/digest.md</code>.</p></div>
+          </div>
+        </div>
+
+        <div class="attach-grid">
+          <div class="attach">
+            <h3>🛠️ Tools</h3>
+            <p><code>tools[] · agent_toolset_20260401</code><br><span class="tag on">web_search</span><span class="tag on">web_fetch</span><span class="tag">bash</span><span class="tag">read</span><span class="tag">write</span><span class="tag">edit</span><span class="tag">glob</span><span class="tag">grep</span></p>
+          </div>
+          <div class="attach">
+            <h3>🧠 Memory store</h3>
+            <p><code>resources[] · memory_store</code> <span class="tag good">read_write</span> <strong>competitor-history</strong> — last week's snapshot per competitor, so runs report changes, not re-descriptions.</p>
+          </div>
+          <div class="attach ghost">
+            <h3>🔌 Connectors &amp; 🔐 vaults</h3>
+            <p><code>mcp_servers[]</code> + <code>vault_ids[]</code> — empty in v0, public web only. Notion + Slack sit in the version rail below.</p>
+          </div>
+          <div class="attach ghost">
+            <h3>📄 Skills</h3>
+            <p><code>skills[]</code> — empty; plain markdown output.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="joint" aria-hidden="true"></div>
+
+    <div class="col">
+      <p class="col-title">Output &amp; grading</p>
+
+      <div class="node">
+        <div class="node-head"><span class="node-icon">📤</span><h2>Deliverable</h2><span class="node-meta">files api</span></div>
+        <div class="node-body">
+          <p class="small"><code>digest.md</code> — the weekly competitor digest, fetched from the run's outputs.</p>
+          <div class="field"><div class="field-k">Guardrails in effect</div>
+            <span class="tag">max_iterations: 3</span><span class="tag">drafts only — no write connectors wired</span></div>
+        </div>
+      </div>
+
+      <div class="node key grow">
+        <div class="node-head"><span class="node-icon">🎯</span><h2>Outcome</h2><span class="node-meta"><b>user.define_outcome</b> · max_iterations 3</span></div>
+        <div class="node-body">
+          <p class="small sub" style="margin-bottom:8px;">Your definition of done — <code>rubric.content</code>, graded by the platform every run.</p>
+          <ol class="rubric small">
+            <li>digest.md exists and covers all 5 competitors listed in the kickoff</li>
+            <li>Every pricing or feature change has a source link</li>
+            <li>Each competitor section ends with a one-line "so what for us"</li>
+            <li>Anything unchanged since last week sits in one "no movement" line</li>
+            <li>No claim without a source or an explicit "unverified" tag</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── evals + run log ── -->
+  <div class="lane-grid">
+    <div class="lane">
+      <div class="lane-head"><span class="node-icon">📜</span><h2>Sessions · run log</h2><span class="lane-meta">no runs yet</span></div>
+      <div class="lane-body">
+        <div class="overflow">
+        <table>
+          <thead><tr><th>Run</th><th>Session</th><th>Rubric</th><th>Verdict</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>—</td><td class="mono">—</td><td>—</td><td><span class="tag">no runs yet</span></td><td class="sub">The first launch fills this in.</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="lane-head"><span class="node-icon">🧪</span><h2>Evals</h2><span class="lane-meta">3 cases · regression</span></div>
+      <div class="lane-body">
+        <div class="overflow">
+        <table>
+          <thead><tr><th>Case</th><th>Known-good answer</th><th>Last verdict</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">week-of-may-25</td><td>Lamis's hand-written digest</td><td><span class="tag">not run yet</span></td></tr>
+            <tr><td class="mono">week-of-jun-01</td><td>Hand-written digest</td><td><span class="tag">not run yet</span></td></tr>
+            <tr><td class="mono">week-of-jun-08</td><td>Hand-written digest</td><td><span class="tag">not run yet</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="small sub" style="margin:.5em 0 0;">Case 1 is the v0 input; the rest are held back and re-run before promoting any new agent version.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── version rail: what ships next ── -->
+  <div class="lane full">
+    <div class="lane-head"><span class="node-icon">🧭</span><h2>Next directions</h2><span class="lane-meta">the version rail</span></div>
+    <div class="lane-body">
+      <div class="rail">
+        <div class="ver">
+          <div class="ver-tag">v1</div>
+          <div class="ver-what">Agent posts the digest to Slack itself</div>
+          <div class="ver-why">Write-action — kept human-in-the-loop for v0</div>
+          <div class="ver-how">Slack MCP server + 🔐 vault credential, toolset gated <span class="mono">always_ask</span></div>
+        </div>
+        <div class="ver">
+          <div class="ver-tag">v2</div>
+          <div class="ver-what">Pull the internal strategy doc into context</div>
+          <div class="ver-why">Needs a Notion credential not on hand in the session</div>
+          <div class="ver-how">Notion MCP + vault <span class="mono">mcp_oauth</span>; reference the doc in the kickoff</div>
+        </div>
+        <div class="ver">
+          <div class="ver-tag">v3</div>
+          <div class="ver-what">Lock networking to the competitor sites only</div>
+          <div class="ver-why">Hardening — unrestricted is fine while read-only</div>
+          <div class="ver-how">Environment <span class="mono">networking: limited</span> + <span class="mono">allowed_hosts</span></div>
+        </div>
+        <div class="ver">
+          <div class="ver-tag">always</div>
+          <div class="ver-what">Re-run the eval cases before promoting a new version</div>
+          <div class="ver-why">Process habit, not a build task</div>
+          <div class="ver-how"><span class="mono">evals/run-evals.sh</span> against the new version; promote only when verdicts hold</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>generated from build-sheet.json by claude code · live runs &amp; traces: <a href="https://platform.claude.com/workspaces/default/agents">open the console</a> (your key's workspace — swap "default" if yours differs)</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+-- Progress Bar SVG Measure
+-- dataType: Text, dataCategory: ImageUrl
+-- Generates a colored progress bar with percentage label
+-- Target visual: Table, Matrix, or Card (imageHeight: 20, imageWidth: 100)
+
+Progress Bar SVG =
+VAR _Pct = [Completion Percentage]  -- 0 to 1 value
+VAR _W = 100
+VAR _H = 20
+VAR _FillW = _Pct * _W
+VAR _Label = FORMAT(_Pct, "0%")
+
+VAR _Color =
+    SWITCH(
+        TRUE(),
+        _Pct < 0.5, "#F44336",
+        _Pct < 0.8, "#FF9800",
+        "#4CAF50"
+    )
+
+VAR _Prefix = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " & _W & " " & _H & "'>"
+
+VAR _Background = "<rect width='" & _W & "' height='" & _H & "' fill='#E0E0E0' rx='" & (_H / 2) & "'/>"
+
+VAR _Fill = "<rect width='" & _FillW & "' height='" & _H & "' fill='" & _Color & "' rx='" & (_H / 2) & "'/>"
+
+VAR _Text = "<text x='" & (_W / 2) & "' y='" & (_H / 2 + 5) & "' font-size='11' text-anchor='middle' fill='white' font-weight='bold'>" & _Label & "</text>"
+
+VAR _Suffix = "</svg>"
+
+RETURN
+    _Prefix & _Background & _Fill & _Text & _Suffix

@@ -1,0 +1,4 @@
+<!-- Harvested from https://github.com/NirDiamant/GenAI_Agents/blob/HEAD/data/project_manager_assistant/project_description.txt -->
+> **Source:** [`NirDiamant/GenAI_Agents`](https://github.com/NirDiamant/GenAI_Agents) → `data/project_manager_assistant/project_description.txt`
+
+Our business aims to deliver a chatbot application for our customers to ensure 24/7 support and advice on product choices.

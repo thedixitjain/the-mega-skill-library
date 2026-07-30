@@ -1,0 +1,129 @@
+# Security Policy
+
+## Supported Versions
+
+Only the latest minor release receives security fixes. Earlier `0.x` releases predate the current API surface and are no longer maintained — please upgrade to the latest version.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 0.8.x   | :white_check_mark: |
+| < 0.8   | :x:                |
+
+## Reporting a Vulnerability
+
+If you discover a security vulnerability, please report it by:
+
+1. **DO NOT** open a public GitHub issue
+2. Email the maintainers directly (see `pyproject.toml` for contact info)
+3. Include a detailed description of the vulnerability
+4. Allow reasonable time for a fix before public disclosure
+
+## Credential Security
+
+This library stores authentication credentials locally. Please understand these security considerations:
+
+### Storage Locations
+
+By default, files are stored per-profile under `~/.notebooklm/profiles/<profile>/` (configurable via the `NOTEBOOKLM_HOME` and `NOTEBOOKLM_PROFILE` environment variables). Legacy layouts store files directly in the root of `~/.notebooklm/` (representing the `default` profile). Permission modes below are POSIX modes; Windows uses the inherited filesystem ACLs and intentionally skips `chmod`.
+
+| File Path | Contents | Permissions |
+|-----------|----------|-------------|
+| `profiles/<profile>/storage_state.json` | Google session cookies | `0o600` (owner-only) |
+| `profiles/<profile>/browser_profile/` | Playwright Chromium profile | `0o700` (owner-only) |
+| `profiles/<profile>/context.json` | Active profile context / metadata | `0o600` (owner-only) |
+| `config.json` | Global CLI config (e.g. language/active profile) | Default |
+| `storage_state.json` *(legacy)* | Fallback root storage state (for `default` profile) | `0o600` (owner-only) |
+| `browser_profile/` *(legacy)* | Fallback root Playwright profile | `0o700` (owner-only) |
+| `context.json` *(legacy)* | Fallback root active notebook context | `0o600` (owner-only, POSIX) |
+
+### Security Best Practices
+
+1. **Protect your credentials**
+   - The `storage_state.json` file contains your Google session cookies
+   - Anyone with access to this file can impersonate your Google account to NotebookLM
+   - Never share, commit, or expose this file
+
+2. **Add to .gitignore**
+   ```gitignore
+   .notebooklm/
+   ```
+
+3. **Credential rotation**
+   - Re-run `notebooklm login` periodically to refresh credentials
+   - Sessions typically last days to weeks before expiring
+
+4. **If credentials are compromised**
+   - Immediately revoke access at [Google Security Settings](https://myaccount.google.com/permissions)
+   - Delete the `~/.notebooklm/` directory
+   - Re-authenticate with `notebooklm login`
+
+5. **CI/CD usage**
+   - Do not commit credentials to repositories
+   - Use `NOTEBOOKLM_AUTH_JSON` environment variable for secure, file-free authentication
+   - Store the JSON value in GitHub Secrets or similar secure secret management
+   - The env var approach keeps credentials in memory only, never written to disk
+
+### What This Library Does NOT Do
+
+- Does not transmit credentials to any third party
+- Does not store passwords (uses browser-based OAuth)
+- Does not access data outside of NotebookLM except for user-selected local files
+  and opt-in browser-cookie extraction during login/refresh
+- Does not modify Google account settings
+
+## Dependency Security
+
+This library keeps the base dependency set small and puts optional surfaces behind
+extras:
+
+| Dependency | Scope | Purpose |
+|------------|-------|---------|
+| `httpx` | base | HTTP client |
+| `click` | base | CLI framework |
+| `rich` | base | Terminal output |
+| `filelock` | base | Cross-process file locking for profile/context writes |
+| `markdownify` | `markdown` extra | HTML-to-Markdown conversion |
+| `playwright` | `browser` extra | Interactive/headless browser login |
+| `rookiepy` | `cookies` extra | Opt-in browser-cookie import |
+| `fastmcp` | `mcp` extra | MCP server adapter |
+| `fastapi`, `uvicorn[standard]`, `python-multipart` | `server` extra | Optional REST server and file uploads |
+
+### Auditing Dependencies
+
+```bash
+# Mirror CI: audit the locked selected-extra graph
+uv sync --frozen --extra browser --extra dev --extra markdown
+uv run python -m pip install "pip-audit>=2.7.0,<3"
+uv export --frozen --extra browser --extra dev --extra markdown --format requirements-txt --no-emit-project \
+  | uv run pip-audit --strict --require-hashes --disable-pip -r /dev/stdin
+
+# Release/security sweep: include maintained MCP + REST server extras too
+uv export --frozen --extra browser --extra dev --extra markdown --extra mcp --extra server \
+  --format requirements-txt --no-emit-project \
+  | uv run pip-audit --strict --require-hashes --disable-pip -r /dev/stdin
+```
+
+The `cookies` extra remains an explicit opt-in because `rookiepy` has had
+interpreter compatibility issues; audit that graph separately when changing the
+browser-cookie import surface.
+
+## Known Limitations
+
+### Undocumented API
+
+This library uses Google's internal APIs, which means:
+
+- **No official security guarantees** from Google
+- **API changes without notice** may break functionality
+- **Rate limiting** may be applied by Google
+- **Account restrictions** are possible for unusual usage patterns
+
+### Session Security
+
+- Sessions are cookie-based (standard web authentication)
+- CSRF tokens are required and automatically handled
+- No long-lived API keys or OAuth tokens
+
+## Questions?
+
+For security questions that are not vulnerabilities, open a [GitHub Discussion](https://github.com/teng-lin/notebooklm-py/discussions).

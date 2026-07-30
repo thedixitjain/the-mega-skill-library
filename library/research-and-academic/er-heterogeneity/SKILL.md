@@ -1,0 +1,112 @@
+---
+name: er-heterogeneity
+description: "Use when designing or writing the heterogeneity section of an 《经济研究》 (Economic Research Journal) manuscript — choosing which dimensions to cut, justifying each cut theoretically, presenting subsample results with coefficient-difference tests, and wiring at least one dimension back to the mechanism story so heterogeneity doubles as mechanism evidence. 使用时机：主结果已稳健但只切了\"东中西\"一类单一维度、审稿人要求补做异质性、或切分维度缺乏理论指引时。"
+category: research-and-academic
+source_repo: brycewang-stanford/Awesome-Journal-Skills
+source_path: "Economic-Research-Journal-Skills/skills/er-heterogeneity/SKILL.md"
+source_url: https://github.com/brycewang-stanford/Awesome-Journal-Skills/blob/HEAD/Economic-Research-Journal-Skills/skills/er-heterogeneity/SKILL.md
+---
+
+
+# 异质性分析（er-heterogeneity）
+
+## 触发时机
+
+- 主结果已稳健，但只切了一个维度（"东中西"或"国企 / 非国企"）
+- 审稿人要求补做异质性
+- 切了多个维度但没有理论指引
+
+## 切分维度优先级
+
+按《经济研究》读者期待度排序：
+
+1. **制度环境 / 市场化程度** —— 王小鲁《中国分省份市场化指数》、各地法治指数
+2. **企业产权 / 公司治理** —— 国企 / 民企 / 外资、董事会独立性
+3. **行业属性** —— 高新 / 传统、上下游、是否管制
+4. **时间窗** —— 政策初期 vs. 后期 / 经济周期
+5. **个体特征**（如适用）—— 年龄、教育、技能水平
+
+至少切 3 个维度，每个维度至少 2 个子样本对比。
+
+## 维度选择三原则
+
+1. **有理论指引**：切分维度必须能解释"为什么这一维度上效应不同"
+2. **样本量足够**：每个子样本 N ≥ 100 是底线
+3. **系数差异显著性检验**：必须报告 Chow 检验或交互项
+
+## 异质性写作模板
+
+```
+本文进一步检验[维度]异质性。
+
+理论上，[原因]……
+实证上，本文将样本按[维度]分为[组 1] 和 [组 2]，分别估计主回归（结果见表 X 第 (1)(2) 列）。
+结果显示，[组 1] 的处理效应为 X，而 [组 2] 为 Y，系数差异在 [显著水平] 上显著。
+这一发现与本文的[机制]一致。
+```
+
+## 该刊的呈现惯例：分样本表 vs. 交互项
+
+两种呈现方式在《经济研究》正文中都常见，选择标准：
+
+- **分样本回归（并列同一张表）**：适合切分变量是离散制度属性（产权、行业管制、地区市场化分组）时。惯例是一张表放一个维度，(1)(2) 列为两个子样本，表下注明分组标准与分组变量出处（如市场化指数取样本期中位数分组），并**单独一行报告组间系数差异的经验 p 值**（费舍尔组合检验 / 自体抽样法），而不是让读者自己目测两列星号。
+- **交互项回归**：适合切分变量连续（融资约束指数、数字化程度）时，避免人为二分损失信息。交互项系数即"异质性本身"，正文解读应写成"X 的效应随 Z 每提高一个标准差而增强 β 个单位"，而非只说"交互项显著"。
+
+两点该刊特有的口味：
+
+1. **异质性小节标题写经济含义，不写变量名**——用"融资约束的调节作用"而非"按 SA 指数分组"；小节首句先给理论预期，再给结果。
+2. **不显著的维度也要交代**：若某个理论上应有差异的维度没切出差异，正文用一两句话诚实报告并解释（度量噪声 / 渠道被政策抵消），比悄悄删掉更能赢得审稿人信任。
+
+### 微型对照（改写前 / 改写后）
+
+> ❌ 改写前："分组回归显示，国企组系数为 0.021，民企组系数为 0.058，说明存在产权异质性。"
+>
+> ✅ 改写后："民企组的处理效应（0.058）约为国企组（0.021）的 2.8 倍，组间差异的经验 p 值为 0.03。这与假说 2 的预期一致：民营企业面临更紧的外部融资约束，政策带来的现金流改善对其边际价值更高，产权维度的差异因而构成融资约束机制的侧面证据。"
+
+改写后同时完成了三件事：报差异检验、给理论解释、回扣机制。
+
+## 与机制分析的关系
+
+异质性 ≈ 机制的反向验证：
+- 机制告诉我们"为什么有效应"
+- 异质性告诉我们"在什么条件下效应更强 / 更弱"
+
+理想的实证文章应该：**机制（M 强 → 效应强）** 与 **异质性（M 强样本 → 效应强）** 互相印证。
+
+## 必查清单
+
+- [ ] 至少 3 个异质性维度
+- [ ] 每个维度有理论指引
+- [ ] 系数差异显著性检验报告
+- [ ] 各子样本量足够
+- [ ] 异质性结论与机制一致（或合理解释不一致）
+
+## 反模式
+
+- 把控制变量挂上交互项就叫"异质性"
+- 切分后某一组 N=30 还在解释
+- 切了 8 个维度凑数，但每个都不显著
+- 异质性结论与机制冲突但不解释
+
+## 异质性作为机制的侧证（重要）
+
+按江艇（2022）的思路，**理论驱动的异质性是比中介分解更可信的机制证据**：若机制是 M，则在"M 渠道更畅通 / 更受约束"的子样本中，主效应应更强 / 更弱。设计异质性时，刻意让至少一个维度**对应某条机制**，使机制与异质性相互印证（详见 `er-mechanism`）。
+
+## 配套与范例
+
+- 完整范文：[`resources/worked-examples/06-heterogeneity.md`](../../resources/worked-examples/06-heterogeneity.md)（三维异质性 + 机制侧证）
+- 范本对标：张勋等（2019，《经济研究》第 8 期）以群体异质性佐证数字金融渠道，见 [`resources/exemplars/`](../../resources/exemplars/)
+
+## 输出格式
+
+```
+【异质性维度】X 个
+【系数差异检验】是 / 否
+【与机制一致性】是 / 否（哪一维度对应哪条机制）
+【最小子样本量】X
+【下一步】er-tables-figures
+```
+
+---
+
+**Source:** [`brycewang-stanford/Awesome-Journal-Skills`](https://github.com/brycewang-stanford/Awesome-Journal-Skills) → `Economic-Research-Journal-Skills/skills/er-heterogeneity/SKILL.md`

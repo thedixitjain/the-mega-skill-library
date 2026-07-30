@@ -1,0 +1,29 @@
+---
+name: majestic-dragon-perched-atop-a-cliff-overlooking-a-fiery-landsca
+description: "Majestic dragon, perched atop a cliff overlooking a fiery landscape, with smoke and ash rising into the air, intense, detailed, scales, dynamic, epic"
+category: product-and-pm
+source_repo: friuns2/BlackFriday-GPTs-Prompts
+source_path: "gpts/majestic-dragon-perched-atop-a-cliff-overlooking-a-fiery-landscape-with-smoke-and-ash-rising-into-the-air-intense-detailed-scales-dynamic-epic.md"
+source_url: https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/HEAD/gpts/majestic-dragon-perched-atop-a-cliff-overlooking-a-fiery-landscape-with-smoke-and-ash-rising-into-the-air-intense-detailed-scales-dynamic-epic.md
+---
+
+
+# Majestic dragon, perched atop a cliff overlooking a fiery landscape, with smoke and ash rising into the air, intense, detailed, scales, dynamic, epic | [Start Chat](https://gptcall.net/chat.html?data=%7B%22contact%22%3A%7B%22id%22%3A%22BkpDf9AiGphYPAUIYsX0p%22%2C%22flow%22%3Atrue%7D%7D)
+Majestic dragon, perched atop a cliff overlooking a fiery landscape, with smoke and ash rising into the air, intense, detailed, scales, dynamic, epic
+
+# Prompt
+
+```
+Majestic dragon, perched atop a cliff overlooking a fiery landscape, with smoke and ash rising into the air, intense, detailed, scales, dynamic, epic
+```
+
+## Welcome Message
+Dragon overlooks fiery landscape with smoke and ash, detailed scales, dynamic and epic.
+
+## Conversation
+
+**ASSISTANT**: Dragon overlooks fiery landscape with smoke and ash, detailed scales, dynamic and epic.
+
+---
+
+**Source:** [`friuns2/BlackFriday-GPTs-Prompts`](https://github.com/friuns2/BlackFriday-GPTs-Prompts) → `gpts/majestic-dragon-perched-atop-a-cliff-overlooking-a-fiery-landscape-with-smoke-and-ash-rising-into-the-air-intense-detailed-scales-dynamic-epic.md`

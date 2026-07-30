@@ -1,0 +1,75 @@
+---
+name: diagram
+description: "Generate Mermaid visual maps from /understand or /validate output directories"
+category: general-purpose
+source_repo: gadievron/raptor
+source_path: ".claude/commands/diagram.md"
+source_url: https://github.com/gadievron/raptor/blob/HEAD/.claude/commands/diagram.md
+---
+
+
+# /diagram
+
+Turn `/understand` and `/validate` JSON outputs into Mermaid diagrams. Instead of reading raw JSON, you get a visual map of entry points, trust boundaries, sinks, attack trees, and attack paths.
+
+## Usage
+
+```
+/diagram <out-dir> [--target <name>] [--stdout] [--force]
+```
+
+It renders everything it can find in the directory. Use `--stdout` for a
+read-only preview, or `--force` if you really do want to overwrite an existing
+`diagrams.md`.
+
+## What gets rendered
+
+| Source file | Diagram type | Shows |
+|-------------|-------------|-------|
+| `context-map.json` | flowchart LR | Entry points → trust boundaries → sinks; unchecked flows as dashed edges |
+| `attack-surface.json` | flowchart LR | Same layout, Stage B view |
+| `flow-trace-*.json` | flowchart TD | Each hop in the call chain, tainted variable at each step, branches, attacker control |
+| `attack-tree.json` | flowchart TD | Knowledge graph with nodes styled by status (confirmed/disproven/exploring/unexplored) |
+| `attack-paths.json` | flowchart TD per path | Step chain with proximity score (0–10) and blocker annotations |
+
+Black-box binary `context-map.json` files also render xref-backed candidate call
+edges as dotted grey edges labelled `candidate`. They are deliberately not
+drawn as unchecked flows because a binary xref is not taint proof.
+
+## Examples
+
+```
+# Everything from a /understand run
+/diagram .out/code-understanding-20240101/
+
+# Include a target name in the header
+/diagram .out/exploitability-validation-20240101/ --target myapp
+
+# Print to stdout
+/diagram .out/code-understanding-20240101/ --stdout
+```
+
+## Output
+
+Writes `diagrams.md` into the target directory next to the existing JSON files. One Mermaid fenced block per diagram, with section headings. Renders in GitHub, VS Code, Obsidian, or anything Mermaid-aware.
+
+## Execution
+
+```bash
+libexec/raptor-render-diagrams <out-dir> [--target <name>] [--stdout] [--force]
+```
+
+Parse `$ARGS` for `<out-dir>` and `--target`, then run the command. Show the output path.
+
+## When to run
+
+After any of:
+- `/understand --map` (produces `context-map.json`)
+- `/understand --trace <entry>` (produces `flow-trace-*.json`)
+- `/validate` (produces `attack-surface.json`, `attack-tree.json`, `attack-paths.json`)
+
+Point it at the same output directory. It picks up whatever JSON is there: no configuration needed.
+
+---
+
+**Source:** [`gadievron/raptor`](https://github.com/gadievron/raptor) → `.claude/commands/diagram.md`

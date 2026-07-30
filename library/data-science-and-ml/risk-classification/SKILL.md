@@ -1,0 +1,158 @@
+---
+name: risk-classification
+description: "Classifies agent tasks into 4 risk tiers (GREEN/YELLOW/RED/CRITICAL). Use when assessing action reversibility before committing to an approach."
+category: data-science-and-ml
+source_repo: athola/claude-night-market
+source_path: "plugins/leyline/skills/risk-classification/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/leyline/skills/risk-classification/SKILL.md
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [When to Use](#when-to-use)
+- [4-Tier Risk Model](#4-tier-risk-model)
+- [Hybrid Routing](#hybrid-routing)
+- [Task Metadata Extension](#task-metadata-extension)
+- [Module Reference](#module-reference)
+- [Integration Pattern](#integration-pattern)
+- [Exit Criteria](#exit-criteria)
+
+
+# Risk Classification
+
+## Overview
+
+Provides inline risk classification for agent tasks using a 4-tier model (GREEN/YELLOW/RED/CRITICAL). Uses fast heuristic file-pattern matching for low-risk tiers and delegates to `Skill(attune:war-room-checkpoint)` for high-risk tiers requiring full reversibility scoring.
+
+## When To Use
+
+- Assessing risk of tasks before agent assignment
+- Determining verification requirements for task completion
+- Deciding parallel execution safety between tasks
+- Adding risk markers to task checklists
+
+## When NOT To Use
+
+- Single-file trivial changes (assume GREEN)
+- Strategic architecture decisions (use full `Skill(attune:war-room)` instead)
+- Non-code tasks (documentation-only, configuration comments)
+
+## 4-Tier Risk Model
+
+| Tier | Color | Scope | Example | Verification |
+|------|-------|-------|---------|-------------|
+| **GREEN** | Safe | Single file, trivial revert | Test files, docs, utils | None required |
+| **YELLOW** | Caution | Module-level, user-visible | Components, routes, views | Conflict check and test pass |
+| **RED** | Danger | Cross-module, security/data | Migrations, auth, database schema | War-room RS, full test, and review |
+| **CRITICAL** | Stop | Irreversible, regulated | Data deletion, production deploy | War-room RS and human approval |
+
+## Hybrid Routing
+
+```
+Task received
+    |
+    v
+Heuristic classifier (file patterns)
+    |
+    ├── GREEN/YELLOW → Apply tier, continue
+    |
+    └── RED/CRITICAL → Invoke Skill(attune:war-room-checkpoint)
+                        for reversibility scoring (RS)
+                        |
+                        └── RS confirms or adjusts tier
+```
+
+**Why hybrid**: GREEN/YELLOW classification is fast and deterministic (file pattern matching). RED/CRITICAL tasks warrant the overhead of full reversibility analysis because the cost of getting them wrong is high.
+
+## Task Metadata Extension
+
+Add risk tier to task metadata for downstream consumption:
+
+```json
+{
+  "id": "5",
+  "subject": "Add user authentication",
+  "metadata": {
+    "risk_tier": "YELLOW",
+    "risk_reason": "Modifies src/components/LoginForm.tsx (user-visible component)",
+    "classified_at": "2026-02-07T22:00:00Z"
+  }
+}
+```
+
+Tasks without `risk_tier` metadata default to **GREEN** (backward compatible).
+
+## Readiness Levels
+
+The 4-tier Readiness Levels system provides clear risk
+classification with required controls per tier:
+
+| Level | Name | When | Required Controls |
+|-------|------|------|-------------------|
+| 0 | Routine | Low blast radius, easy rollback | Basic validation, rollback step |
+| 1 | Watch | User-visible changes | Review, negative test, rollback note |
+| 2 | Elevated | Security/compliance/data | Adversarial review, risk checklist |
+| 3 | Critical | Irreversible, regulated | Human confirmation, two-step verification |
+
+See `modules/readiness-levels.md` for full level definitions,
+selection decision tree, and integration guidance.
+
+## Graduated Autonomy
+
+Risk classification sets how carefully a change is verified.
+Automation tiers set how autonomously the agent acts and when it
+must hand control back. Each risk tier carries a default automation
+tier (GREEN to A3 autonomous, CRITICAL to A0 manual), and a
+pre-licensed downgrade trigger drops the agent one tier on repeated
+failure, confidence loss, a stakes spike, or repo-state mismatch
+rather than re-prompting at the same level. See
+`modules/automation-tiers.md` for the tier table and the downgrade
+trigger, and `imbue:assisted-mastery` for the explain/produce mode
+selection that reads from it.
+
+## Module Reference
+
+- **tier-definitions.md**: Detailed tier criteria, boundaries, and override mechanism
+- **heuristic-classifier.md**: File-pattern rules for automated classification
+- **verification-gates.md**: Per-tier verification requirements and parallel safety matrix
+- **readiness-levels.md**: 4-tier risk system with required controls per level
+- **automation-tiers.md**: Per-tier autonomy defaults and the downgrade trigger
+
+## Integration Pattern
+
+```yaml
+# In your skill's frontmatter
+dependencies: [leyline:risk-classification]
+```
+
+### For Task Generators
+
+Append `[R:TIER]` marker to task format:
+
+```markdown
+- [ ] T012 [P] [US1] [R:YELLOW] Create LoginForm component in src/components/LoginForm.tsx
+```
+
+### For Orchestrators
+
+Check risk tier before task assignment:
+
+```
+if task.risk_tier in ["RED", "CRITICAL"]:
+    invoke Skill(attune:war-room-checkpoint) for RS scoring
+    if CRITICAL: require human approval before proceeding
+```
+
+## Exit Criteria
+
+- Every task has a risk tier assigned (explicit or default GREEN)
+- RED/CRITICAL tasks have war-room-checkpoint RS scores
+- Verification gates passed for the assigned tier
+- No parallel execution of prohibited tier combinations
+- Each task carries an automation tier; downgrades are recorded
+  with a reason when a trigger fires
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/leyline/skills/risk-classification/SKILL.md`

@@ -1,0 +1,9 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/mcp/building-a-supply-chain-copilot-with-agent-sdk-and-databricks-mcp/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/mcp/building-a-supply-chain-copilot-with-agent-sdk-and-databricks-mcp/requirements.txt`
+
+fastapi==0.115.13
+uvicorn==0.34.3
+pydantic==2.11.7
+databricks-sdk==0.57.0
+httpx==0.28.1
+openai-agents==0.0.19

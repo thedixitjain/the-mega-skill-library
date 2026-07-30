@@ -1,0 +1,102 @@
+---
+name: a2a-llms
+description: "This project defines the Agent2Agent (A2A) protocol, an open standard initiated by Google and donated to the Linux Foundation, designed to enable communication and interoperability between disparate AI agent systems. It allows agents built on different frameworks (e.g., LangGraph, CrewAI, Google ADK, Genkit) to discover each other's capabilities, negotiate interaction modes, and collaborate on tasks securely without exposing internal state."
+category: ai-agents-and-harness
+source_repo: a2aproject/A2A
+source_path: "docs/llms.txt"
+source_url: https://github.com/a2aproject/A2A/blob/HEAD/docs/llms.txt
+---
+# A2A (Agent2Agent) Protocol High-Level Summary
+
+This project defines the **Agent2Agent (A2A) protocol**, an open standard initiated by Google and donated to the Linux Foundation, designed to enable communication and interoperability between disparate AI agent systems. It allows agents built on different frameworks (e.g., LangGraph, CrewAI, Google ADK, Genkit) to discover each other's capabilities, negotiate interaction modes, and collaborate on tasks securely without exposing internal state.
+
+The repository contains:
+1.  **Formal Specification:** The normative Protobuf definition (`specification/a2a.proto`). A non-normative JSON Schema (`a2a.json`, JSON Schema 2020-12) is generated from it at build time and published at `docs/spec/a2a.json`.
+2.  **Core Concepts Documentation:** Conceptual guides in `docs/topics/` (What is A2A, A2A & MCP, Core Concepts, Life of a Task, Agent Discovery, Enterprise Features, Streaming & Async, Multi-Tenancy, and the Extensions group).
+3.  **SDKs:** Production-ready SDKs for Python, JS/TS, Java, Go, .NET, and Rust.
+4.  **Sample Implementations:** Real-world examples integrated with various agent frameworks.
+
+## Key Files & Directories
+
+- `specification/a2a.proto`: The authoritative, normative Protobuf definition of the protocol (source of truth).
+- `docs/specification.md`: The human-readable protocol specification (current released version `1.0.0`).
+- `docs/definitions.md`: Protocol Definition reference embedding the normative proto and the generated JSON Schema.
+- `docs/whats-new-v1.md`: Summary of changes from v0.3.0 to v1.0.
+- `docs/topics/`: Conceptual guides — `what-is-a2a`, `a2a-and-mcp`, `key-concepts`, `life-of-a-task`, `agent-discovery`, `enterprise-ready`, `streaming-and-async`, `multi-tenancy`, plus the Extensions group (`extensions`, `custom-protocol-bindings`, `extension-and-binding-governance`).
+- `docs/tutorials/`: Step-by-step Python quickstart for building A2A-compliant agents.
+- `docs/sdk/`: SDK overview and Python API reference.
+- `scripts/`: Utility scripts for building docs, JSON Schema generation, and formatting.
+
+# A2A (Agent2Agent) Protocol Reference
+
+## 1. Overview
+
+- **Purpose:** Open standard for agent-to-agent interoperability.
+- **Current Version:** 1.0. The Protobuf definition (`specification/a2a.proto`) is the normative source of truth; each `AgentInterface` advertises its own `protocol_version`.
+- **Communication Bindings:** Supports JSON-RPC 2.0 (HTTP/SSE), gRPC, and HTTP/REST.
+- **Key Concepts:** Agent Cards for discovery, Task-based execution, Multi-turn Messages, and Artifact outputs.
+
+## 2. Core Data Objects
+
+### 2.1 AgentCard (`/.well-known/agent-card.json`)
+Describes an agent's identity and capabilities.
+- `name`, `description`, `version`: Identity metadata.
+- `supported_interfaces`: List of `AgentInterface` (URL, protocol binding, tenant, protocol version).
+- `capabilities`: `streaming`, `push_notifications`, `extended_agent_card`, `extensions`.
+- `skills`: List of `AgentSkill` (id, name, description, tags, examples).
+- `security_schemes`, `security_requirements`: Authentication configuration (API Key, OAuth2, OIDC, mTLS, HTTP Auth).
+- `default_input_modes`, `default_output_modes`: Supported MIME types (e.g., `text/plain`, `application/json`).
+
+### 2.2 Task
+Represents a stateful unit of work.
+- `id`, `context_id`: Identifiers for the task and its conversational context.
+- `status`: `TaskStatus` (state, message, timestamp).
+- `artifacts`: List of `Artifact` (outputs produced).
+- `history`: List of `Message` (conversation history).
+- `metadata`: Custom structured data.
+
+### 2.3 TaskState (Enum)
+- `SUBMITTED`, `WORKING`, `COMPLETED` (terminal), `FAILED` (terminal), `CANCELED` (terminal), `REJECTED` (terminal), `INPUT_REQUIRED` (interrupted), `AUTH_REQUIRED` (interrupted).
+
+### 2.4 Message & Part
+- `Message`: Contains `message_id`, `role` (USER/AGENT), `parts`, `context_id`, `task_id`, `reference_task_ids`.
+- `Part`: Union type containing `text`, `raw` (bytes), `url`, or `data` (JSON). Includes `media_type` and `filename`.
+
+### 2.5 Artifact
+- A tangible output from a task, containing one or more `Part`s and metadata.
+
+## 3. RPC Methods
+
+| Method | Request | Response | Description |
+| :--- | :--- | :--- | :--- |
+| `SendMessage` | `SendMessageRequest` | `SendMessageResponse` | Initiates or continues a task. |
+| `SendStreamingMessage` | `SendMessageRequest` | `stream StreamResponse` | Sends message and receives real-time SSE updates. |
+| `GetTask` | `GetTaskRequest` | `Task` | Retrieves current task state. |
+| `ListTasks` | `ListTasksRequest` | `ListTasksResponse` | Filter and paginate tasks. |
+| `CancelTask` | `CancelTaskRequest` | `Task` | Requests cancellation of a task. |
+| `SubscribeToTask` | `SubscribeToTaskRequest` | `stream StreamResponse` | Subscribes to updates for an existing task. |
+| `GetExtendedAgentCard` | `GetExtendedAgentCardRequest` | `AgentCard` | Fetches detailed metadata after authentication. |
+| `CreateTaskPushNotificationConfig` | `TaskPushNotificationConfig` | `TaskPushNotificationConfig` | Registers a push notification (webhook) config for a task. |
+| `GetTaskPushNotificationConfig` | `GetTaskPushNotificationConfigRequest` | `TaskPushNotificationConfig` | Retrieves a task's push notification config. |
+| `ListTaskPushNotificationConfigs` | `ListTaskPushNotificationConfigsRequest` | `ListTaskPushNotificationConfigsResponse` | Lists push notification configs for a task. |
+| `DeleteTaskPushNotificationConfig` | `DeleteTaskPushNotificationConfigRequest` | `Empty` | Deletes a task's push notification config. |
+
+### 3.1 Streaming Events (`StreamResponse`)
+Streams return a payload containing one of:
+- `task`: Full task state.
+- `message`: A discrete message part.
+- `status_update`: `TaskStatusUpdateEvent` (taskId, contextId, status).
+- `artifact_update`: `TaskArtifactUpdateEvent` (taskId, artifact, append, last_chunk).
+
+## 4. Security & Authentication
+- **Transport:** HTTPS/TLS required for production.
+- **Authentication:** Declared in `AgentCard` via OpenAPI-style security schemes.
+- **Push Notifications:** Webhooks secured via authentication tokens/schemes configured per task.
+
+## 5. Implementation Status
+- **Official SDKs:** Python (`a2a-sdk`), JS/TS (`@a2a-js/sdk`), Java, Go, C#/.NET (`A2A`), and Rust (`a2a-rs`).
+- **Integrations:** LangGraph, CrewAI, Google ADK, Genkit, AG2, BeeAI, PydanticAI, and more.
+
+---
+
+**Source:** [`a2aproject/A2A`](https://github.com/a2aproject/A2A) → `docs/llms.txt`

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "graymatter": {
+      "command": "scripts/gm-mcp-launcher",
+      "args": ["--stdio"]
+    }
+  }
+}

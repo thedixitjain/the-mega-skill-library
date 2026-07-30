@@ -1,0 +1,38 @@
+---
+name: codebase-memory-mcp-llms
+description: "- License: MIT, open source. - Languages: 158 (158 vendored tree-sitter grammars compiled into the binary). - Hybrid LSP type resolution: 9 language families (Python, TypeScript/JavaScript/JSX/TSX, PHP, C#, Go, C/C++, Java, Kotlin, Rust) — a lightweight C implementation of language type-resolution algorithms, structurally inspired by and compatible with major language servers including tsserver, pyright, gopls, Roslyn, Eclipse JDT, and rust-analyzer."
+category: docs-and-knowledge-mgmt
+source_repo: DeusData/codebase-memory-mcp
+source_path: "docs/llms.txt"
+source_url: https://github.com/DeusData/codebase-memory-mcp/blob/HEAD/docs/llms.txt
+---
+# codebase-memory-mcp
+
+> An open-source Model Context Protocol (MCP) server that indexes a codebase into a persistent knowledge graph of functions, classes, call chains, HTTP routes, and cross-service links. AI coding agents query the graph instead of reading files one by one, answering structural questions with roughly 120x fewer tokens (~3,400 vs ~412,000 across five structural queries). Parses 158 languages via vendored tree-sitter grammars, with Hybrid LSP semantic type resolution for Python, TypeScript/JavaScript, PHP, C#, Go, C/C++, Java, Kotlin, and Rust. It also generates semantic graph edges (SEMANTICALLY_RELATED for vocabulary-mismatch matches, SIMILAR_TO for near-clone detection) and supports semantic vector search via bundled nomic-embed-code embeddings compiled into the binary — no API key, no Ollama, no Docker. Ships as a single static C binary (zero runtime dependencies) for macOS, Linux, and Windows. All processing is local — the embeddings run on-device; there is no embedded LLM and no API key.
+
+## Key facts
+
+- License: MIT, open source.
+- Languages: 158 (158 vendored tree-sitter grammars compiled into the binary).
+- Hybrid LSP type resolution: 9 language families (Python, TypeScript/JavaScript/JSX/TSX, PHP, C#, Go, C/C++, Java, Kotlin, Rust) — a lightweight C implementation of language type-resolution algorithms, structurally inspired by and compatible with major language servers including tsserver, pyright, gopls, Roslyn, Eclipse JDT, and rust-analyzer.
+- MCP tools: 15 (search_graph incl. semantic_query vector search, trace_path (alias: trace_call_path), check_index_coverage, query_graph (Cypher), detect_changes, get_architecture, get_code_snippet, manage_adr, and more).
+- Semantic search: natural-language code discovery via bundled nomic-embed-code embeddings (768-dim, compiled into the binary); 11-signal combined scoring; fully local, no API key.
+- Semantic & similarity edges: SEMANTICALLY_RELATED (vocabulary-mismatch matches) and SIMILAR_TO (MinHash + LSH near-clone / duplicate detection).
+- Cross-repo intelligence: CROSS_* edges link nodes across multiple repos indexed in one store; multi-galaxy 3D layout and cross-repo architecture summary.
+- Cross-service linking: HTTP route ↔ call-site matching, plus gRPC/GraphQL/tRPC detection and pub/sub channels (EMITS/LISTENS_ON for Socket.IO, EventEmitter, generic buses).
+- Supported agents: 43 automatic/conditional client surfaces (37 automatically detected + 6 conditional/explicit): Claude Code, Codex CLI, Gemini CLI, Zed, OpenCode, Antigravity, Aider, KiloCode, VS Code, Cursor, Windsurf, Augment / Auggie, OpenClaw, Kiro, Junie, Hermes, OpenHands, Cline, Warp, Qwen Code, GitHub Copilot CLI, Factory Droid, Crush, Goose, Mistral Vibe, Qoder CLI, Kimi Code CLI, GitLab Duo CLI, Rovo Dev CLI, Amp, Devin CLI / Local, Tabnine, Continue / cn, Visual Studio, TRAE, Roo Code, Amazon Q Developer IDE, CodeBuddy Code CLI, IBM Bob IDE, IBM Bob Shell, Pochi, Pi, and Sourcegraph Cody.
+- Agent profiles: documented custom-agent formats receive Scout (fast/provisional), Verify (default/task-directed), and Auditor (bounded/full verification) definitions. Every direct tier checks exact path/scope coverage with check_index_coverage and falls back to source for flagged gaps; unsafe child-MCP formats use explicit parent handoff. Kiro and Junie use positive-allowlist Scout/Analysis server profiles (7/11 tools); Qoder combines named-server selection with exact tier-specific MCP tool IDs, while Factory uses exact registered IDs without additive whole-server exposure. Foreign Junie aliases are preserved and force parent handoff.
+- Performance: Linux kernel (28M LOC, 75K files) full index in 3 minutes → 4.81M nodes, 7.72M edges; Cypher queries in under 1ms.
+- Distribution: single static C binary; also npm, PyPI, Homebrew, Scoop, Winget, Chocolatey, AUR, and `go install`.
+
+## Links
+
+- Homepage: https://deusdata.github.io/codebase-memory-mcp/
+- Source code (GitHub): https://github.com/DeusData/codebase-memory-mcp
+- Latest release: https://github.com/DeusData/codebase-memory-mcp/releases/latest
+- Benchmark report: https://github.com/DeusData/codebase-memory-mcp/blob/main/docs/BENCHMARK.md
+- Research paper: https://arxiv.org/abs/2603.27277
+
+---
+
+**Source:** [`DeusData/codebase-memory-mcp`](https://github.com/DeusData/codebase-memory-mcp) → `docs/llms.txt`

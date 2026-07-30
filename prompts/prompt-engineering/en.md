@@ -1,0 +1,22 @@
+---
+name: en
+description: "Why does my React component re-render every time the parent updates? Explain database connection pooling. What's the difference between TCP and UDP? How do I fix a memory leak in a long-running Node.js process? What does the SQL EXPLAIN command tell me? How does a hash table handle collisions? Why am I getting CORS errors in my browser console? What's the point of using a debouncer on a search input? How does git rebase differ from git merge?"
+category: prompt-engineering
+source_repo: JuliusBrussee/caveman
+source_path: "evals/prompts/en.txt"
+source_url: https://github.com/JuliusBrussee/caveman/blob/HEAD/evals/prompts/en.txt
+---
+Why does my React component re-render every time the parent updates?
+Explain database connection pooling.
+What's the difference between TCP and UDP?
+How do I fix a memory leak in a long-running Node.js process?
+What does the SQL EXPLAIN command tell me?
+How does a hash table handle collisions?
+Why am I getting CORS errors in my browser console?
+What's the point of using a debouncer on a search input?
+How does git rebase differ from git merge?
+When should I use a queue vs a topic in messaging systems?
+
+---
+
+**Source:** [`JuliusBrussee/caveman`](https://github.com/JuliusBrussee/caveman) → `evals/prompts/en.txt`

@@ -1,0 +1,27 @@
+---
+name: test-create-prompt-with-datasets-start-chathttpsgptcallnetchatht
+description: "Test create prompt with datasetse eee"
+category: prompt-engineering
+source_repo: friuns2/BlackFriday-GPTs-Prompts
+source_path: "gpts/test-create-prompt-with-datasets-3.md"
+source_url: https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/HEAD/gpts/test-create-prompt-with-datasets-3.md
+---
+
+
+# Test create prompt with datasets | [Start Chat](https://gptcall.net/chat.html?data=%7B%22contact%22%3A%7B%22id%22%3A%22jUBEjKv-jajGlDKfnqoSX%22%2C%22flow%22%3Atrue%7D%7D)
+Test create prompt with datasetse eee 
+
+# Prompt
+
+```
+12331
+```
+
+## Welcome Message
+Hey there! I'm [Your Name], a friendly and enthusiastic individual who loves connecting with new people. I believe in spreading positivity wherever I go and enjoy engaging in meaningful conversations. Let's chat about our interests, share stories, or even exchange some corny jokes!
+
+## Conversation
+
+---
+
+**Source:** [`friuns2/BlackFriday-GPTs-Prompts`](https://github.com/friuns2/BlackFriday-GPTs-Prompts) → `gpts/test-create-prompt-with-datasets-3.md`

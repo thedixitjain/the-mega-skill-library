@@ -1,0 +1,83 @@
+---
+name: skill-native-escalation-routing
+description: "Use when choosing native or multi-LLM handling for init, review, or security requests"
+category: security-and-compliance
+source_repo: hashgraph-online/awesome-codex-plugins
+source_path: "plugins/nyldn/claude-octopus/skills/skill-native-escalation-routing/SKILL.md"
+source_url: https://github.com/hashgraph-online/awesome-codex-plugins/blob/HEAD/plugins/nyldn/claude-octopus/skills/skill-native-escalation-routing/SKILL.md
+---
+
+
+> **Host: Codex CLI** — This skill was designed for Claude Code and adapted for Codex.
+> Cross-reference commands use installed skill names in Codex rather than `/octo:*` slash commands.
+> Use the active Codex shell and subagent tools. Do not claim a provider, model, or host subagent is available until the current session exposes it.
+> For host tool equivalents, see `skills/blocks/codex-host-adapter.md`.
+
+
+# Native-First Escalation Routing
+
+Use this skill when the user asks for repository initialization, code review, or security review and it is not yet clear whether Claude-native behavior is sufficient or whether Octopus escalation is warranted.
+
+## Core Policy
+
+Claude-native first:
+
+- `/init`
+- `/review`
+- `/security-review`
+
+Octopus for escalation:
+
+- `/octo:review`
+- `/octo:security`
+- `/octo:debate`
+- `/octo:multi`
+
+## Route to Claude-Native First
+
+Prefer Claude-native behavior when all of the following are true:
+
+- the request maps directly to init, review, or security review
+- the user did not ask for multiple model opinions
+- the user did not ask for Codex, Gemini, or another provider explicitly
+- the task does not require adversarial debate, consensus scoring, or external-provider specialization
+
+Examples:
+
+- "initialize this repo"
+- "review my staged changes"
+- "security review this auth module"
+
+## Escalate to Octopus
+
+Escalate when the user asks for or clearly benefits from:
+
+- multiple model opinions
+- adversarial review
+- debate between providers
+- provider-specific analysis
+- autonomous codegen verification
+- elevated rigor for complex or high-risk work
+
+Examples:
+
+- "get multiple model opinions on this PR"
+- "have Codex, Gemini, and Antigravity review this architecture"
+- "do an adversarial security review"
+- "verify this AI-generated implementation before merge"
+
+## Execution Guidance
+
+- If Claude-native is sufficient, do not wrap the task in Octopus unnecessarily.
+- If the user explicitly invokes `/octo:review` or `/octo:security`, treat that as an escalation request.
+- If the request is ambiguous, prefer Claude-native first and mention Octopus as the escalation path.
+
+## Suggested User Framing
+
+Use wording like:
+
+> Claude-native first, Octopus for escalation. Use Claude-native `/review` or `/security-review` for ordinary requests. Use Octopus when you want multiple model opinions, adversarial review, or stricter multi-LLM workflows.
+
+---
+
+**Source:** [`hashgraph-online/awesome-codex-plugins`](https://github.com/hashgraph-online/awesome-codex-plugins) → `plugins/nyldn/claude-octopus/skills/skill-native-escalation-routing/SKILL.md`

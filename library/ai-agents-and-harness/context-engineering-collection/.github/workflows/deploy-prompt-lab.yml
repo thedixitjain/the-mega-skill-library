@@ -1,0 +1,92 @@
+name: Deploy long-horizon prompt lab
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-prompt-lab.yml"
+      - "skills/long-horizon-prompting/**"
+      - "researcher/claims/index.jsonl"
+      - "examples/long-horizon-prompt-lab/data/**"
+      - "examples/long-horizon-prompt-lab/package.json"
+      - "examples/long-horizon-prompt-lab/package-lock.json"
+      - "examples/long-horizon-prompt-lab/scripts/**"
+      - "examples/long-horizon-prompt-lab/screenshots/shot-hero.png"
+      - "examples/long-horizon-prompt-lab/ui/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-prompt-lab.yml"
+      - "skills/long-horizon-prompting/**"
+      - "researcher/claims/index.jsonl"
+      - "examples/long-horizon-prompt-lab/**"
+  workflow_dispatch:
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: examples/long-horizon-prompt-lab/package-lock.json
+
+      - name: Install site tooling
+        run: npm ci
+        working-directory: examples/long-horizon-prompt-lab
+
+      - name: Build and validate site
+        run: |
+          npm test
+          git diff --exit-code -- \
+            data/prompt-pairs.json \
+            ui/data.js \
+            ui/prompts/
+          test -z "$(git status --porcelain --untracked-files=all -- \
+            data/prompt-pairs.json ui/data.js ui/prompts/)"
+        working-directory: examples/long-horizon-prompt-lab
+
+      - name: Assemble static site
+        run: |
+          mkdir -p _site
+          cp -R examples/long-horizon-prompt-lab/ui/. _site/
+          cp examples/long-horizon-prompt-lab/screenshots/shot-hero.png _site/social-card.png
+          touch _site/.nojekyll
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: _site
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

@@ -1,0 +1,56 @@
+---
+name: dig
+description: "Refines an active research session by drilling deeper into a subtopic. Use after tome:research to narrow results to a specific channel or angle."
+category: research-and-academic
+source_repo: athola/claude-night-market
+source_path: "plugins/tome/skills/dig/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/tome/skills/dig/SKILL.md
+---
+
+# Dig Deeper
+
+## When To Use
+
+- Drilling into a subtopic after an initial research session
+- Narrowing results to a specific channel (e.g. papers only)
+
+## When NOT To Use
+
+- Starting a new research topic (use `/tome:research` first)
+- Synthesizing results (use `/tome:synthesize`)
+
+Refine an active research session interactively.
+
+## Workflow
+
+1. Load most recent session via SessionManager
+2. Parse the subtopic and optional channel filter
+3. Dispatch targeted search (single agent or all channels)
+4. Merge new findings into existing session
+5. Re-rank and update the saved report
+6. Present new findings to user
+
+## Error Cases
+
+- No active session: "Start a session first with
+  `/tome:research \"topic\"`"
+- Specified channel not in original session: warn and
+  suggest available channels
+
+## Exit Criteria
+
+- [ ] Active session loaded from SessionManager before any search
+      executes; if absent, error "Start a session first with
+      `/tome:research \"<topic>\"`" is emitted and skill halts
+- [ ] New findings merged into the existing session without
+      overwriting prior findings from other channels
+- [ ] Session report re-ranked and saved after the merge so
+      the updated file reflects the deeper search results
+- [ ] If the specified channel is not in the original session,
+      a warning is emitted listing the available channels
+- [ ] New findings presented to the user after the session is
+      saved, not before
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/tome/skills/dig/SKILL.md`

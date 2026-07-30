@@ -1,0 +1,15 @@
+<!-- Harvested from https://github.com/hesreallyhim/awesome-claude-code/blob/HEAD/requirements-dev.txt -->
+> **Source:** [`hesreallyhim/awesome-claude-code`](https://github.com/hesreallyhim/awesome-claude-code) → `requirements-dev.txt`
+
+# Development dependencies: runtime deps plus tests, linting, type-checking, and
+# the pre-commit framework. This is what `make deps` installs.
+#   venv/bin/python -m pip install -r requirements-dev.txt
+-r requirements.txt
+
+pytest
+pytest-cov
+ruff
+mypy
+types-PyYAML
+types-requests
+pre-commit

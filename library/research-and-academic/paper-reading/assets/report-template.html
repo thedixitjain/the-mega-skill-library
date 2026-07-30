@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{LANGUAGE}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{{TITLE}}</title>
+  <style data-report-style>{{REPORT_STYLE}}</style>
+</head>
+<body>
+  <a class="skip-link" href="#report-content">{{SKIP_LINK}}</a>
+
+  <article data-paper-report data-paper-type="{{PAPER_TYPE}}">
+    <header class="report-hero">
+      <h1><span>{{TITLE_BEFORE}}</span><em class="title-focus">{{TITLE_FOCUS}}</em><span>{{TITLE_AFTER}}</span></h1>
+      <p class="authors">{{AUTHORS}}</p>
+      <div class="hero-thesis">
+        <p>{{THESIS}}</p>
+      </div>
+    </header>
+
+    <div class="proof-layout">
+      <nav class="reader-nav" data-reader-navigation aria-label="{{READER_NAVIGATION_LABEL}}">
+        <button type="button" class="reader-nav-toggle" aria-expanded="true">{{READER_NAVIGATION_LABEL}}</button>
+        <div class="reader-nav-body">
+          <section class="nav-group outline-links">
+            <p class="nav-heading">{{OUTLINE_LABEL}}</p>
+            {{OUTLINE}}
+          </section>
+          {{SOURCE_LINK}}
+        </div>
+      </nav>
+
+      <main id="report-content" class="manuscript">
+        {{REPORT_SECTIONS}}
+      </main>
+    </div>
+  </article>
+
+  <dialog id="lightbox" class="lightbox" aria-label="{{LIGHTBOX_LABEL}}">
+    <div class="lightbox-controls" aria-label="{{ZOOM_CONTROLS_LABEL}}">
+      <button type="button" data-zoom-out aria-label="{{ZOOM_OUT_LABEL}}">−</button>
+      <button type="button" data-zoom-reset aria-label="{{ZOOM_RESET_LABEL}}">100%</button>
+      <button type="button" data-zoom-in aria-label="{{ZOOM_IN_LABEL}}">+</button>
+    </div>
+    <button type="button" class="lightbox-close" data-lightbox-close aria-label="{{CLOSE_LIGHTBOX_LABEL}}">×</button>
+    <div class="lightbox-stage" data-zoom="1"></div>
+    <p class="lightbox-caption" aria-live="polite"></p>
+  </dialog>
+
+  <script data-report-script>{{REPORT_SCRIPT}}</script>
+</body>
+</html>

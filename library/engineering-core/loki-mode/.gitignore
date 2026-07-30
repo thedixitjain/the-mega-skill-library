@@ -1,0 +1,102 @@
+.DS_Store
+
+# OS files
+*.DS_Store
+
+# Secrets -- never commit. .env holds ANTHROPIC_API_KEY for docker compose;
+# .loki-oauth-credentials.json holds a live Claude Code OAuth token (Auth
+# Option 2). .env.example is the committed placeholder template.
+.env
+.env.*
+!.env.example
+.loki-oauth-credentials.json
+
+# Python virtualenv
+.venv/
+dashboard/.venv/
+
+# Node.js
+node_modules/
+*.log
+*.tgz
+# v7.5.10: package-lock.json is now committed (was gitignored prior).
+# Required for `npm audit` to scan production deps; also gives
+# reproducible installs for users who consume `npm install -g loki-mode`.
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Build outputs
+dist/
+!web-app/dist/
+*.vsix
+
+# Local development (not tracked)
+the_app/
+wiki-repo/
+
+# Runtime state (regenerated each session)
+# Source hooks live in autonomy/hooks/ (tracked)
+.loki/
+
+# Runtime state in subdirectories
+dashboard-ui/.loki/
+vscode-extension/.loki/
+
+# Hermetic test fixtures under loki-ts/ are intentionally tracked
+!loki-ts/tests/fixtures/**/.loki/
+!loki-ts/tests/fixtures/**/.loki/**
+
+# Claude Code harness scheduled-tasks lock (transient, per-session)
+.claude/scheduled_tasks.lock
+
+# Test artifacts
+**/test-results/
+.aider*
+
+# Stray test artifacts (accidentally committed in v6.50.0; ignore going forward)
+.loki-test-tmp/
+.gstack/
+internal/
+artifacts/competitive-analysis/
+
+# Local-only, non-public, or generated scratch -- never ship to users / npm.
+# Codex provider scratch + skill (kept out of the public CLI repo).
+.codex/
+AGENTS.md
+# Other harness / verify scratch dot-folders.
+.loki-verify/
+.claude/launch.json
+tmp/
+# Generated per-build output docs (e.g. a Loki self-run's handoff), NOT curated
+# repo docs. Stale/auto-generated API/architecture dumps also land here -- do not
+# commit until they are refreshed to the current version and reviewed.
+HANDOFF.md
+# Internal strategy / roadmap / next-steps / MOAT specs -- hidden from the public repo.
+artifacts/ROADMAP-*.md
+artifacts/STRATEGY.md
+artifacts/AUTONOMOUS-SESSION-*.md
+artifacts/FOUNDER-HANDOFF-*.md
+artifacts/V8-SESSION-STATE.md
+artifacts/v7-e2e-saas/MOAT-*.md
+artifacts/v7-e2e-saas/DESIGN-*.md
+# Internal build/test/e2e output + screenshots under artifacts/ -- scratch, not
+# public CLI material. (Specific curated artifacts can be force-added with `git
+# add -f` when genuinely meant to ship.)
+artifacts/adoption-emptystate/
+artifacts/app-runner-ui-fixes/
+artifacts/budget-tracker-screens/
+artifacts/dashboard-preview/
+artifacts/dashboard-settings-fix/
+artifacts/dashboard-tab-audit/
+artifacts/e4-e2e/
+artifacts/e4-e2e-rerun/
+artifacts/live-preview-screens/
+artifacts/observability/screenshot.png
+artifacts/paolo/
+artifacts/v781-e2e/
+artifacts/E2E-CLIENT-FIX-RESULTS.md
+artifacts/V8-SESSION-STATE.md

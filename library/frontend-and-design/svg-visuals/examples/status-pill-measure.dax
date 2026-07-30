@@ -1,0 +1,49 @@
+-- SVG Status Pill
+-- Author: Kurt Buhler / Data Goblins (PowerBI MacGuyver Toolbox)
+-- Target: Table / Matrix (Image size: H25 x W100)
+-- Placeholders: Replace __GROUPBY_COLUMN with your column
+-- Note: Update the SWITCH values and colors for your specific categories
+
+IF (
+    HASONEVALUE( __GROUPBY_COLUMN ),
+
+VAR _CategoryValue = SELECTEDVALUE ( __GROUPBY_COLUMN )
+VAR _LabelCased = UPPER ( _CategoryValue )
+
+-- Color config -- change "Value" to your actual category values
+VAR _Color =
+    SWITCH (
+        _CategoryValue,
+        "Value1", "#1971c2",   -- Blue
+        "Value2", "#2f9e44",   -- Green
+        "Value3", "#e03131",   -- Red
+        "Value4", "#f08c00",   -- Yellow
+        "#000000"              -- Default black
+    )
+
+-- Font config -- change "Value" to bold/lighten specific categories
+VAR _FontWeight =
+    SWITCH (
+        _CategoryValue,
+        "Value1", "700",   -- Bold
+        "400"              -- Normal
+    )
+
+-- SVG elements
+VAR _SvgPrefix = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg'>"
+VAR _Background =
+    "<rect x='0.5' y='0.5' width='98%' height='95%' rx='15%' fill='"
+        & _Color & "22"
+        & "' stroke='" & _Color & "'/>"
+VAR _Label =
+    "<text x='50%' y='53%' font-family='Segoe UI' font-size='10.5' font-weight='"
+        & _FontWeight
+        & "' fill='" & _Color
+        & "' text-anchor='middle' dominant-baseline='middle'>"
+        & _LabelCased & "</text>"
+VAR _SvgSuffix = "</svg>"
+
+VAR _SVG = _SvgPrefix & _Background & _Label & _SvgSuffix
+
+RETURN _SVG
+)

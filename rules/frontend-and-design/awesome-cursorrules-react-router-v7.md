@@ -1,0 +1,60 @@
+---
+name: awesome-cursorrules-react-router-v7
+description: "React Router v7 rules for framework mode, data routers, loaders, actions, route modules, and progressive enhancement"
+category: frontend-and-design
+source_repo: PatrickJS/awesome-cursorrules
+source_path: "rules/react-router-v7.mdc"
+source_url: https://github.com/PatrickJS/awesome-cursorrules/blob/HEAD/rules/react-router-v7.mdc
+---
+
+
+# React Router v7 Rules
+
+## Route Modules
+
+- Use route modules as the boundary for route UI, loader data, actions, metadata, and error boundaries.
+- Keep route modules small; move shared UI to components and reusable data access to services.
+- Prefer file-based routing in framework mode when the project is configured for it.
+- Use nested routes for shared layouts and progressive disclosure.
+- Export route-specific `ErrorBoundary` components for recoverable route failures.
+
+## Data Loading
+
+- Use loaders for route data that should be available before render.
+- Keep loaders deterministic and side-effect free.
+- Validate params and search params at the loader boundary.
+- Return typed data and consume it through route hooks rather than duplicating fetch logic in components.
+- Use deferred or streaming patterns only when they improve perceived performance.
+
+## Mutations
+
+- Use actions for route mutations and form submissions.
+- Prefer `Form`, `useFetcher`, and `useSubmit` for progressive enhancement.
+- Revalidate affected loader data after mutations.
+- Handle validation errors as typed action data instead of generic exceptions.
+- Keep server-only secrets and privileged operations out of client actions.
+
+## Navigation and State
+
+- Store shareable state in URL params or search params.
+- Keep ephemeral UI state local to components.
+- Use pending navigation state to show optimistic or loading UI.
+- Avoid global state for data that belongs to route loaders.
+
+## TypeScript and Testing
+
+- Type loader and action return values.
+- Add tests for route loaders, actions, validation failures, and error boundaries.
+- Use integration tests for critical form and navigation flows.
+- Mock network and persistence at the route-service boundary.
+
+## Common Mistakes
+
+- Do not duplicate loader fetches in `useEffect`.
+- Do not mutate data in loaders.
+- Do not hide route errors behind a single generic app-level catch-all.
+- Do not put auth checks only in components when loader data is protected.
+
+---
+
+**Source:** [`PatrickJS/awesome-cursorrules`](https://github.com/PatrickJS/awesome-cursorrules) → `rules/react-router-v7.mdc`

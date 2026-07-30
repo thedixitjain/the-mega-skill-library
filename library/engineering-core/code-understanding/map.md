@@ -1,0 +1,487 @@
+---
+name: code-understanding-map
+description: Builds a ground-truth model of a codebase's entry points, trust boundaries, and dangerous sinks from an attacker's perspective, producing context-map.json for pipeline integration.
+user-invocable: false
+---
+
+# [MAP] Application Context Mapping
+
+Build a ground-truth model of the target codebase before attacking it. The goal is to understand the application's trust model, where input enters, where decisions get made, and where dangerous operations occur.
+
+## Input
+
+A target directory or repository.
+
+## Purpose
+
+A context map answers: *"If I were the attacker, what would I care about here?"*
+
+This is not documentation generation. It is adversarial reconnaissance at the source level.
+
+## Task
+
+**[MAP-0] Source Inventory**
+
+Before any manual enumeration, build the source inventory (the understand command's Step 1 already did this — `$WORKDIR/checklist.json` should exist).
+
+Read the resulting `checklist.json`. It provides every source file with language, line count, SHA-256 checksum, and every function with name, line number, and signature. Excluded files are recorded with reasons.
+
+If tree-sitter is installed, functions also include a `metadata` field with:
+- `attributes` — decorators (Python) and annotations (Java) that identify entry points and auth gates
+- `visibility` — public/private/static/exported/extern
+- `class_name` — enclosing class or receiver type
+- `return_type` and `parameters` — typed signatures for data flow analysis
+
+Check the metadata BEFORE reading code — it may already answer questions about entry points, trust boundaries, and attack surface without needing to open files.
+
+Use this as your ground truth for what exists in the codebase. Do NOT manually enumerate files.
+
+**[MAP-1] Entry Point Enumeration**
+
+Find all locations where external input enters the application:
+- HTTP routes (GET/POST handlers, REST endpoints, GraphQL resolvers)
+- CLI argument parsers
+- File/socket readers
+- Message queue consumers
+- Deserialization entry points (JSON parsers, pickle loads, XML parsers)
+- IPC handlers
+
+For each: record file path, line number, and what data it accepts.
+
+For each source, also assign a **`trust_level`** — the provenance of the data it introduces, i.e. how attacker-controllable it is *at the point it enters*:
+
+- `attacker_controlled` — the attacker supplies it directly: HTTP body/query/headers/cookies, `argv`/stdin, `recv`/socket reads, uploaded file contents, webhook payloads before signature verification.
+- `persistent_store` — read from storage that may hold attacker data written in an earlier request: DB rows, cache, message queues, files written by another actor. Cross-class flow out of here is the "stored" vuln family (stored XSS / stored cmd-injection) — note it for Stage B.
+- `internal_value` — server-generated, not attacker-influenced: UUIDs / sequence IDs the server mints, JWT claims *after* signature verification, values checked against a closed allow-list.
+- `runtime_constant` — fixed before any request: compile-time constants, hardcoded config, env vars loaded at startup.
+
+When a value combines inputs, take the most-attacker-controlled (`attacker_controlled` > `persistent_store` > `internal_value` > `runtime_constant`). These labels correspond to L1-L4 respectively for anyone coming from that vocabulary.
+
+**[MAP-2] Trust Boundary Identification**
+
+Identify where the code makes (or should make) trust decisions:
+- Authentication checks (where credentials are verified)
+- Authorization checks (where permissions are enforced)
+- Input validation (where sanitization occurs)
+- Privilege transitions (setuid, sudo, elevated operations)
+
+Flag any entry point that reaches a sensitive operation *without* passing through a trust boundary.
+
+**[MAP-3] Sink Catalog**
+
+Find all dangerous operations:
+- Database queries (especially raw/string-concatenated)
+- Shell execution (`subprocess`, `exec`, `system`, `popen`)
+- File system writes and reads (especially with user-controlled paths)
+- Deserialization (`pickle.loads`, `eval`, `yaml.load` without SafeLoader)
+- Network requests with user-controlled URLs (SSRF candidates)
+- Template rendering with user data
+- Cryptographic operations (especially key material handling)
+- LDAP injection (`DirContext.search`, `LdapContext` with string-concatenated filters)
+- JNDI lookup (`InitialContext.lookup`, `Context.lookup` with user-controlled names)
+- XXE (`DocumentBuilderFactory`, `SAXParserFactory`, `XMLInputFactory` without disabling external entities)
+
+For each: record file path, line number, and what data reaches it.
+
+**[MAP-4] Architecture Summary**
+
+Produce a brief summary covering:
+- Application type (web app, CLI, daemon, library, etc.)
+- Primary language(s) and frameworks
+- Authentication model (session-based, token-based, API key, none)
+- Database(s) and ORM (if any)
+- External service dependencies
+- Notable security controls present (WAF hints in code, CSP headers, rate limiting)
+
+## Output Format
+
+`context-map.json` is a superset of `attack-surface.json`. The top-level `sources`, `sinks`, and `trust_boundaries` keys use the same required fields as Stage B's `attack-surface.json` — so `cp context-map.json attack-surface.json` works. Context-map-specific fields (`meta`, `entry_points`, `unchecked_flows`) sit alongside as extra keys.
+
+```json
+{
+  "sources": [
+    {
+      "type": "http_route",
+      "entry": "POST /api/v2/query @ src/routes/query.py:34",
+      "trust_level": "attacker_controlled"
+    }
+  ],
+  "sinks": [
+    {
+      "type": "db_query",
+      "location": "src/db/query.py:89"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "boundary": "JWT auth middleware",
+      "check": "src/middleware/auth.py:12"
+    }
+  ],
+  "meta": {
+    "target": "path/to/target",
+    "timestamp": "ISO timestamp",
+    "app_type": "web_app|cli|daemon|library",
+    "language": ["python", "go"],
+    "frameworks": ["flask", "sqlalchemy"],
+    "auth_model": "session|token|api_key|none|mixed"
+  },
+  "entry_points": [
+    {
+      "id": "EP-001",
+      "type": "http_route|cli_arg|file_read|socket|queue|ipc|deserialize",
+      "method": "POST",
+      "path": "/api/v2/query",
+      "file": "src/routes/query.py",
+      "line": 34,
+      "accepts": "JSON body: {query: string, params: object}",
+      "auth_required": true,
+      "notes": "Auth check at line 38, but only validates token format, not permissions"
+    }
+  ],
+  "sink_details": [
+    {
+      "id": "SINK-001",
+      "type": "db_query|shell_exec|file_write|file_read|deserialize|network|template|crypto",
+      "operation": "cursor.execute(raw_sql)",
+      "file": "src/db/query.py",
+      "line": 89,
+      "reaches_from": ["EP-001"],
+      "trust_boundaries_crossed": ["TB-001"],
+      "parameterized": false,
+      "notes": "Query string built via f-string at line 87"
+    }
+  ],
+```
+
+For memory-corruption / arithmetic / bounds sinks (CWE-119/120/121/122/125/787/190/191/476), optionally include SMT-checkable path conditions on the sink_detail. The bridge propagates them into attack-paths.json so /validate Stage B's SMT pre-flight ([B-3.1.5]) doesn't have to re-extract from source. Skip for sinks where SMT doesn't apply (XSS/SQLi/cmdi etc — Z3 can't reason about strings the way string-sanitizer-bypass needs):
+
+```json
+{
+  "sink_details": [
+    {
+      "id": "SINK-002",
+      "type": "buffer_write",
+      "operation": "strcpy(buf, argv[1])",
+      "file": "src/util.c",
+      "line": 42,
+      "path_conditions": ["strlen(argv[1]) >= 16"],
+      "path_profile": "uint64"
+    }
+  ],
+  "boundary_details": [
+    {
+      "id": "TB-001",
+      "type": "auth_check|authz_check|input_validation|privilege_drop",
+      "file": "src/middleware/auth.py",
+      "line": 12,
+      "covers": ["EP-001", "EP-002"],
+      "gaps": "EP-003 bypasses this middleware via direct import at src/admin/bulk.py:67"
+    }
+  ],
+  "unchecked_flows": [
+    {
+      "entry_point": "EP-003",
+      "sink": "SINK-002",
+      "missing_boundary": "No auth check on admin bulk endpoint"
+    }
+  ]
+}
+```
+
+## Gates
+
+GATES APPLY: U1 [READ-FIRST], U2 [ATTACKER-LENS], U5 [EVIDENCE-ONLY]
+
+Do not populate `sources`, `sinks`, or `entry_points` from file names or common patterns alone — read the code and verify.
+
+**[MAP-5] Normalise context-map**
+
+Right after writing `context-map.json`, run the normaliser. It uses the
+checklist in the same dir as ground truth to:
+- backfill missing `name` fields on entry_points / sink_details from line ranges
+- normalise file paths (strip leading `./`, convert absolute paths under
+  the target into relative ones)
+- warn (non-fatal) on hallucinated files / out-of-range line numbers /
+  cross-reference typos in `unchecked_flows`
+
+```bash
+libexec/raptor-normalize-context-map "$WORKDIR"
+```
+
+Idempotent — safe to re-run. Skip this step only if `$WORKDIR/checklist.json`
+doesn't exist (e.g. you skipped MAP-0 inventory build).
+
+When you can, include the function `name` directly on each entry_point and
+sink_detail you emit — it helps the normaliser skip backfill and is
+clearer for human reviewers.
+
+**[MAP-5b] Enrich entry points with forward-reachable closures**
+
+After normalisation, run the call-graph enricher. Uses the inventory to
+attach a `forward_reachable` field to each entry point, listing the
+internal functions and external dep calls transitively reachable from
+the entry's host function.
+
+```bash
+libexec/raptor-enrich-context-map-callgraph "$WORKDIR"
+```
+
+The enriched context-map.json carries machine-derived "this entry
+reaches N internal + M external" data alongside the LLM's narrative —
+useful for `/diagram` rendering and downstream consumers (audit
+prioritisation, validate Stage F). Idempotent. Skip if
+`$WORKDIR/checklist.json` doesn't exist or doesn't carry `target_path`.
+
+**[MAP-5c] Enrich entry points and sinks with per-function AST views**
+
+After normalisation, run the AST-view enricher. Uses the inventory to
+attach an `ast_view` field to each entry point and sink whose
+`(file, line)` resolves to an enclosing function: signature, calls
+made inside the body, explicit returns, inline-asm flag.
+
+```bash
+libexec/raptor-enrich-context-map-ast-view "$WORKDIR"
+```
+
+The enriched context-map.json carries machine-derived structure (what
+the function *is*) alongside the LLM's narrative (what the function
+*does*). Downstream consumers — `/audit` Phase A per-function review,
+`/validate` Stage B path enumeration, `/diagram` rendering — can read
+this without re-parsing source. Idempotent. Skip if
+`$WORKDIR/checklist.json` doesn't exist or doesn't carry `target_path`.
+
+**[MAP-5d] Enrich with ownership / privilege / shared-state / crypto sites (C/C++)**
+
+After normalisation, run the site enricher. Uses `source_intel` (cocci) to
+attach four Phase B sections, each entry carrying `kind`, `file`, `line`,
+and `function`:
+
+* `ownership_model` — alloc / checked-alloc / paired-free / double-free sites
+  (extras: `allocator`, `free_fn`, `role`)
+* `privilege_model` — capability-check / LSM-hook sites
+  (extras: `name`, `grade`)
+* `shared_state` — lock acquire/release sites covering kernel spinlock /
+  mutex / rwlock and POSIX `pthread_mutex` (kernel: variants `_irq`,
+  `_irqsave`, `_bh`, `_interruptible`, `_killable`, `_trylock`; rw: read /
+  write variants). Entry `kind` is the compound `<lock_kind>_<op>`
+  (e.g. `spin_acquire`, `mutex_release`); extras: `fn` (concrete function
+  matched, e.g. `spin_lock_irqsave`), `lock_var` (first-arg expression,
+  whitespace-normalised). Atomics, RCU, and C++ scope-based locks
+  (`std::lock_guard`) are intentionally out of scope here — each has
+  semantics worth its own evidence shape and is deferred.
+* `crypto_inventory` — cryptographic primitive calls + RNG sources. Entry
+  `kind` is the call kind (`primitive_call` or `rng_source`); extras:
+  `api` (`openssl` / `kernel` / `libsodium` / `libc`) and `fn` (concrete
+  function matched, e.g. `EVP_EncryptInit_ex`). Covers OpenSSL modern EVP
+  + legacy primitives (AES_/SHA_/HMAC_/DES_/RC4_/MD5_/BF_), Linux kernel
+  crypto API (`crypto_alloc_*`, `crypto_skcipher_*`, `crypto_shash_*`,
+  `crypto_ahash_*`, `crypto_aead_*`), libsodium (`crypto_secretbox_*`,
+  `crypto_box_*`, `crypto_sign_*`, `crypto_aead_*`, `crypto_pwhash_*`),
+  and RNG sources (`RAND_bytes`, `randombytes_buf`, `getrandom`,
+  `get_random_bytes`, libc `rand`/`random`). MbedTLS, Windows BCrypt,
+  Bouncy Castle / Java crypto, and C++ wrappers (Botan, Crypto++) are
+  intentionally out of scope here — add as separate rules when target
+  corpus shows demand. **Soundness**: identifier matching is name-only;
+  a non-crypto project that defines its own `SHA256_Update` will fire.
+  Short names (`rand`, `random`) have highest collision risk.
+
+```bash
+libexec/raptor-enrich-context-map-sites "$WORKDIR"
+```
+
+These are the *mechanical* halves of those sections — deterministic call
+sites, no LLM. (Semantic analysis — refcount-protocol anomalies, ownership
+transfers, privilege bypass paths, lock imbalance — is the LLM's job when
+you populate the narrative. Lock *imbalance* specifically has its own
+finding-style cocci at `engine/coccinelle/rules/lock_imbalance.cocci` for
+the bug-shape; this enrichment is enumeration only.) Skip-silent: no-ops on
+non-C/C++ targets or when `spatch` isn't on PATH, so it only adds a cocci
+pass where it has something to find. Idempotent. Skip if
+`$WORKDIR/checklist.json` lacks `target_path`.
+
+**[MAP-5e] Enrich with frida runtime evidence (automatic)**
+
+After normalisation, merge any frida runtime evidence discovered in sibling
+run directories. This is automatic and best-effort — if no frida evidence
+exists, it no-ops silently.
+
+```bash
+libexec/raptor-enrich-context-map-frida "$WORKDIR"
+```
+
+Merges function-level runtime observations (which functions were called, how
+many times, with what arguments) from frida `events.jsonl` into the
+context-map's entry points and sinks. Entry points and sinks that frida
+confirmed at runtime get a `runtime_confirmed: true` annotation. Idempotent.
+Skip-silent when no frida evidence is discoverable.
+
+**[MAP-5f] Enrich with mechanically-discovered sinks and framework APIs**
+
+After normalisation, run the sink enricher. Uses the call graph to:
+
+* **Discover direct sinks** — functions that call dangerous targets
+  (`os.execute`, `subprocess.Popen`, `eval`, `loadstring`, `io.popen`,
+  etc.) — merged into `sink_details` with `source: "mechanical"`
+* **Compute reverse reachability** — entry points that can transitively
+  reach a dangerous sink through the call chain get a `reachable_sinks`
+  field listing which dangerous targets are reachable
+* **Discover framework APIs** — high-frequency call targets spanning
+  many files, added to `meta.frameworks_discovered`. Autonomous — works
+  for niche frameworks (LuCI, OpenResty) without a registry
+
+```bash
+libexec/raptor-enrich-context-map-sinks "$WORKDIR"
+```
+
+Language-agnostic: uses call graphs from any language extractor
+(Python, JS, C, C++, Lua, Go, Java). Complements MAP-3 (LLM's sink
+catalog) with mechanical ground truth. Limitation: reverse
+reachability is intra-file only (same-file call edges); cross-file
+call chains are visible to the LLM but not to this enricher.
+Idempotent. Skip if `$WORKDIR/checklist.json` lacks `target_path`.
+
+**[MAP-5g] Enrich sinks with target-mitigation context (optional)**
+
+When `--binary <path>` was supplied, augment each sink under `sinks[]`
+with a `mitigation_context` blob describing which classical exploitation
+primitives (`arbitrary_write`, `%n write`, `got_overwrite`, `.fini_array`,
+`hook_overwrite`, `stack_smash`) the target's build actually permits
+given its NX / RELRO tier / canary / FORTIFY / glibc-`%n`-disabled
+state. Each entry carries a `priority_hint` combining primitive
+availability with the sink's CWE.
+
+```bash
+libexec/raptor-enrich-context-map-mitigation "$WORKDIR"
+```
+
+Opt-in — no-op when no binary path is available. Additive — sinks are
+never dropped, only enriched. Namespaced under `source:
+"exploit_feasibility.analyze_binary"` so parallel enrichers can coexist.
+Tri-state honest — `format_n_write: null` means CONDITIONAL, distinct
+from `false`; consumers must not collapse `null` to `false`. Cache-keyed
+on `(binary_sha256, build_flags_source, schema_version)` — one
+`analyze_binary` call per run. Idempotent.
+
+**[MAP-5h] Build Joern CPG cache (optional)**
+
+When Joern is available and the target contains C/C++/Java/Scala source,
+pre-build a cached CPG so that later `/audit` and `/agentic` runs can
+query callers/callees without the cold-start penalty:
+
+```bash
+libexec/raptor-build-cpg-cache "$RESOLVED_TARGET" "$WORKDIR"
+```
+
+Opt-in — skipped when Joern is not installed or the target has no
+supported source files. Writes `cpg-cache-manifest.json` to `$WORKDIR`.
+
+**[MAP-5i] Enrich with Joern taint-flow confirmation (optional)**
+
+After building the CPG cache (MAP-5h), confirm which entry-point → sink
+pairs have a mechanically-verified taint flow. Annotates entry points
+with `has_taint_flow` and `taint_reaches_sinks`, sinks with
+`taint_reached_from`, and adds a `taint_summary` to the context map.
+
+```bash
+libexec/raptor-enrich-context-map-taint "$WORKDIR"
+```
+
+Opt-in — skipped when no CPG cache exists or Joern is not installed.
+Caps at 500 (entry × sink) pairs to prevent combinatorial explosion.
+Idempotent. Downstream consumers: `/validate` Stage B imports
+`has_taint_flow` via the understand bridge, pre-confirming B-3.1
+reachability. `/diagram` renders confirmed flows as solid edges.
+
+**[MAP-6] Record Coverage**
+
+After writing `context-map.json`, update the inventory with which functions you examined.
+Write a JSON array of every function you read and analysed (entry points, sinks, trust boundary
+checks) to `$WORKDIR/reviewed-items.json`, then run the coverage recorder:
+
+Record coverage using the understand command's Step 3:
+```bash
+libexec/raptor-coverage-summary "$WORKDIR" --mark src/routes/query.py:handle_query src/db/query.py:run_query
+```
+
+This updates the coverage record so `/project coverage` reflects what was examined.
+
+**[MAP-7] Runtime Probe (optional)**
+
+When the target ships an executable binary alongside the source —
+e.g. a CLI tool, a built service, or a packaged scanner — you can
+corroborate the static map with a runtime observation. The probe
+runs the binary under `sandbox(observe=True)` and records every
+path it reads/writes/stat's plus every connect target it attempts;
+the resulting profile is merged into `context-map.json` under a
+`runtime_observation` key with correlations against your entry
+points and sinks.
+
+This is **opt-in** because:
+- many /understand targets don't have a runnable binary;
+- probing executes the binary, which the operator must consent to;
+- the observation is one execution path — entry points the binary
+  didn't reach in this run aren't refuted, just unconfirmed.
+
+Run the probe via the CLI shim and merge the JSON output:
+
+```bash
+raptor-sandbox-observe --json --out "$WORKDIR/probe" -- \
+    /path/to/binary [args...] > "$WORKDIR/probe.json"
+
+python3 -c "
+import json
+from pathlib import Path
+from core.sandbox.observe_profile import (
+    ConnectTarget, ObserveProfile,
+)
+from core.sandbox.observe_context_merge import (
+    merge_observation_into_context_map,
+)
+
+w = Path('$WORKDIR')
+ctx = json.loads((w / 'context-map.json').read_text())
+probe = json.loads((w / 'probe.json').read_text())
+profile = ObserveProfile(
+    paths_read=probe['paths_read'],
+    paths_written=probe['paths_written'],
+    paths_stat=probe['paths_stat'],
+    connect_targets=[
+        ConnectTarget(**t) for t in probe['connect_targets']
+    ],
+)
+merged = merge_observation_into_context_map(
+    ctx, profile,
+    binary='/path/to/binary',
+    command=['/path/to/binary'] + ['<args>'],
+)
+(w / 'context-map.json').write_text(json.dumps(merged, indent=2))
+"
+```
+
+After merge, `context-map.json` has a new `runtime_observation`
+section with:
+- the full path/connect record;
+- `correlations.entry_points_runtime_confirmed`: IDs of entry
+  points whose source file the binary actually opened;
+- `correlations.sinks_runtime_confirmed`: IDs of sinks whose
+  source file the binary opened for write;
+- `correlations.external_reach`: list of ip:port the binary
+  attempted (often complements egress proxy log).
+
+When you display the MAP summary to the user, surface a runtime
+section if `runtime_observation` is present:
+
+> Runtime probe: N paths read, N writes, N connects.
+> Confirmed entry points: EP-001, EP-007.
+> Confirmed sink writes: SINK-002.
+
+## Output
+
+OUTPUT: `$WORKDIR/context-map.json`
+
+Display a summary to the user after writing:
+- N entry points found (N require auth, N are public)
+- N trust boundaries found (N gaps identified)
+- N sinks found (N have unchecked flows)
+- Recommended next step: `--trace <entry-point-id>` for highest-risk unchecked flow

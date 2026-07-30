@@ -1,0 +1,316 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      custom_branch:
+        description: 'Branch/ref to test (leave empty to use the triggering ref). Use this to run the full gate against a release branch that conflicts with main and so cannot run via pull_request.'
+        required: false
+        default: ''
+
+concurrency:
+  # Include the dispatch input so a manual run against a release branch gets its
+  # own group instead of sharing (and cancelling) the push/PR run on the
+  # triggering ref. Empty for push/pull_request, so their behavior is unchanged.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.custom_branch }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        # Honor the workflow_dispatch custom_branch input; falls back to the
+        # triggering ref for push/pull_request (input is empty there).
+        ref: ${{ inputs.custom_branch || github.ref }}
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+        cache: 'pip'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        # Retry to ride out transient registry/network blips during dep
+        # resolution: a single PyPI/GitHub hiccup was hard-failing the leg.
+        # `uv sync` has no internal retry across the full resolve+download.
+        # A real lockfile problem fails all 3 attempts identically, so this
+        # only absorbs flakes — it never masks a genuine resolution error.
+        attempt=1; max=3
+        until uv sync --frozen --extra browser --extra dev --extra markdown; do
+          if [ "$attempt" -ge "$max" ]; then
+            echo "::error::uv sync failed after $max attempts" >&2
+            exit 1
+          fi
+          echo "::warning::uv sync attempt $attempt failed; retrying in $((attempt * 15))s" >&2
+          sleep $((attempt * 15))
+          attempt=$((attempt + 1))
+        done
+
+    - name: Assert core imports without optional adapter extras
+      # This job uses the canonical lean install (browser+dev+markdown, no
+      # `mcp`/`server`). Since the test matrix now installs those extras, this
+      # is the remaining per-PR guard that the core package still imports
+      # without fastmcp/fastapi present — a stray top-level `import fastmcp` in
+      # non-adapter code would ImportError here, catching the regression before
+      # it reaches the release-time smoke test in publish.yml.
+      #
+      # `notebooklm_cli` (not `cli.grouped`) is imported because it is the
+      # console-script entrypoint that builds the full command tree via
+      # `cli.add_command(...)`, including `cli/mcp_cmd.py` — the most likely
+      # place a stray `import fastmcp` would land. `cli.grouped` only defines
+      # the Click Group subclass and traverses none of the command modules.
+      # `client` + `artifacts` cover the primary public Python-API surface
+      # (`from notebooklm import NotebookLMClient`). Since the lean install has
+      # neither fastmcp nor fastapi, a stray top-level import of either from any
+      # core/`_app` module reachable here fails the step. The `notebooklm-server`
+      # adapter is intentionally NOT imported: it legitimately requires fastapi
+      # (so it can't load on the lean install) and is exercised by the `test`
+      # matrix instead — `server` is not wired into the CLI command tree.
+      run: uv run python -c "import notebooklm, notebooklm.notebooklm_cli, notebooklm.client, notebooklm.artifacts"
+
+    - name: Run pre-commit checks
+      run: uv run pre-commit run --all-files
+
+    - name: Run type checking
+      run: uv run mypy src/notebooklm --ignore-missing-imports
+
+    - name: Assert workflow permissions are scoped
+      run: uv run python scripts/check_workflow_permissions.py
+
+    - name: Assert workflow secret-bearing jobs are gated
+      # Companion to the permissions check: prevents a new
+      # ``${{ secrets.NAME }}`` reference from landing without picking up
+      # a job-level ``environment:`` declaration or a step-level
+      # ``is_standard`` guard. See docs/development.md →
+      # "Workflow secret gates".
+      run: uv run python scripts/check_workflow_secret_gates.py
+
+    - name: Assert third-party actions in privileged workflows are SHA-pinned
+      # Supply-chain gate: every third-party action (non ``actions/*``) in
+      # publish / testpypi-publish / claude / rpc-health / nightly /
+      # verify-package must use a 40-char commit SHA, not a floating
+      # ``@v1`` / ``@release/v1`` / branch ref. Dependabot bumps the
+      # SHAs weekly via the grouped ``actions`` updates in
+      # ``.github/dependabot.yml``.
+      run: uv run python scripts/check_action_pinning.py
+
+    - name: Assert no deprecation targets the shipping version
+      # Release gate: a DeprecationWarning must never name the version in
+      # pyproject.toml as its removal target. Lapsed shims are allowlisted
+      # inside the script with a tracking issue.
+      run: uv run python scripts/check_deprecation_targets.py
+
+    - name: Assert coverage thresholds match
+      run: uv run python scripts/check_coverage_thresholds.py
+
+    - name: Assert CI install matches CONTRIBUTING.md
+      run: uv run python scripts/check_ci_install_parity.py
+
+    - name: Assert repo-structure map (docs/architecture.md) is fresh
+      run: uv run python scripts/check_claude_md_freshness.py
+
+    - name: Assert doc module references are fresh
+      # Companion to the CLAUDE.md freshness gate: guards the rest of the docs
+      # against stale module paths. Every relative link into src/notebooklm/
+      # must resolve, and every inline module ref in the live docs must point at
+      # a real module (rare historical mentions are allowlisted, shrink-only).
+      run: uv run python scripts/check_docs_module_refs.py
+
+    - name: Audit public API compatibility
+      # ``--check-stale`` also fails when an allowlist entry matches no break
+      # against the baseline (it is already in the baseline). This forces the
+      # allowlist to be pruned at each release boundary instead of silently
+      # accumulating cruft. See docs/releasing.md → prune-allowlist-at-release.
+      run: uv run python scripts/audit_public_api_compat.py --check-stale
+
+    - name: Assert per-method RPC coverage
+      # Static check: each RPCMethod member must have at least one test
+      # reference AND at least one cassette body containing its RPC id.
+      # Pre-existing gaps are grandfathered via PREEXISTING_GAPS inside the
+      # script — that set is a one-way ratchet and must not grow.
+      run: uv run python tests/scripts/check_method_coverage.py
+
+    - name: Verify e2e test fixtures
+      run: uv run pytest tests/e2e --collect-only -q
+
+  test:
+    name: Test (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    needs: quality
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    env:
+      # Pin Playwright's browser install dir to a single workspace-relative
+      # path on every OS. The previous dual-path cache stanza (``~/.cache``
+      # + ``~/AppData/Local``) intermittently failed the cache restore on
+      # Windows with ``actions/cache@v5`` — the missing Linux path tripped
+      # the post-restore validation on a cache hit. Pinning the path here
+      # lets the cache stanza below carry exactly one entry on every OS.
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        # Honor the workflow_dispatch custom_branch input; falls back to the
+        # triggering ref for push/pull_request (input is empty there).
+        ref: ${{ inputs.custom_branch || github.ref }}
+        persist-credentials: false
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        enable-cache: true
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        # Retry to ride out transient registry/network blips during dep
+        # resolution: a single PyPI/GitHub hiccup on one matrix entry was
+        # hard-failing the whole leg while the other 14 passed. `uv sync`
+        # has no internal retry across the full resolve+download. A real
+        # lockfile problem fails all 3 attempts identically, so this only
+        # absorbs flakes — it never masks a genuine resolution error.
+        #
+        # `mcp` + `server` + `impersonate` are installed here (on top of the
+        # canonical browser+dev+markdown set) so the MCP, server, and curl_cffi
+        # suites (`tests/unit/mcp`, `tests/integration/mcp_vcr`, `tests/server`,
+        # `tests/unit/test_curl_cffi_transport_poc.py`) run in the main matrix
+        # instead of being importorskip'd — that gives
+        # `src/notebooklm/{mcp,server}/**` and `_curl_cffi_transport.py` real
+        # coverage in coverage.json (no 0% blind spot) across the full
+        # 3.10–3.14 × 3-OS matrix, which also proves curl_cffi's native wheels
+        # resolve on every OS/Python. `cookies` is deliberately excluded:
+        # rookiepy fails on Python 3.13/3.14 (see check_ci_install_parity.py).
+        #
+        # Tradeoff: the deleted MCP/server jobs each enforced a *scoped*
+        # `--cov=src/notebooklm/{mcp,server} --cov-fail-under=90`. mcp/server (and
+        # the curl_cffi adapter) are now covered only by the global aggregate gate
+        # below — no per-subpackage floor backfills them, so a subpackage could
+        # regress within the aggregate's headroom. Add entries to
+        # `[tool.notebooklm.per_file_coverage_floors]` if that backstop is
+        # wanted back.
+        attempt=1; max=3
+        until uv sync --frozen --extra browser --extra dev --extra markdown --extra mcp --extra server --extra impersonate; do
+          if [ "$attempt" -ge "$max" ]; then
+            echo "::error::uv sync failed after $max attempts" >&2
+            exit 1
+          fi
+          echo "::warning::uv sync attempt $attempt failed; retrying in $((attempt * 15))s" >&2
+          sleep $((attempt * 15))
+          attempt=$((attempt + 1))
+        done
+
+    - name: Assert curl_cffi imports (native wheel; no silent skip)
+      # The matrix installs --extra impersonate, so curl_cffi MUST import on every
+      # OS/Python. It's a native wheel: if it installs but fails to import, the
+      # importorskip'd curl_cffi suites would silently skip in the coverage run
+      # rather than fail. This makes a broken native import a hard error.
+      shell: bash
+      run: uv run python -c "import curl_cffi"
+
+    - name: Get Playwright version
+      id: playwright-version
+      shell: bash
+      run: |
+        echo "version=$(uv pip show playwright | grep '^Version:' | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v6
+      # Tolerate transient cache-backend failures: a miss already falls
+      # through to the install step below, and a backend hiccup should be
+      # treated the same. Without this, a 29s backend flake on a single
+      # matrix entry hard-fails the job and skips the entire test run.
+      continue-on-error: true
+      with:
+        path: ${{ github.workspace }}/.playwright-browsers
+        # ``-ws`` suffix invalidates archives keyed to the prior dual-path
+        # stanza so first restores after this change land on the new path.
+        key: playwright-${{ matrix.os }}-${{ steps.playwright-version.outputs.version }}-ws
+
+    - name: Install Playwright browsers
+      run: uv run playwright install chromium
+
+    - name: Install Playwright system dependencies (Linux)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        if ! timeout 180s uv run playwright install-deps chromium; then
+          echo "::warning::Playwright system dependency installation timed out or failed."
+          echo "::warning::Continuing so the non-browser test matrix can run."
+        fi
+
+    - name: Assert cassettes are sanitized
+      # Runs on all matrix entries (ubuntu, macos, windows × 5 Python versions).
+      # An earlier bash-only gate was replaced by a portable Python invocation
+      # so the check runs uniformly across the cross-platform test matrix.
+      #
+      # ``--strict`` flips the repair-allowlist from "best-effort suppressor"
+      # to "must be empty" — the phase-2 cassette cleanup is done, so any
+      # entry sneaking back in is a CI failure (P1-5).
+      # ``--recursive`` extends the scan from ``tests/cassettes/*.yaml`` to
+      # ``tests/cassettes/**/*.yaml`` so a recorder can't smuggle a leak
+      # into a nested folder like ``tests/cassettes/gzip_coverage/`` (P1-5).
+      run: uv run python tests/scripts/check_cassettes_clean.py --strict --recursive
+
+    - name: Check fixtures for credential leaks
+      # The cassette guard above is scoped to ``tests/cassettes/*.yaml``. Golden
+      # RPC fixtures live under ``tests/fixtures/`` as ``.json`` (and one
+      # captured ``.html`` page), which embed the same WIZ_global_data shapes —
+      # a Google API key smuggled into a golden HTML fixture would otherwise
+      # slip past CI entirely (the GET_INTERACTIVE_HTML.json class). ``--secrets
+      # -only`` scans .json/.html/.yaml for high-severity credential shapes
+      # (Google auth tokens + API keys) without tripping on the intentional
+      # placeholder content (``"Scrubbed ..."`` names, test emails) that fills
+      # those fixtures.
+      run: uv run python tests/scripts/check_cassettes_clean.py --secrets-only --recursive tests/fixtures
+
+    - name: Run tests with coverage
+      # ``-n auto --dist loadgroup`` parallelizes the ~11k-test suite across the
+      # runner's cores (pytest-xdist is already a dev dep). ``loadgroup`` honors
+      # ``@pytest.mark.xdist_group`` — the isolation escape hatch for tests touching
+      # process-global state (tests/integration/concurrency/conftest.py); unmarked
+      # tests distribute like ``load``. The suite is parallel-safe via per-test
+      # ``NOTEBOOKLM_HOME`` tmp isolation, and pytest-cov merges per-worker coverage
+      # automatically, so the coverage.json + per-file floors below are unaffected.
+      #
+      # Emit coverage.json so the per-file floor check below can read it without
+      # re-running the suite. ``term-missing`` is kept so build logs still show the
+      # missing-lines summary.
+      run: uv run pytest -n auto --dist loadgroup --cov=src/notebooklm --cov-report=term-missing --cov-report=json:coverage.json --cov-fail-under=90
+
+    - name: Assert per-file coverage floors
+      # Linux-only because ``coverage.json`` on Windows records backslash
+      # paths (e.g. ``src\notebooklm\cli\doctor.py``) that won't match the
+      # forward-slash keys in ``[tool.notebooklm.per_file_coverage_floors]``
+      # in pyproject.toml. macOS uses forward slashes and would also work,
+      # but a single OS is enough — the floors are platform-independent.
+      if: runner.os == 'Linux'
+      run: uv run python scripts/check_coverage_thresholds.py --coverage-json coverage.json

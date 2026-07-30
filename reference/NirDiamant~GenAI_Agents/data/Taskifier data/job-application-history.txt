@@ -1,0 +1,4 @@
+<!-- Harvested from https://github.com/NirDiamant/GenAI_Agents/blob/HEAD/data/Taskifier data/job-application-history.txt -->
+> **Source:** [`NirDiamant/GenAI_Agents`](https://github.com/NirDiamant/GenAI_Agents) → `data/Taskifier data/job-application-history.txt`
+
+In the last month, I applied to 5 jobs a day. For each job application, I always avoid the long responses like why I am interested in the company and similar. Those are way too troublesome for me and I tend to need extra time for giving a well-organized response. 

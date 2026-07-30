@@ -1,0 +1,72 @@
+# Python virtual environments
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Python cache (redundant patterns for npm glob compatibility)
+__pycache__
+__pycache__/
+*.pyc
+*.pyo
+
+# Node modules (dashboard frontend)
+**/node_modules/
+
+# Build artifacts
+dashboard-ui/dist/
+**/.next/
+**/build/
+
+# vscode-extension/ is deprecated as of v7.2.0 and excluded from npm tarballs.
+# Source remains in the repo for users who want to build locally.
+vscode-extension/
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files
+tests/
+**/*.test.js
+**/*.test.ts
+**/*.spec.js
+**/*.spec.ts
+**/*_test.js
+**/*_test.ts
+
+# Development files
+.git/
+.github/
+.loki/
+*.log
+.DS_Store
+
+# Docker files (not needed for npm)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Benchmarks and examples (not needed for npm)
+benchmarks/
+examples/
+
+# Large binary assets (excluded from docs/ allowlist)
+docs/*.gif
+docs/*.pptx
+docs/screenshots/
+
+# Python test files (exclude from all subdirectories)
+**/test_*.py
+**/tests/
+
+# Learning module build artifacts
+learning/__pycache__/
+
+# Dashboard frontend source (keep server.py only)
+dashboard/frontend/
+dashboard/.venv/
+dashboard/__pycache__/

@@ -1,0 +1,46 @@
+---
+name: analyze-raptor-llm-analysis
+description: "Analyze existing SARIF findings with LLM"
+category: general-purpose
+source_repo: gadievron/raptor
+source_path: ".claude/commands/analyze.md"
+source_url: https://github.com/gadievron/raptor/blob/HEAD/.claude/commands/analyze.md
+---
+
+
+# /analyze - RAPTOR LLM Analysis
+
+Analyzes existing SARIF files with LLM (for findings from previous scans).
+
+Execute: `python3 raptor.py analyze --repo <path> --sarif <sarif-file>`
+
+**`--help` / `-h`:** If the user passes only `--help` or `-h`, run `python3 raptor.py analyze --help` and present its output. That command is side-effect-free (no run, lifecycle, output directory, or LLM dispatcher) and is the complete, authoritative flag list — do NOT start analysis or hand-summarise flags from this doc.
+
+Use when you already have SARIF findings and want LLM analysis.
+
+## Multi-model support
+
+The same `--model`, `--consensus`, `--judge`, and `--aggregate` flags from `/agentic`
+work here. When any role flag is provided, `/analyze` preps findings
+then dispatches them through the parallel orchestrator:
+
+```
+# Analyze with a specific model
+python3 raptor.py analyze --repo /path --sarif findings.sarif --model gemini-2.5-pro
+
+# Add consensus + judge
+python3 raptor.py analyze --repo /path --sarif findings.sarif \
+  --model gemini-2.5-pro --consensus claude-opus-4-6 --judge gpt-5.4
+
+# Multi-model analysis + final aggregation
+python3 raptor.py analyze --repo /path --sarif findings.sarif \
+  --model claude-opus-4-6 --model gpt-5.4 --aggregate claude-sonnet-4-6
+```
+
+Without role flags, `/analyze` runs the sequential single-model path as before.
+
+---
+
+---
+
+**Source:** [`gadievron/raptor`](https://github.com/gadievron/raptor) → `.claude/commands/analyze.md`

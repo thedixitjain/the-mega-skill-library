@@ -1,0 +1,87 @@
+[
+  {
+    "id": "rc-01",
+    "reference": "COMPETITOR MOVES: Otterly adds Perplexity tracker, joining Profound and LLMRefs in multi-platform citations.\nBACKLINK OPPORTUNITIES: 3 SEO directories (G2, Capterra, GetApp) have not been claimed.\nAGENCY BLUEPRINT: Top 2 agency sites bundle GEO audit + content refresh as $3K/mo tier.\nACTION ITEMS: Build Perplexity citation test into GeoXylia audit; claim G2 listing by Friday.",
+    "rubric": "Score 1.0 if all 4 section headings present in correct order, each with a substantive (not generic) 1-sentence content. Score 0.5 if headings present but content is generic. Score 0.0 if any heading missing or order wrong.",
+    "project": "research-cron-output",
+    "intent": "Weekly Competitive Deep Dive for GeoXylia. The competitor otterly.ai just added a Perplexity citation tracker. Produce the report header (top section) in our standard format: COMPETITOR MOVES, BACKLINK OPPORTUNITIES, AGENCY BLUEPRINT, ACTION ITEMS. Keep it to 4 lines, one per section heading with a 1-sentence placeholder.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "research-cron-output"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  },
+  {
+    "id": "rc-02",
+    "reference": "1. 'ai seo audit tool': 420 imp, pos 8.2, on page 1 \u2014 needs CTR lift (snippet/schema).\n2. 'geo audit tool': 230 imp, pos 12.5, page 2 \u2014 target blog post could push to page 1.\n3. 'llm optimization': 85 imp, pos 18.3, deep page-2 \u2014 fresh content with answer capsule could compete.",
+    "rubric": "Score 1.0 if the response correctly identifies 'ai seo audit tool', 'geo audit tool', and 'llm optimization' as the top 3 (NOT 'best free seo audit' which is already converting well, NOT 'free audit tool' which has too few impressions). Each must have correct impression count, position, and a substantive rationale. Score 0.5 if correct 3 keywords but rationale is weak. Score 0.0 if wrong keywords selected.",
+    "project": "research-cron-output",
+    "intent": "GSC keyword opportunity scan. From this snippet of GSC data, identify the top 3 keyword opportunities (high impressions, low CTR, position 5-15):\n\n1. 'ai seo audit tool' \u2014 420 imp, 12 clicks, pos 8.2\n2. 'best free seo audit' \u2014 1100 imp, 95 clicks, pos 4.1\n3. 'geo audit tool' \u2014 230 imp, 4 clicks, pos 12.5\n4. 'llm optimization' \u2014 85 imp, 1 click, pos 18.3\n5. 'free audit tool' \u2014 50 imp, 0 clicks, pos 22.0\n\nOutput: one line per opportunity, format 'KEYWORD: impressions, position, why-it-matters (1 short clause)'.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "research-cron-output"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  },
+  {
+    "id": "rc-03",
+    "reference": "Google AI Overviews now show source links more prominently + author bylines. For GeoXylia: this favors pages with clear authorship (add author schema to blog posts). Action: this week, add author + E-E-A-T schema markup to top 10 blog posts. Source: Google Search Central blog.",
+    "rubric": "Score 1.0 if: (a) under 60 words, (b) names the change, (c) gives GeoXylia-specific implication, (d) gives a concrete action item, (e) cites the source. Score 0.5 if missing 1-2 of these. Score 0.0 if over 60 words or missing 3+.",
+    "project": "research-cron-output",
+    "intent": "Daily Industry News scan. The Google Search Central blog just announced: 'AI Overviews now showing source links more prominently, with author bylines for E-E-A-T-heavy content.' Write a 1-paragraph Telegram alert (max 60 words) for Ethan. Include: 1) what changed, 2) what it means for GeoXylia, 3) any action item.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "research-cron-output"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  },
+  {
+    "id": "rc-04",
+    "reference": "Hi [Name], I saw seo-skill.com's resources page is one of the most-respected SEO learning hubs in the industry \u2014 your 2026 algorithm breakdown was spot-on. We just published a free 2026 AI SEO Audit comparison that your readers would find genuinely useful (no paywall, no signup). It covers the 8 leading AI-audit tools with hands-on screenshots and a clear feature matrix. GeoXylia is the only fully-free option in the comparison, so it's a natural fit for a 'tools to know' section. Mind if I share the link for inclusion?",
+    "rubric": "Score 1.0 if exactly 4 sentences, all four functional pieces present (compliment / mention resource / audience benefit / GeoXylia one-liner), conversational tone, no aggressive sales language. Score 0.5 if 3 of 4 pieces present or tone is too salesy. Score 0.0 if more than 5 sentences or missing 2+ pieces.",
+    "project": "research-cron-output",
+    "intent": "Backlink Outreach draft for the blog post 'Free AI SEO Audit Tool: 2026 Comparison'. The prospect is seo-skill.com (a popular SEO training site with a 'resources' page). Write a 4-sentence outreach email: 1) compliment, 2) mention our resource, 3) explain audience benefit, 4) one-line about GeoXylia.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "research-cron-output"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  },
+  {
+    "id": "rc-05",
+    "reference": "1) DO MORE: AI citation / LLM-mention topics \u2014 the 0.9% CTR at position 9.4 means we're visible but need richer answer capsules to lift CTR. Target 2x posts/week on this cluster.\n2) PAUSE: Pure schema-markup how-tos \u2014 'Schema Markup for SEO' has 0 clicks at position 41, the audience isn't searching this way. Rework as 'How to appear in AI answers' framing.\n3) TEST: 'Perplexity vs ChatGPT citation rates for [niche]' \u2014 unexplored angle, could capture comparison-intent traffic.",
+    "rubric": "Score 1.0 if all 3 are specific (not generic), cite actual data from the prompt, and contain a clear actionable change. Score 0.5 if 2 of 3 are specific. Score 0.0 if generic advice or no data citations.",
+    "project": "research-cron-output",
+    "intent": "Performance \u2192 Strategy feedback loop. Last week's top blog post was 'AI Citation Audit: Does Your Site Appear in ChatGPT?' with 4,200 impressions and 38 clicks (CTR 0.9%, position 9.4). The bottom post was 'Schema Markup for SEO: A 2026 Guide' with 110 impressions and 0 clicks (CTR 0%, position 41). Write 3 specific strategy adjustments: 1) what to do more of, 2) what to pause, 3) what new topic to test.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "research-cron-output"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  }
+]

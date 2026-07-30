@@ -1,0 +1,2 @@
+error: invalid path 'examples/data/hotel_invoices/extracted_invoice_json /20190119_002_extracted.json'
+fatal: failed to unpack tree object 675785c47c855cb4f644c992b5756f47545e733e

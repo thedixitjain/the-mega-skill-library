@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+node_modules
+dist
+# Exception: loki-ts/dist is the pre-built Bun bundle shipped to containers.
+!loki-ts/dist
+!loki-ts/dist/**
+*.log
+
+# Local state
+.loki
+.env
+.env.*
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Benchmarks (large files)
+benchmarks/datasets
+benchmarks/results
+
+# Blog assets
+blog/
+
+# Source-only directories (not needed in Docker image)
+dashboard-ui/
+tests/
+!tests/docker/
+wiki/
+wiki-repo/
+demo/
+examples/
+api-examples/
+vscode-extension/
+.pytest_cache/
+.claude/
+.github/
+__pycache__
+
+# Development
+*.bak
+*.tmp

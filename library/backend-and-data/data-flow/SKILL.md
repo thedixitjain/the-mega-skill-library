@@ -1,0 +1,114 @@
+---
+name: data-flow
+description: "Generates a Mermaid sequence diagram showing how data moves between components. Use when tracing request flows or documenting data transformation pipelines."
+category: backend-and-data
+source_repo: athola/claude-night-market
+source_path: "plugins/cartograph/skills/data-flow/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/cartograph/skills/data-flow/SKILL.md
+---
+
+
+# Data Flow Diagram
+
+Generate a Mermaid sequence diagram showing how data moves
+between components in a codebase.
+
+## When To Use
+
+- Tracing how a request flows through the system
+- Understanding data transformation pipelines
+- Documenting API call chains
+- Answering "what happens when X is called?"
+
+## When NOT To Use
+
+- Static call structure (use `cartograph:call-chain`)
+- Process steps and state transitions (use `cartograph:workflow-diagram`)
+
+## Workflow
+
+### Step 1: Explore the Codebase
+
+Dispatch the codebase explorer agent:
+
+```
+Agent(cartograph:codebase-explorer)
+Prompt: Explore [scope] and return a structural model.
+Focus on function calls, data transformations, and
+inter-module communication for a data flow diagram.
+```
+
+### Step 2: Generate Mermaid Syntax
+
+Transform the structural model into a Mermaid sequence
+diagram.
+
+**Rules for data flow diagrams**:
+
+- Use `sequenceDiagram` for request/response flows
+- Participants are modules or components (not functions)
+- Arrows show data direction: `->>` for calls,
+  `-->>` for returns
+- Use `activate`/`deactivate` for long-running operations
+- Add `Note over` for data transformations
+- Limit to 8-10 participants maximum
+- Use `alt`/`else` for conditional flows
+- Handle circular calls by showing them once with a note
+
+**Example output**:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Command as /commit
+    participant Sanctum as sanctum.commit
+    participant Leyline as leyline.git_platform
+    participant Git
+
+    User->>Command: /commit
+    Command->>Sanctum: generate_message()
+    Sanctum->>Leyline: get_staged_changes()
+    Leyline->>Git: git diff --cached
+    Git-->>Leyline: diff output
+    Leyline-->>Sanctum: structured changes
+    Note over Sanctum: Classify change type
+    Sanctum-->>Command: commit message
+    Command->>Git: git commit -m "..."
+```
+
+### Step 3: Render via MCP
+
+Call the Mermaid Chart MCP to render:
+
+```
+mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram
+  prompt: "Data flow diagram of [scope/feature]"
+  mermaidCode: [generated syntax]
+  diagramType: "sequenceDiagram"
+  clientName: "claude-code"
+```
+
+If rendering fails, fix syntax and retry (max 2 retries).
+
+### Step 4: Present Results
+
+Show the rendered diagram with a brief description of the
+flow depicted (2-3 sentences).
+
+## Exit Criteria
+
+- [ ] Mermaid `sequenceDiagram` syntax generated with participants
+      and at least one `->>` call arrow
+- [ ] `mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram`
+      called with `diagramType: "sequenceDiagram"` and returns without
+      error (or retry attempted on first failure)
+- [ ] Participant count is at most 10; if more components exist,
+      they are aggregated and the aggregation noted
+- [ ] A 2-3 sentence description of the depicted flow is shown
+      alongside the rendered diagram
+- [ ] Return arrows (`-->>`) are present for any request that has
+      a corresponding response in the traced flow
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/cartograph/skills/data-flow/SKILL.md`

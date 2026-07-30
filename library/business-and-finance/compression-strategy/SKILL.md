@@ -1,0 +1,180 @@
+---
+name: compression-strategy
+description: "Recommends context compression strategies for bloated or quota-heavy sessions. Use when context feels sluggish or quota burns faster than expected."
+category: business-and-finance
+source_repo: athola/claude-night-market
+source_path: "plugins/conserve/skills/compression-strategy/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/conserve/skills/compression-strategy/SKILL.md
+---
+
+# Compression Strategy
+
+Analyze current context usage and recommend optimal compression strategies.
+
+## When To Use
+
+- Context feels bloated or sluggish
+- Before major task phase transitions (plan complete, starting implementation)
+- Token quota burning faster than expected
+- After large tool output accumulations
+
+## When NOT To Use
+
+- Context-optimization skill already handling the scenario
+- Simple queries with minimal context
+- Freshly cleared context
+
+## Required TodoWrite Items
+
+1. `compression-strategy:analyze-context`
+2. `compression-strategy:recommend-strategy`
+3. `compression-strategy:estimate-savings`
+
+## Step 1 – Analyze Context (`analyze-context`)
+
+Run `/context` to check current usage. Then estimate:
+
+1. **Tool output accumulation**: How much context is from tool results vs. conversation?
+2. **Stale content age**: How many turns since critical decisions were made?
+3. **Active files**: Which files are still relevant vs. historical?
+
+## Step 2 – Recommend Strategy (`recommend-strategy`)
+
+Based on analysis, recommend one of:
+
+### Option A: `/clear` and `/catchup`
+
+Best when:
+- Task phase complete (planning done, implementation starting)
+- Context > 60% full
+- Most content is stale
+
+Process:
+1. Save critical state to `.claude/session-state.md`
+2. Run `/clear`
+3. Run `/catchup` to reload active files
+
+### Option B: Spawn Continuation Agent
+
+Best when:
+- Context > 80% full
+- Work in progress, can't stop
+- Delegatable tasks remain
+
+Process:
+1. Run `Skill(conserve:clear-context)` to spawn continuation agent
+2. Agent receives fresh context with saved state
+
+### Option C: Archive and Summarize
+
+Best when:
+- Context 40-60% full
+- Some stale content mixed with active
+- Not ready for full clear
+
+Process:
+1. Archive old decisions/errors to `.claude/context-archive/`
+2. Summarize completed work in memory
+3. Continue with leaner context
+
+### Option D: Delegate to Subagent
+
+Best when:
+- Parallel work possible
+- Independent subtasks exist
+- Context pressure moderate
+
+Process:
+1. Identify delegatable tasks
+2. Spawn specialized agents via `Task` tool
+3. Main context stays lean
+
+## Step 3 – Estimate Savings (`estimate-savings`)
+
+For the recommended strategy, estimate:
+
+| Strategy | Typical Savings | Risk |
+|----------|-----------------|------|
+| /clear and /catchup | 70-90% | Low if state saved |
+| Continuation agent | 80-95% | Low, state preserved |
+| Archive and summarize | 20-40% | Very low |
+| Delegate to subagent | 30-50% | Low, parallel work |
+| Reversible compression (CCR) | 47-92% per archived output | Low, original cached |
+
+The CCR row is per oversized tool output, not whole-context: a large Bash,
+Read, or Grep result is archived to a handle and replaced by a digest for
+future turns. Savings are content-type-dependent (logs compress hard, prose
+barely at all). See `modules/reversible-compression.md`.
+
+## Context Archive Location
+
+Preserved context is saved to:
+```
+.claude/context-archive/pre-compact-YYYYMMDD-HHMMSS-SESSIONID.md
+```
+
+This is automatically created by the `pre_compact_preserve` hook before
+any `/compact` operation.
+
+## Integration Points
+
+- **PreCompact hook**: Automatically preserves context before compression
+- **Tool output summarizer**: Warns when tool outputs accumulate
+- **Context warning hook**: Three-tier alerts at 40%/50%/80%
+
+## Specialized Modules
+
+Load `modules/log-debugging-hygiene.md` when the bloat source is
+pasted log output (debug traces, CI failures, hook logs, JSONL).
+That module documents a three-tier filter-first workflow with
+benchmarked snippets and an honest framing of when compression
+is and is not warranted. On the committed `intake_queue.jsonl`
+fixture, `tail -n 100` beats lossless compression by 25
+percentage points; the module formalizes that asymmetry.
+
+Load `modules/reversible-compression.md` when large tool outputs
+(code search, log dumps, file reads) are the bloat source. That
+module documents the CCR pattern: the `tool_output_summarizer`
+hook archives any oversized output to a content-addressed handle
+under `.claude/context-archive/`, and `context_retrieve.py`
+fetches the original (or a slice) on demand, so the original
+survives `/clear` without staying resident.
+
+## Example Usage
+
+```
+/compression-strategy
+```
+
+Output:
+```
+Context Analysis:
+- Current usage: 52%
+- Tool output: ~15KB (3 tool results)
+- Stale content: ~40% (decisions from 8+ turns ago)
+
+Recommendation: Option C - Archive + Summarize
+- Archive old decisions to context-archive
+- Keep active files and recent decisions
+- Estimated savings: 25-35%
+
+Commands:
+1. Read .claude/context-archive/ to see what's preserved
+2. Summarize completed work
+3. Continue with leaner context
+```
+
+## Exit Criteria
+
+- [ ] Context analyzed: current usage and tool-output share estimated
+- [ ] A single strategy recommended (A-D, or reversible compression) with a
+      stated reason
+- [ ] Savings estimated with the named risk from the Step 3 table
+- [ ] For large tool outputs, the CCR handle and `context_retrieve.py`
+      retrieval command are surfaced (not just a warning)
+- [ ] Recommendation refused or downgraded when the bloat source is dense
+      prose (compresses by roughly nothing)
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/conserve/skills/compression-strategy/SKILL.md`

@@ -1,0 +1,54 @@
+---
+name: changelog-automation
+description: "Automate changelog generation from commits, PRs, and releases following Keep a Changelog format. Use when setting up release workflows, generating release notes, or standardizing commit conventions."
+category: engineering-core
+source_repo: sickn33/agentic-awesome-skills
+source_path: "skills/changelog-automation/SKILL.md"
+source_url: https://github.com/sickn33/agentic-awesome-skills/blob/HEAD/skills/changelog-automation/SKILL.md
+---
+
+
+# Changelog Automation
+
+Patterns and tools for automating changelog generation, release notes, and version management following industry standards.
+
+## Use this skill when
+
+- Setting up automated changelog generation
+- Implementing conventional commits
+- Creating release note workflows
+- Standardizing commit message formats
+- Managing semantic versioning
+
+## Do not use this skill when
+
+- The project has no release process or versioning
+- You only need a one-time manual release note
+- Commit history is unavailable or unreliable
+
+## Instructions
+
+- Select a changelog format and versioning strategy.
+- Enforce commit conventions or labeling rules.
+- Configure tooling to generate and publish notes.
+- Review output for accuracy, completeness, and wording.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+## Safety
+
+- Avoid exposing secrets or internal-only details in release notes.
+
+## Resources
+
+- `resources/implementation-playbook.md` for detailed patterns, templates, and examples.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+
+---
+
+**Source:** [`sickn33/agentic-awesome-skills`](https://github.com/sickn33/agentic-awesome-skills) → `skills/changelog-automation/SKILL.md`
+
+**Also appears in:** `sickn33/agentic-awesome-skills/plugins/agentic-awesome-skills/skills/changelog-automation/SKILL.md`, `sickn33/agentic-awesome-skills/plugins/agentic-awesome-skills-claude/skills/changelog-automation/SKILL.md`, `sickn33/agentic-awesome-skills/plugins/agentic-bundle-oss-maintainer/skills/changelog-automation/SKILL.md`

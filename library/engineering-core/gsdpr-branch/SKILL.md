@@ -1,0 +1,30 @@
+---
+name: gsdpr-branch
+description: "Create a clean PR branch by filtering out .planning/ commits — ready for code review"
+allowed-tools: "Bash Read AskUserQuestion"
+category: engineering-core
+source_repo: davepoon/buildwithclaude
+source_path: "plugins/gsd/skills/pr-branch/SKILL.md"
+source_url: https://github.com/davepoon/buildwithclaude/blob/HEAD/plugins/gsd/skills/pr-branch/SKILL.md
+---
+
+
+<objective>
+Create a clean branch suitable for pull requests by filtering out .planning/ commits
+from the current branch. Reviewers see only code changes, not GSD planning artifacts.
+
+This solves the problem of PR diffs being cluttered with PLAN.md, SUMMARY.md, STATE.md
+changes that are irrelevant to code review.
+</objective>
+
+<execution_context>
+@${CLAUDE_PLUGIN_ROOT}/workflows/pr-branch.md
+</execution_context>
+
+<process>
+Execute the pr-branch workflow from @${CLAUDE_PLUGIN_ROOT}/workflows/pr-branch.md end-to-end.
+</process>
+
+---
+
+**Source:** [`davepoon/buildwithclaude`](https://github.com/davepoon/buildwithclaude) → `plugins/gsd/skills/pr-branch/SKILL.md`

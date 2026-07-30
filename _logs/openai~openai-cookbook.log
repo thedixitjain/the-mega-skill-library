@@ -1,0 +1,6 @@
+error: invalid path 'examples/data/hotel_invoices/extracted_invoice_json /20190119_002_extracted.json'
+fatal: unable to checkout working tree
+warning: Clone succeeded, but checkout failed.
+You can inspect what was checked out with 'git status'
+and retry with 'git restore --source=HEAD :/'
+

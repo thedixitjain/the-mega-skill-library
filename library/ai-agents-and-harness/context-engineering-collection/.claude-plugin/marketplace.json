@@ -1,0 +1,38 @@
+{
+  "name": "context-engineering-marketplace",
+  "owner": {
+    "name": "Muratcan Koylan",
+    "email": "muratcan.koylan@outlook.com"
+  },
+  "metadata": {
+    "description": "Context engineering and harness engineering skills plus a file-based autonomous research-to-skill operating system with measured router-benchmark results across four frontier models",
+    "version": "2.5.0"
+  },
+  "plugins": [
+    {
+      "name": "context-engineering",
+      "description": "Comprehensive context engineering and harness engineering skills for production-grade AI agent systems: fundamentals, degradation patterns, compression, optimization, multi-agent coordination, long-horizon prompting (pseudo-formal task briefs for long-running and parallel agents), memory systems, tool design, filesystem context, hosted agents, evaluation, autonomous harnesses, self-improvement loops (RSI, meta-harnesses, evolutionary scaffold search), latent briefing (KV cache sharing between agents), project development, and cognitive architecture. Ships with a researcher operating system (rubrics, mechanism registry, claim provenance, run state machine, adversarial benchmarks, continuous loop).",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/context-fundamentals",
+        "./skills/context-degradation",
+        "./skills/context-compression",
+        "./skills/context-optimization",
+        "./skills/multi-agent-patterns",
+        "./skills/long-horizon-prompting",
+        "./skills/memory-systems",
+        "./skills/tool-design",
+        "./skills/filesystem-context",
+        "./skills/hosted-agents",
+        "./skills/evaluation",
+        "./skills/advanced-evaluation",
+        "./skills/harness-engineering",
+        "./skills/project-development",
+        "./skills/bdi-mental-states",
+        "./skills/latent-briefing",
+        "./skills/self-improvement-loops"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/partners/agentic_governance_guide/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/partners/agentic_governance_guide/requirements.txt`
+
+# Core OpenAI packages
+openai
+openai-agents
+openai-guardrails[benchmark]
+
+# Environment and async utilities
+python-dotenv
+nest_asyncio
+
+# Data validation
+pydantic

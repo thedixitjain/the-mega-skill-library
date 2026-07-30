@@ -1,0 +1,92 @@
+---
+name: rclone-archive-extract
+description: "Extract archives from source to destination."
+category: general-purpose
+source_repo: sickn33/agentic-awesome-skills
+source_path: "skills/rclone-cli/references/commands/rclone_archive_extract.md"
+source_url: https://github.com/sickn33/agentic-awesome-skills/blob/HEAD/skills/rclone-cli/references/commands/rclone_archive_extract.md
+---
+
+
+> **Official documentation:** [https://rclone.org/commands/rclone_archive_extract/](https://rclone.org/commands/rclone_archive_extract/)
+# rclone archive extract
+
+Extract archives from source to destination.
+
+## Synopsis
+
+
+
+Extract the archive contents to a destination directory auto detecting
+the format. See [rclone archive create](/commands/rclone_archive_create/)
+for the archive formats supported.
+
+For example on this archive:
+
+```
+$ rclone archive list --long remote:archive.zip
+        6 2025-10-30 09:46:23.000000000 file.txt
+        0 2025-10-30 09:46:57.000000000 dir/
+        4 2025-10-30 09:46:57.000000000 dir/bye.txt
+```
+
+You can run extract like this
+
+```
+$ rclone archive extract remote:archive.zip remote:extracted
+```
+
+Which gives this result
+
+```
+$ rclone tree remote:extracted
+/
+├── dir
+│   └── bye.txt
+└── file.txt
+```
+
+The source or destination or both can be local or remote.
+
+Filters can be used to only extract certain files:
+
+```
+$ rclone archive extract archive.zip partial --include "bye.*"
+$ rclone tree partial
+/
+└── dir
+    └── bye.txt
+```
+
+The [archive backend](/archive/) can also be used to extract files. It
+can be used to read only mount archives also but it supports a
+different set of archive formats to the archive commands.
+
+
+```
+rclone archive extract [flags] <source> <destination>
+```
+
+## Options
+
+```
+  -h, --help   help for extract
+```
+
+See the [global flags page](/flags/) for global options not listed here.
+
+## See Also
+
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable ul-style line-length -->
+
+* [rclone archive](/commands/rclone_archive/)	 - Perform an action on an archive.
+
+
+<!-- markdownlint-restore -->
+
+---
+
+**Source:** [`sickn33/agentic-awesome-skills`](https://github.com/sickn33/agentic-awesome-skills) → `skills/rclone-cli/references/commands/rclone_archive_extract.md`
+
+**Also appears in:** `sickn33/agentic-awesome-skills/plugins/agentic-awesome-skills/skills/rclone-cli/references/commands/rclone_archive_extract.md`, `sickn33/agentic-awesome-skills/plugins/agentic-awesome-skills-claude/skills/rclone-cli/references/commands/rclone_archive_extract.md`

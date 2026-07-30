@@ -1,0 +1,47 @@
+---
+name: setup-mcp
+description: "Use the Bright Data web MCP skill to setup mcp with pro mode. Here is my token: <yourbrightdatatoken>"
+category: prompt-engineering
+source_repo: patchy631/ai-engineering-hub
+source_path: "hugging-face-skills/prompt.txt"
+source_url: https://github.com/patchy631/ai-engineering-hub/blob/HEAD/hugging-face-skills/prompt.txt
+---
+# Setup MCP
+Use the Bright Data web MCP skill to setup mcp with pro mode. Here is my token: <your_brightdata_token>
+
+
+# Get reviews
+Scraped Play Store reviews from 12 AI/education apps using Bright Data Web MCP:
+https://play.google.com/store/apps/details?id=com.openai.chatgpt
+https://play.google.com/store/apps/details?id=com.google.android.apps.bard
+https://play.google.com/store/apps/details?id=com.microsoft.copilot
+https://play.google.com/store/apps/details?id=ai.perplexity.app.android
+https://play.google.com/store/apps/details?id=com.anthropic.claude
+https://play.google.com/store/apps/details?id=com.microblink.photomath
+https://play.google.com/store/apps/details?id=co.brainly
+https://play.google.com/store/apps/details?id=com.quizlet.quizletandroid
+https://play.google.com/store/apps/details?id=com.duolingo
+https://play.google.com/store/apps/details?id=com.cliffweitzman.speechify2
+https://play.google.com/store/apps/details?id=com.codeway.wonder
+https://play.google.com/store/apps/details?id=com.starryai
+Create a new folder "reviews/raw/" and save the actual comments in a txt file under the folder. Save 12 text files.
+
+
+# Process reviews
+Process all text files in the "reviews/raw/" folder. Create csv with columns:
+1. app_name (from filename)
+2. review_text (the actual review comment within "")
+3. category (one of: Bug/Issue, Feature Request, Praise, Complaint)
+
+
+# Fine-tuning
+Start a new fine-tuning experiment using SFT for text classification task.
+- Maintain a report for experiment. 
+- Use "distilbert/distilbert-base-uncased" model to fine-tune on the "reviews/reviews_analysis.csv" dataset.
+- Use `review_text` as input and `category` as output.
+- Use local GPU for training.
+- Use tensorboard with local dashboard for monitoring.
+
+---
+
+**Source:** [`patchy631/ai-engineering-hub`](https://github.com/patchy631/ai-engineering-hub) → `hugging-face-skills/prompt.txt`

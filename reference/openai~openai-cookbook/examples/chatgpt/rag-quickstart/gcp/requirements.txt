@@ -1,0 +1,6 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/chatgpt/rag-quickstart/gcp/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/chatgpt/rag-quickstart/gcp/requirements.txt`
+
+google-cloud-bigquery
+functions-framework
+openai

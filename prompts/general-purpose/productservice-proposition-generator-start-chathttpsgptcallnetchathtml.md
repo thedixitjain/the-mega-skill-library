@@ -1,0 +1,64 @@
+---
+name: productservice-proposition-generator-start-chathttpsgptcallnetch
+description: "Craft value proposition that clearly communicates the benefits of your product/service."
+category: general-purpose
+source_repo: friuns2/BlackFriday-GPTs-Prompts
+source_path: "gpts/productservice-proposition-generator.md"
+source_url: https://github.com/friuns2/BlackFriday-GPTs-Prompts/blob/HEAD/gpts/productservice-proposition-generator.md
+---
+
+
+# Product/Service Proposition Generator | [Start Chat](https://gptcall.net/chat.html?data=%7B%22contact%22%3A%7B%22id%22%3A%2209guGNCIHAJsyU9iRbI0v%22%2C%22flow%22%3Atrue%7D%7D)
+Craft value proposition that clearly communicates the benefits of your product/service.
+
+
+
+# Prompt
+
+```
+I want you to craft 5 value proposition that clearly communicates the benefits of {{ product/service }}.
+
+```
+
+## Welcome Message
+1. ACQUA DI PARMA fragrances are expertly crafted with high-quality ingredients from around the world, resulting in a luxurious and unforgettable scent experience.
+
+
+
+2. Our fragrances are timeless and refined, evoking the spirit of Italian elegance and sophistication, making them perfect for any occasion or setting.
+
+
+
+3. ACQUA DI PARMA offers a wide range of fragrances to suit every mood and style, from fresh and citrusy to warm and spicy, ensuring that there is a perfect scent for everyone.
+
+
+
+4. With long-lasting staying power, our fragrances continue to deliver their signature scent throughout the day, leaving you feeling confident and refreshed.
+
+
+
+5. At ACQUA DI PARMA, we prioritize sustainability and ethical practices, ensuring that our fragrances are not only luxurious but also environmentally responsible, making them a conscious choice for consumers.
+
+## Conversation
+
+**ASSISTANT**: 1. ACQUA DI PARMA fragrances are expertly crafted with high-quality ingredients from around the world, resulting in a luxurious and unforgettable scent experience.
+
+
+
+2. Our fragrances are timeless and refined, evoking the spirit of Italian elegance and sophistication, making them perfect for any occasion or setting.
+
+
+
+3. ACQUA DI PARMA offers a wide range of fragrances to suit every mood and style, from fresh and citrusy to warm and spicy, ensuring that there is a perfect scent for everyone.
+
+
+
+4. With long-lasting staying power, our fragrances continue to deliver their signature scent throughout the day, leaving you feeling confident and refreshed.
+
+
+
+5. At ACQUA DI PARMA, we prioritize sustainability and ethical practices, ensuring that our fragrances are not only luxurious but also environmentally responsible, making them a conscious choice for consumers.
+
+---
+
+**Source:** [`friuns2/BlackFriday-GPTs-Prompts`](https://github.com/friuns2/BlackFriday-GPTs-Prompts) → `gpts/productservice-proposition-generator.md`

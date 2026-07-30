@@ -1,0 +1,119 @@
+---
+name: tools
+description: "{ \"contents\": [ { \"role\": \"user\", \"parts\": [ { \"text\": \"You are an advanced query agent specializing in Clickhouse SQL. Your task is to search the database to retrieve information based on the given question, focusing on the table specified in the input. You must generate Clickhouse-compatible SQL that accurately answers the question.\\n\\n Follow these steps for EVERY query:\\n \\n Step 1: Get Database Schema\\n Action: getsemantics tool\\n Action Input: all\\n Observation: [Output from getsemantics tool showing schema for all tables in the specified schema]\\n\\n Step 2: Analyze Schema and Focus on p"
+category: backend-and-data
+source_repo: vllora/vllora
+source_path: "llm/src/provider/gemini/tools.json"
+source_url: https://github.com/vllora/vllora/blob/HEAD/llm/src/provider/gemini/tools.json
+---
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "You are an advanced query agent specializing in Clickhouse SQL. Your task is to search the database to retrieve information based on the given question, focusing on the table specified in the input. You must generate Clickhouse-compatible SQL that accurately answers the question.\n\n    Follow these steps for EVERY query:\n \n    Step 1: Get Database Schema\n    Action: get_semantics tool\n    Action Input: all\n    Observation: [Output from get_semantics tool showing schema for all tables in the specified schema]\n\n    Step 2: Analyze Schema and Focus on pick tables to query\n    Thought: Based on the question, and the available schema for all tables, I will focus on the required tables and identify any potential relationships with other tables if needed.\n    Related Tables (if any): [Names of potentially related tables from the schema]\n    Reason: [Explanation for why the specified table is appropriate and how any related tables might be useful]\n    \n    Step 3: Generate and Execute Clickhouse SQL Query\n    Thought: I will now generate a Clickhouse SQL query that accurately answers the question, focusing on the specified table. Consider the following:\n    - Use the specified table as the primary source of data\n    - Use JOINs with other tables only if absolutely necessary to answer the question\n    - Never query for all columns from a table, only ask for the few relevant columns given the question\n    - Only use the columns available in the tables as shown by the get_semantics tool\n    - Limit results to at most 5 unless the user specifies a different number\n    - Order results by a relevant column to return the most interesting examples\n    - Use only column names visible in the schema description\n    - Be careful not to query for columns that do not exist\n    - Pay attention to which column is in which table\n    - Use appropriate Clickhouse syntax (e.g., `backticks` for identifiers if needed)\n    - If the question requires finding specific data (e.g., a city name), use flexible search techniques like ILIKE, lower(), or partial matching\n\n    Step 4: Validate the SQL Query\n    Action: query_validator tool\n    Action Input: [Your generated ClickHouse SQL query]\n    Observation: [true or false]\n\n    Step 5: Execute or Revise Query\n    Thought: If the validator returned 'true', proceed to execute the query. If 'false', revise the query and go back to Step 3.\n    Action: langdb_raw_query tool\n    Action Input: [Your generated Clickhouse SQL query]\n    Observation: [Output from langdb_raw_query]\n\n    Always provide your final response in this EXACT format:\n\n    Question: [Original question]\n    SQLQuery: [The Clickhouse SQL query you generated]\n    SQLResult: [Result of the SQL query]\n\n    If you encounter any errors, include them in your response but maintain the format above.\n\n    Remember: Your query should answer the question accurately, even if it requires complex logic or multiple steps. Focus on the specified table, but consider relationships with other tables if necessary. Use flexible search techniques when looking for specific data. If the user's question is ambiguous or lacks specific details, make reasonable assumptions and state them in your answer."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "how many cities"
+        }
+      ]
+    }
+  ],
+  "generation_config": {
+    "maxOutputTokens": null,
+    "temperature": null,
+    "topP": null,
+    "topK": null,
+    "stopSequences": null,
+    "candidateCount": null
+  },
+  "tools": [
+    {
+      "function_declarations": [
+        {
+          "name": "describe_tables",
+          "description": "This tool returns schema of tables in the database",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "table_names": {
+                "type": "array",
+                "description": "List of table names. Format of table name is {database}.{table_name}, for views use {view_name}",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": []
+          }
+        },
+        {
+          "name": "langdb_validate_query",
+          "description": "This query parses a raw query and validates against LangDB syntax and returns True/False and error if any",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Raw query to be validated against LangDB.",
+                "items": null
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        },
+        {
+          "name": "langdb_raw_query",
+          "description": "This query executes a raw query against the database.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string",
+                "description": "Raw query to be executed against the Database.",
+                "items": null
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        },
+        {
+          "name": "list_tables",
+          "description": "This tool fetches list of tables and views from database.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "databases": {
+                "type": "array",
+                "description": "Optional list of database to fetch tables list from.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fetch_views": {
+                "type": "boolean",
+                "description": "Optional flag should tool fetch views list. By default it is true",
+                "items": null
+              }
+            },
+            "required": []
+          }
+        }
+      ]
+    }
+  ]
+}
+
+---
+
+**Source:** [`vllora/vllora`](https://github.com/vllora/vllora) → `llm/src/provider/gemini/tools.json`

@@ -1,0 +1,50 @@
+---
+name: saas-health
+description: "Calculate SaaS health metrics (ARR, MRR, churn, CAC, LTV, NRR) and benchmark against industry standards. Usage: /saas-health. Slash command for Claude Code, Codex CLI, Gemini CLI."
+category: docs-and-knowledge-mgmt
+source_repo: alirezarezvani/claude-skills
+source_path: "docs/commands/saas-health.md"
+source_url: https://github.com/alirezarezvani/claude-skills/blob/HEAD/docs/commands/saas-health.md
+---
+
+
+# /saas-health
+
+<div class="page-meta" markdown>
+<span class="meta-badge">:material-console: Slash Command</span>
+<span class="meta-badge">:material-github: <a href="https://github.com/alirezarezvani/claude-skills/tree/main/commands/saas-health.md">Source</a></span>
+</div>
+
+
+Calculate SaaS financial health metrics from raw business numbers, benchmark against industry standards, and project forward.
+
+## Usage
+
+```
+/saas-health metrics --mrr <amount> [--customers <n>] [--churned <n>] [--json]
+/saas-health quick-ratio --new-mrr <amount> --churned <amount> [--expansion <amount>]
+/saas-health simulate --mrr <amount> --growth <pct> --churn <pct> --cac <amount> [--json]
+```
+
+## Examples
+
+```
+/saas-health metrics --mrr 80000 --customers 200 --churned 3 --new-customers 15 --sm-spend 25000
+/saas-health quick-ratio --new-mrr 10000 --expansion 2000 --churned 3000 --contraction 500
+/saas-health simulate --mrr 50000 --growth 10 --churn 3 --cac 2000
+```
+
+## Scripts
+- `finance/skills/saas-metrics-coach/scripts/metrics_calculator.py` — Core SaaS metrics (ARR, MRR, churn, CAC, LTV, NRR, payback)
+- `finance/skills/saas-metrics-coach/scripts/quick_ratio_calculator.py` — Growth efficiency ratio
+- `finance/skills/saas-metrics-coach/scripts/unit_economics_simulator.py` — 12-month forward projection
+
+## Skill Reference
+→ `finance/skills/saas-metrics-coach/SKILL.md`
+
+## Related Commands
+- `/financial-health` — Traditional financial analysis (ratios, DCF, budgets)
+
+---
+
+**Source:** [`alirezarezvani/claude-skills`](https://github.com/alirezarezvani/claude-skills) → `docs/commands/saas-health.md`

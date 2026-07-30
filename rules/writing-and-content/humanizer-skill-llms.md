@@ -1,0 +1,69 @@
+---
+name: humanizer-skill-llms
+description: "- README: Install, usage, voice profiles, the 53 patterns, science, comparisons - SKILL.md: The skill source, the only file needed to run humanizer - references/patterns.md: Per-pattern deep dives, full trigger lists, and before/after examples"
+category: writing-and-content
+source_repo: Aboudjem/humanizer-skill
+source_path: "llms.txt"
+source_url: https://github.com/Aboudjem/humanizer-skill/blob/HEAD/llms.txt
+---
+# Humanizer — AI Writing Pattern Detector and Rewriter
+
+> Humanizer is a pure-Markdown Claude Code skill that detects 53 AI writing patterns and rewrites text with human rhythm, voice, and burstiness. 5 named voice profiles. 0-100 AI-tell score. Zero-dependency Markdown core plus an optional metrics CLI and CI gate. No network calls, no binaries. Install in one command.
+
+## Overview
+
+- [README](https://github.com/Aboudjem/humanizer-skill/blob/main/README.md): Install, usage, voice profiles, the 53 patterns, science, comparisons
+- [SKILL.md](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): The skill source, the only file needed to run humanizer
+- [references/patterns.md](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/references/patterns.md): Per-pattern deep dives, full trigger lists, and before/after examples
+- [AGENTS.md](https://github.com/Aboudjem/humanizer-skill/blob/main/AGENTS.md): Harness context for Claude Code, Cursor, Copilot, Codex CLI, and 20+ other AI editors
+- [docs-site](https://github.com/Aboudjem/humanizer-skill/tree/main/docs-site): Full MDX documentation site (Docusaurus, deploy-ready)
+- [Examples](https://github.com/Aboudjem/humanizer-skill/tree/main/examples): Before/after humanization examples with pattern annotations
+
+## Install
+
+- [Any agent via the skills CLI](https://github.com/Aboudjem/humanizer-skill#quickstart): `npx skills add Aboudjem/humanizer-skill`
+- [Project-scoped curl install](https://github.com/Aboudjem/humanizer-skill#quickstart): `mkdir -p .claude/skills/humanizer && curl -sL https://raw.githubusercontent.com/Aboudjem/humanizer-skill/main/skills/humanizer/SKILL.md -o .claude/skills/humanizer/SKILL.md`
+- [Plugin marketplace](https://github.com/Aboudjem/humanizer-skill#quickstart): `claude plugin marketplace add Aboudjem/humanizer-skill`
+
+## Usage
+
+- [Basic rewrite](https://github.com/Aboudjem/humanizer-skill#usage): `/humanizer "your text"` — rewrite with the default voice
+- [Detect mode](https://github.com/Aboudjem/humanizer-skill#usage): `/humanizer "text" --mode detect --score` — scan only, get a 0-100 AI-tell score
+- [Voice profiles](https://github.com/Aboudjem/humanizer-skill#voice-profiles): `--voice casual|professional|technical|warm|blunt`
+- [File editing](https://github.com/Aboudjem/humanizer-skill#usage): `/humanizer --file docs/README.md --voice technical` — edit a file in place
+- [Aggressive mode](https://github.com/Aboudjem/humanizer-skill#usage): `/humanizer "text" --aggressive --iterate 3` — convergence mode
+
+## The 53 AI Patterns
+
+- [Content P1-P8](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Significance inflation, promotional language, AI vocabulary ("delve", "leverage")
+- [Language and Style P9-P18](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Negative parallelisms, em dash overuse, structured list syndrome
+- [Communication P19-P21](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Chatbot artifacts, sycophantic tone
+- [Filler and Hedging P22-P30](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Filler phrases, uniform sentence length, comprehensive overview openers
+- [Emerging P31-P43](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Treadmill effect, infomercial hooks, elegant variation
+- [Craft and Forensic P44-P53](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): False agency, diff-anchored writing, reasoning-chain artifacts, unicode obfuscation
+
+## Science and Research
+
+- [Burstiness](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Sentence length variation — humans vary wildly, AI averages 18 words. Detectors measure this.
+- [Perplexity](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/SKILL.md): Word predictability — AI picks the statistically likely next word. Humans don't.
+- [RAID Benchmark](https://github.com/Aboudjem/humanizer-skill/blob/main/README.md): Structural paraphrasing drops DetectGPT accuracy from 70.3% to 4.6% (ACL 2024)
+- [HC3 corpus](https://github.com/Aboudjem/humanizer-skill/blob/main/skills/humanizer/references/patterns.md): Bilingual ~40K-pair corpus (arXiv 2301.07597) on length, vocabulary diversity, and perplexity
+
+## Comparisons
+
+- [vs QuillBot](https://github.com/Aboudjem/humanizer-skill/blob/main/README.md): QuillBot swaps words; Humanizer fixes structure, rhythm, and burstiness
+- [vs Undetectable.ai](https://github.com/Aboudjem/humanizer-skill/blob/main/README.md): Paid, closed, no pattern detection, no voice profiles
+- [Open source advantage](https://github.com/Aboudjem/humanizer-skill/blob/main/README.md): 53 patterns vs 0, 5 voices vs 3, free vs $10-20/mo, explains every change
+
+## Optional
+
+- [Metrics CLI](https://github.com/Aboudjem/humanizer-skill/blob/main/cli/README.md): Zero-dependency Node tool that computes burstiness, TTR, trigram repetition, AI-vocab density, and a 0-100 score, with a CI quality-gate and GitHub Action
+- [Chinese README](https://github.com/Aboudjem/humanizer-skill/blob/main/README.zh-CN.md): Simplified-Chinese docs positioned for humanizing English writing
+- [CHANGELOG](https://github.com/Aboudjem/humanizer-skill/blob/main/CHANGELOG.md): Version history
+- [CONTRIBUTING](https://github.com/Aboudjem/humanizer-skill/blob/main/CONTRIBUTING.md): How to add new patterns
+- [Landing page](https://humanizer-skill.vercel.app): Interactive demo in the browser
+- [Plugin manifest](https://github.com/Aboudjem/humanizer-skill/blob/main/.claude-plugin/plugin.json): Claude Code plugin metadata
+
+---
+
+**Source:** [`Aboudjem/humanizer-skill`](https://github.com/Aboudjem/humanizer-skill) → `llms.txt`

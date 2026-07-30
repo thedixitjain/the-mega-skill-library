@@ -1,0 +1,7 @@
+<!-- Harvested from https://github.com/openai/openai-cookbook/blob/HEAD/examples/gpt-5/prompt-optimization-cookbook/requirements.txt -->
+> **Source:** [`openai/openai-cookbook`](https://github.com/openai/openai-cookbook) → `examples/gpt-5/prompt-optimization-cookbook/requirements.txt`
+
+openai
+matplotlib 
+seaborn
+datasets

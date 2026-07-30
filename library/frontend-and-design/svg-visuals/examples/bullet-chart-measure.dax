@@ -1,0 +1,65 @@
+-- Bullet Chart with Action Dots SVG Measure
+-- dataType: Text, dataCategory: ImageUrl
+-- Shows actual bar, target line, and sentiment-colored dot
+-- Target visual: Table or Matrix (imageHeight: 25, imageWidth: 100)
+-- Source: SpaceParts production model
+
+SVG Bullet Chart =
+-- Config
+VAR _Actual = [MTD Turnover]
+VAR _Target = [MTD Turnover 1YP]
+VAR _Performance = DIVIDE(_Actual - _Target, _Target)
+
+-- Sentiment thresholds
+VAR _VeryBad  = -0.05
+VAR _Bad      = -0.025
+VAR _Good     =  0.025
+VAR _VeryGood =  0.05
+
+-- Chart dimensions
+VAR _BarMax = 100
+VAR _BarMin = 20
+VAR _Scope = ALL('Customers'[Key Account Name])
+
+-- Colors
+VAR _BackgroundColor = "#F5F5F5"
+VAR _BarFillColor    = "#CFCFCF"
+VAR _BaselineColor   = "#737373"
+VAR _TargetColor     = "#000000"
+
+VAR _ActionDotFill =
+    SWITCH(TRUE(),
+        _Performance < _VeryBad,  "#f4ae4c",
+        _Performance < _Bad,      "#ffe075",
+        _Performance > _VeryGood, "#2D6390",
+        _Performance > _Good,     "#74B2FF",
+        "#FFFFFF00"
+    )
+
+-- Axis normalization
+VAR _MaxActual = CALCULATE(MAXX(_Scope, [MTD Turnover]), REMOVEFILTERS('Customers'[Key Account Name]))
+VAR _MaxTarget = CALCULATE(MAXX(_Scope, [MTD Turnover 1YP]), REMOVEFILTERS('Customers'[Key Account Name]))
+VAR _AxisMax =
+    IF(HASONEVALUE('Customers'[Key Account Name]),
+        MAX(_MaxActual, _MaxTarget),
+        CALCULATE(MAX([MTD Turnover], [MTD Turnover 1YP]), REMOVEFILTERS('Customers'[Key Account Name]))
+    ) * 1.1
+
+VAR _AxisRange = _BarMax - _BarMin
+VAR _ActualNormalized = DIVIDE(_Actual, _AxisMax) * _AxisRange
+VAR _TargetNormalized = (DIVIDE(_Target, _AxisMax) * _AxisRange) + _BarMin - 1
+
+-- SVG construction
+VAR _SvgPrefix = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>"
+VAR _Sort = "<desc>" & FORMAT(_Actual, "000000000000") & "</desc>"
+
+VAR _ActionDot    = "<circle cx='10' cy='11' r='5' fill='" & _ActionDotFill & "'/>"
+VAR _BarBg        = "<rect x='" & _BarMin & "' y='2' width='" & _BarMax & "' height='80%' fill='" & _BackgroundColor & "'/>"
+VAR _ActualBar    = "<rect x='" & _BarMin & "' y='5' width='" & _ActualNormalized & "' height='50%' fill='" & _BarFillColor & "'/>"
+VAR _Baseline     = "<rect x='" & _BarMin & "' y='4' width='1' height='60%' fill='" & _BaselineColor & "'/>"
+VAR _TargetLine   = "<rect x='" & _TargetNormalized & "' y='2' width='2' height='80%' fill='" & _TargetColor & "'/>"
+
+VAR _SvgSuffix = "</svg>"
+
+RETURN
+    _SvgPrefix & _Sort & _ActionDot & _BarBg & _ActualBar & _Baseline & _TargetLine & _SvgSuffix

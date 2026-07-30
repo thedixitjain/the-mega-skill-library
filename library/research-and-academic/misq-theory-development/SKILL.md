@@ -1,0 +1,87 @@
+---
+name: misq-theory-development
+description: "Use when building the theoretical engine of a MIS Quarterly manuscript — a behavioral mechanism and hypotheses, a design theory and testable design propositions for a design-science artifact, an economic mechanism for an economics-of-IS study, or an organizational process theory. Adapts the form of \"theory\" to the paper's IS tradition; does not run the analysis (misq-data-analysis) or frame the contribution (misq-contribution-framing)."
+category: research-and-academic
+source_repo: brycewang-stanford/Awesome-Journal-Skills
+source_path: "MIS-Quarterly-Skills/skills/misq-theory-development/SKILL.md"
+source_url: https://github.com/brycewang-stanford/Awesome-Journal-Skills/blob/HEAD/MIS-Quarterly-Skills/skills/misq-theory-development/SKILL.md
+---
+
+
+# Theory Development (misq-theory-development)
+
+## When to trigger
+
+- Your claims are descriptive ("A is associated with B") with no IS mechanism
+- You built an IT artifact but cannot say what *design knowledge* it embodies
+- A Senior Editor or reviewer says "the theoretical contribution is unclear" or "this is a technical exercise"
+- You need hypotheses or design propositions derived *before* you look at results
+
+## Theory takes a different shape in each MISQ tradition
+
+MISQ is pluralistic, so "develop theory" means different things. Pick the row that matches your tradition.
+
+| Tradition | What "theory" means here | What you must produce |
+|-----------|--------------------------|------------------------|
+| **Behavioral** | A causal mechanism linking IT to cognition, behavior, or outcomes | A priori hypotheses with an explicit mechanism, boundary conditions, and any mediation/moderation logic |
+| **Design science** | A *design theory*: the principles that make the artifact work | Justificatory (kernel) theory, design principles/requirements, and testable propositions about the artifact's utility |
+| **Economics of IS** | An economic mechanism (incentives, information, matching, network effects) | A model or argument yielding signed, falsifiable predictions and an identification logic |
+| **Organizational** | A process or variance theory of IT in context | Constructs, their relations, and the contextual conditions that govern them |
+
+## Behavioral and economics: derive claims a priori
+
+State the mechanism in words before the math: *what is the IT-enabled force, on whom, through what channel, and when does it reverse?* Then write hypotheses (behavioral) or comparative-statics predictions (economics) that follow from that mechanism. For mediation, theorize the channel; for moderation, theorize why the IT effect strengthens or weakens. Avoid HARKing — predictions precede results.
+
+## Design science: ground the artifact in a design theory
+
+A MISQ design-science contribution is not "we built a system." Anchor it in the Hevner, March, Park & Ram (2004) tradition: state the problem and its relevance, the kernel theory that justifies your design choices, the **design principles** that generalize beyond this one instantiation, and falsifiable propositions about utility you will later evaluate. The artifact is the vehicle; the prescriptive design knowledge is the contribution.
+
+## Make boundary conditions explicit
+
+IS effects are often contingent on the artifact, the user, the task, and the context. Name where the theory holds and where it breaks — reviewers reward a theorized scope condition over an over-claimed universal law.
+
+## Before/after: from correlation to IS mechanism
+
+- **Before (descriptive, borrowed theory):** "Drawing on TAM, we hypothesize that perceived usefulness of the analytics tool increases usage." — an application, not a contribution; the IT is interchangeable.
+- **After (IT-specific mechanism):** "Because the analytics tool renders *previously tacit* peer benchmarks visible, it triggers upward social comparison specifically among below-median performers, raising effort — an effect that a non-comparative tool of equal accuracy would not produce (H1), and that reverses when benchmarks are anonymized (H2, boundary)." The IT property (making tacit comparisons visible) is load-bearing, the mechanism is named, and the boundary is theorized.
+
+## Design-science worked chain (kernel → principle → proposition)
+
+For a design-science submission, referees look for an explicit chain, not a system description:
+
+1. **Kernel theory:** cognitive load theory explains why analysts miss anomalies in dense logs.
+2. **Design principle:** "Surface anomalies through progressive disclosure keyed to deviation magnitude" — stated so it generalizes beyond this instantiation.
+3. **Testable utility proposition:** "Artifacts embodying principle P let analysts detect injected anomalies faster than a flat-dashboard baseline (P1)."
+4. **Evaluation hook:** the proposition is what `misq-methods`/`misq-data-analysis` will later evaluate.
+
+State each link; a chain that jumps from "we built X" to "it works" is the modal design-science rejection.
+
+## Checklist
+
+- [ ] The tradition's correct *form* of theory is used (mechanism / design theory / economic model / process theory)
+- [ ] The IT artifact is load-bearing in the mechanism, not decorative
+- [ ] Hypotheses / design propositions / predictions are derived *before* results
+- [ ] Mediation, moderation, or comparative statics are theorized, not just tested
+- [ ] Boundary conditions and scope are stated
+- [ ] For design science: kernel theory → design principles → testable utility propositions
+
+## Anti-patterns
+
+- "We applied [theory X] to [setting Y]" with no new IS mechanism — a borrowed-theory application.
+- A design-science paper with an artifact but no generalizable design principles.
+- Hypotheses that merely restate correlations the data already showed.
+- Treating the IT artifact as an interchangeable "treatment."
+
+## Output format
+
+```
+【Tradition & theory form】behavioral mechanism / design theory / economic model / process theory
+【Core mechanism】IT-enabled force → on whom → through what channel
+【Claims】H1..Hn / design propositions P1..Pn / signed predictions
+【Boundary conditions】where it holds / reverses
+【Next step】misq-literature-positioning or misq-methods
+```
+
+---
+
+**Source:** [`brycewang-stanford/Awesome-Journal-Skills`](https://github.com/brycewang-stanford/Awesome-Journal-Skills) → `MIS-Quarterly-Skills/skills/misq-theory-development/SKILL.md`

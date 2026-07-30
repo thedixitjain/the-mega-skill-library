@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Corpus-Wide Hardening Metrics</title>
+  <desc id="desc">Skill improvements moved prose, metadata, and gates together</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0B1020"/>
+      <stop offset="100%" stop-color="#172033"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bg)"/>
+  <text x="48" y="58" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700">Corpus-Wide Hardening Metrics</text>
+  <text x="48" y="86" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="14">Skill improvements moved prose, metadata, and gates together</text>
+
+<rect x="48" y="120" width="1104" height="520" rx="24" fill="#111827" stroke="#263449" stroke-width="1" opacity="1" filter="url(#shadow)"/>
+<rect x="88" y="180" width="250" height="160" rx="20" fill="#172033" stroke="#2F3B52"/>
+<text x="112" y="222" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="650" text-anchor="start">Accepted mechanisms</text>
+<text x="112" y="274" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="40" font-weight="800" text-anchor="start">5 → 16</text>
+<text x="112" y="308" fill="#34D399" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="800" text-anchor="start">+11</text>
+<rect x="363" y="180" width="250" height="160" rx="20" fill="#172033" stroke="#2F3B52"/>
+<text x="387" y="222" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="650" text-anchor="start">Provenance claims</text>
+<text x="387" y="274" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="40" font-weight="800" text-anchor="start">6 → 12</text>
+<text x="387" y="308" fill="#22D3EE" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="800" text-anchor="start">+6</text>
+<rect x="638" y="180" width="250" height="160" rx="20" fill="#172033" stroke="#2F3B52"/>
+<text x="662" y="222" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="650" text-anchor="start">Activation fixtures</text>
+<text x="662" y="274" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="40" font-weight="800" text-anchor="start">8 → 19</text>
+<text x="662" y="308" fill="#60A5FA" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="800" text-anchor="start">+11</text>
+<rect x="913" y="180" width="250" height="160" rx="20" fill="#172033" stroke="#2F3B52"/>
+<text x="937" y="222" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="15" font-weight="650" text-anchor="start">Flagged skills</text>
+<text x="937" y="274" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="40" font-weight="800" text-anchor="start">2 → 0</text>
+<text x="937" y="308" fill="#F87171" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="800" text-anchor="start">-2</text>
+<rect x="96" y="420" width="1008" height="54" rx="16" fill="#0F172A" stroke="#2F3B52"/>
+<rect x="96" y="420" width="817.6" height="54" rx="16" fill="#334155"/>
+<rect x="96" y="420" width="919.0" height="54" rx="16" fill="#34D399"/>
+<text x="96" y="402" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="700" text-anchor="start">Strict skill-health score</text>
+<text x="913.5888" y="510" fill="#9CA3AF" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" font-weight="600" text-anchor="middle">0.8111 baseline</text>
+<text x="1014.9935999999999" y="510" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">0.9117 hardened</text>
+<text x="96" y="595" fill="#E5E7EB" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="16" font-weight="700" text-anchor="start">Result: all 15 skills pass strict health; no flagged skills remain.</text>
+</svg>

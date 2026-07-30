@@ -1,0 +1,70 @@
+---
+name: extract
+description: "Builds the gauntlet knowledge base from AST extraction and AI enrichment. Use when initializing or refreshing codebase knowledge for challenges."
+category: rag-memory-knowledge
+source_repo: athola/claude-night-market
+source_path: "plugins/gauntlet/skills/extract/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/gauntlet/skills/extract/SKILL.md
+---
+
+
+# Extract Codebase Knowledge
+
+Build or rebuild the `.gauntlet/knowledge.json` knowledge base.
+
+## When NOT To Use
+
+- Tribal knowledge no parser can see (use `gauntlet:curate`)
+- Building the code graph (use `gauntlet:graph-build`)
+
+## Steps
+
+1. **Identify target directory**: use the current working directory
+   or a user-specified path
+
+2. **Run AST extraction**: invoke the extractor script
+   ```bash
+   python3 ${CLAUDE_PLUGIN_ROOT}/scripts/extractor.py <target-dir>
+   ```
+
+3. **AI enrichment**: for each extracted entry, enhance the `detail`
+   field with natural language explanation of business logic, data
+   flow, architectural role, and rationale
+
+4. **Cross-reference**: link related entries across modules by
+   matching imports, shared types, and data flow paths
+
+5. **Merge with annotations**: preserve existing curated entries
+   in `.gauntlet/annotations/`
+
+6. **Save**: write to `.gauntlet/knowledge.json`
+
+7. **Report**: show summary by category, coverage gaps, difficulty
+   distribution
+
+## Exit Criteria
+
+- [ ] `.gauntlet/knowledge.json` exists and is valid JSON after the
+  skill completes; entries from `.gauntlet/annotations/` are merged
+  and not overwritten
+- [ ] Report shows entry counts broken down by all 7 categories
+  (business_logic, architecture, data_flow, api_contract, pattern,
+  dependency, error_handling) with coverage gaps identified
+- [ ] Each extracted entry has a `detail` field containing a natural
+  language explanation (not just the raw AST node name)
+- [ ] Cross-reference links between related entries are present for
+  modules sharing imports, shared types, or data flow paths
+
+## Category Priority
+
+1. business_logic (weight 7)
+2. architecture (weight 6)
+3. data_flow (weight 5)
+4. api_contract (weight 4)
+5. pattern (weight 3)
+6. dependency (weight 2)
+7. error_handling (weight 1)
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/gauntlet/skills/extract/SKILL.md`

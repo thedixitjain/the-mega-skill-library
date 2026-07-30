@@ -1,0 +1,284 @@
+[project]
+name = "notebooklm-py"
+version = "0.8.0rc1"
+description = "Unofficial Python library for automating Google NotebookLM"
+dynamic = ["readme"]
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Teng Lin", email = "teng.lin@gmail.com"}
+]
+keywords = ["notebooklm", "google", "ai", "automation", "rpc", "client", "api"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+# Upper bounds protect downstream installs from a breaking new major
+# release. ``httpx`` is pre-1.0, so we cap on the next minor instead of
+# the next major. Bump caps in a follow-up PR after the new major has
+# been smoke-tested locally — see CONTRIBUTING.md "Dependency upper
+# bounds" for the policy.
+dependencies = [
+    "httpx>=0.27.0,<0.29",
+    "click>=8.0.0,<9",
+    "rich>=13.0.0,<16",
+    "filelock>=3.13,<4",
+]
+
+[project.urls]
+Homepage = "https://github.com/teng-lin/notebooklm-py"
+Repository = "https://github.com/teng-lin/notebooklm-py"
+Documentation = "https://github.com/teng-lin/notebooklm-py#readme"
+Issues = "https://github.com/teng-lin/notebooklm-py/issues"
+
+[project.optional-dependencies]
+markdown = ["markdownify>=0.14.1,<2"]
+browser = ["playwright>=1.40.0,<2"]
+cookies = ["rookiepy>=0.1.0,<1"]
+# EXPERIMENTAL / PoC: optional curl_cffi transport for browser TLS-JA3
+# impersonation (NOTEBOOKLM_TRANSPORT=curl_cffi). Native wheels, so excluded from
+# `all` like `cookies`. Opt in via pip install "notebooklm-py[impersonate]".
+impersonate = ["curl_cffi>=0.11,<1"]
+# Headless master-token auth: mint web cookies from a durable Google master
+# token, no per-session browser (docs/installation.md#headless). gpsoauth is
+# pure-Python (no native wheels), so it is safe in `all`. >=1.1.0 for
+# exchange_token; no <2 cap so the 2.0.0 ServiceDisabled fix installs.
+headless = ["gpsoauth>=1.1.0"]
+# >=3.0: the remote-transport bearer auth (FastMCP(auth=...) + TokenVerifier)
+# landed in fastmcp 3.0; 2.x lacks it and would ImportError in mcp/_auth.py.
+# Pinned ==3.4.2: fastmcp 3.4.3 broke the RFC 9728 protected-resource-metadata
+# route (/.well-known/oauth-protected-resource/mcp → 404), which dead-ends
+# claude.ai's remote-connector OAuth discovery ("Couldn't connect to the
+# server"). 3.4.2 is the last-good; lift the pin once a fixed release ships.
+mcp = ["fastmcp==3.4.2"]
+# Optional single-tenant REST server (the third _app adapter, after cli/ and
+# mcp/). EXPERIMENTAL: the /v1 surface may change in a minor release; it is
+# excluded from the public-API compatibility gate. python-multipart is REQUIRED
+# for the file-upload route (FastAPI's UploadFile/File fails without it). Pinned
+# compatibly with the base install's httpx<0.29 / anyio<5 (resolved against
+# uv.lock at build time).
+server = [
+    "fastapi>=0.118,<1",
+    "uvicorn[standard]>=0.34,<1",
+    "python-multipart>=0.0.20,<1",
+]
+dev = [
+    "pytest>=8.0.0,<10",
+    "pytest-asyncio>=0.23.0,<2",
+    "pytest-httpx>=0.30.0,<0.37",
+    "pytest-cov>=4.0.0,<8",
+    "pytest-rerunfailures>=14.0,<17",
+    "pytest-timeout>=2.3.0,<3",
+    "pytest-xdist>=3.6.0,<4",
+    "python-dotenv>=1.0.0,<2",
+    "mypy>=1.0.0,<3",
+    "pre-commit>=4.5.1,<5",
+    "ruff==0.15.21",
+    "tomli>=2.0.0,<3; python_version < '3.11'",  # for tests/unit/test_install_docs.py on Python 3.10 (tomllib is 3.11+)
+    "vcrpy>=6.0.0,<9",
+    "packaging>=23.0,<27",  # for tests/unit/test_version_gate.py (PEP 440 version parsing)
+]
+# `all` deliberately excludes `cookies` — rookiepy has install issues on Python 3.13+
+# (see CHANGELOG [0.4.1]). Opt in explicitly via `pip install "notebooklm-py[cookies]"`.
+all = ["notebooklm-py[browser,dev,headless,markdown,mcp,server]"]
+
+[project.scripts]
+notebooklm = "notebooklm.notebooklm_cli:main"
+notebooklm-mcp = "notebooklm.mcp.__main__:main"
+notebooklm-server = "notebooklm.server.__main__:main"
+
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+
+# Convert relative doc links to version-tagged absolute URLs
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(docs/'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/docs/'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(CHANGELOG\.md\)'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/CHANGELOG.md)'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(SECURITY\.md\)'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/SECURITY.md)'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(LICENSE\)'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/LICENSE)'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(SKILL\.md\)'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/SKILL.md)'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(AGENTS\.md\)'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/AGENTS.md)'
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '\]\(CONTRIBUTING\.md\)'
+replacement = '](https://github.com/teng-lin/notebooklm-py/blob/v$HFPR_VERSION/CONTRIBUTING.md)'
+
+# Bakes the build commit into _commit.py (see hatch_build.py). Registered on both
+# targets so the commit survives `python -m build` (wheel is built from the sdist).
+[tool.hatch.build.targets.sdist.hooks.custom]
+path = "hatch_build.py"
+
+[tool.hatch.build.targets.wheel.hooks.custom]
+path = "hatch_build.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/notebooklm"]
+force-include = {"SKILL.md" = "notebooklm/data/SKILL.md", "AGENTS.md" = "notebooklm/data/CODEX.md"}
+# Re-include the gitignored _commit.py when the wheel is built from a
+# carried-forward sdist (the hook only runs from a checkout with .git).
+artifacts = ["src/notebooklm/_commit.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Put the repo root on sys.path so the ``tests`` package is importable as
+# ``tests.*`` under any invocation (plain ``pytest``/``uv run pytest`` does NOT
+# add CWD; only ``python -m pytest`` does). This is what lets test files use
+# fully-qualified ``from tests.integration.conftest import ...`` instead of bare
+# ``from conftest import ...`` (which resolved only via sys.path pollution and
+# broke isolated/xdist runs — issue #1482).
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "--ignore=tests/e2e"
+# Global timeout prevents tests from hanging indefinitely (CI safety net)
+# Individual tests can override with @pytest.mark.timeout(seconds)
+timeout = 60
+markers = [
+    "e2e: end-to-end tests requiring authentication (run with pytest tests/e2e -m e2e)",
+    "live_chat_ask: E2E live chat ask tests monitored for CI coverage floors",
+    "live_generation: E2E live artifact-generation tests monitored for CI coverage floors (nightly-enforced)",
+    "variants: parameter variant tests (skip to save quota)",
+    "readonly: read-only tests against user's test notebook",
+    "impersonate_smoke: minimal live smoke run under NOTEBOOKLM_TRANSPORT=curl_cffi in the nightly (read/ask/upload/download — one per transport-critical op)",
+    "vcr: tests using VCR.py recorded cassettes (run with NOTEBOOKLM_VCR_RECORD=1 to record)",
+    "no_keepalive_disable: opt a VCR test out of the global NOTEBOOKLM_DISABLE_KEEPALIVE_POKE=1 autouse fixture in tests/integration/conftest.py",
+    "allow_no_vcr: opt a tests/integration/ test out of the integration-tree enforcement hook; use for mock-only tests that legitimately live under tests/integration/",
+    "characterization: behavior-pinning unit tests that lock in current observable contracts and would be too synthetic to cassette-back",
+    "repo_lint: repo-wide audit/compat checks (cassette shapes, public surface, release gates, doc-sync, CI script audits). Slow; skip locally with `-m \"not repo_lint\"`. CI still runs them by default.",
+]
+
+[tool.coverage.run]
+source = ["src/notebooklm"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+
+# Per-file coverage floors enforced by ``scripts/check_coverage_thresholds.py
+# --coverage-json``. The coverage.py ``[tool.coverage.report]`` table only
+# supports a global ``fail_under``, so individual files that historically lag
+# the project-wide 90% are guarded here. Keys are the source paths exactly as
+# they appear in ``coverage.json`` (run ``uv run pytest --cov=src/notebooklm
+# --cov-report=json:coverage.json`` to confirm). Values are the minimum
+# acceptable percent_covered. To bump a floor: run the full suite locally,
+# read the new percentage from ``coverage.json``, and round down by ~2% so
+# transient flakes don't trip CI on unrelated PRs. To delete a file from the
+# guard: drop the line. Adding a new file requires a separate PR with a
+# rationale in the commit message.
+[tool.notebooklm.per_file_coverage_floors]
+"src/notebooklm/__main__.py" = 0
+"src/notebooklm/cli/_firefox_containers.py" = 95
+"src/notebooklm/cli/doctor_cmd.py" = 63
+"src/notebooklm/cli/profile_cmd.py" = 74
+"src/notebooklm/cli/session_cmd.py" = 83
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = false
+warn_unused_ignores = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true
+files = ["src/notebooklm"]
+exclude = ["tests/"]
+
+# Public library modules and moved implementation modules that back exported
+# public types are checked more strictly before the package advertises PEP 561
+# typing support via ``notebooklm/py.typed``.
+[[tool.mypy.overrides]]
+module = [
+    "notebooklm",
+    "notebooklm._types.*",
+    "notebooklm.artifacts",
+    "notebooklm.auth",
+    "notebooklm.client",
+    "notebooklm.config",
+    "notebooklm.exceptions",
+    "notebooklm.io",
+    "notebooklm.log",
+    "notebooklm.migration",
+    "notebooklm.paths",
+    "notebooklm.research",
+    "notebooklm.types",
+    "notebooklm.urls",
+    "notebooklm.utils",
+]
+disallow_untyped_defs = true
+disallow_any_generics = true
+warn_return_any = true
+strict_optional = true
+
+# Key check: catch attribute access on wrong types (would have caught our bugs)
+[[tool.mypy.overrides]]
+module = "notebooklm.cli.*"
+warn_return_any = false
+strict_optional = true
+
+[[tool.mypy.overrides]]
+module = "notebooklm.rpc.*"
+disallow_untyped_defs = true
+warn_return_any = true
+strict_optional = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "SIM",    # flake8-simplify
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # function call in default argument (Click uses this)
+    "SIM102", # nested ifs - kept for readability in complex data parsing
+    "SIM105", # contextlib.suppress - explicit try/except clearer for data parsing
+]
+per-file-ignores = {"src/notebooklm/__init__.py" = ["E402"], "src/notebooklm/notebooklm_cli.py" = ["E402"]}
+
+[tool.ruff.lint.isort]
+known-first-party = ["notebooklm"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

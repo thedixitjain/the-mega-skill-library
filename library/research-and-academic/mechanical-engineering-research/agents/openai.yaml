@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thermal-Fluid Research"
+  short_description: "Add thermal-fluid rigor to AI-assisted research, CFD, experiments, writing, code, and proposals."
+  default_prompt: "Review this thermal-fluid research task for physical assumptions, regime validity, correlations, CFD or experiment credibility, uncertainty, source quality, and decision-ready next steps."

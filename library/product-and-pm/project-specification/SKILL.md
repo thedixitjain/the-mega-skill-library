@@ -1,0 +1,105 @@
+---
+name: project-specification
+description: "Transforms project briefs into testable specifications with user stories and acceptance criteria. Use after brainstorming, before planning."
+category: product-and-pm
+source_repo: athola/claude-night-market
+source_path: "plugins/attune/skills/project-specification/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/attune/skills/project-specification/SKILL.md
+---
+
+## Delegation
+
+For detailed specification writing workflows, this skill delegates to `spec-kit:spec-writing` as the canonical implementation. Use this skill for quick specification needs; use spec-kit for thorough specification documents.
+
+## When To Use
+
+- After brainstorming phase completes
+- Have project brief but need detailed requirements
+- Need testable acceptance criteria for implementation
+- Planning validation and testing strategy
+- Translating business requirements into technical specs
+- Defining scope boundaries and out-of-scope items
+
+## When NOT To Use
+
+- Still exploring problem space (use `Skill(attune:project-brainstorming)` instead)
+- Already have detailed specification (use `Skill(attune:project-planning)` instead)
+- Refining existing implementation (use code review skills)
+- Making strategic decisions (use `Skill(attune:war-room)` for complex choices)
+
+## Integration
+
+**With spec-kit**:
+- Delegates to `Skill(spec-kit:spec-writing)` for methodology
+- Uses spec-kit templates and validation
+- Enables clarification workflow
+
+**Without spec-kit**:
+- Standalone specification framework
+- Requirement templates
+- Acceptance criteria patterns
+
+## Record the Tradeoff (decision journal)
+
+If the specification settled a design decision with real alternatives (a chosen
+data model, an interface boundary, a constraint accepted), record it to
+`docs/tradeoffs.md` before continuing (draft and confirm):
+
+- If leyline is installed, invoke `Skill(leyline:decision-journal)` and append
+  a tradeoff entry (the decision, the options weighed, and what was
+  sacrificed; set `phase` to `specify`). Show the draft; append on
+  confirmation.
+- Fallback (leyline absent): append to `docs/tradeoffs.md` using the in-file
+  ENTRY TEMPLATE; assign the next `TR-NNN` id.
+
+## Post-Completion: Workflow Continuation (REQUIRED)
+
+**Automatic Trigger**: After Quality Checks pass and `docs/specification.md` is saved, MUST auto-invoke the next phase.
+
+**When continuation is invoked**:
+1. Verify `docs/specification.md` exists and is non-empty
+2. Display checkpoint message to user:
+   ```
+   Specification complete. Saved to docs/specification.md.
+   Proceeding to planning phase...
+   ```
+3. Invoke next phase:
+   ```
+   Skill(attune:project-planning)
+   ```
+
+**Bypass Conditions** (ONLY skip continuation if ANY true):
+- `--standalone` flag was provided by the user
+- `docs/specification.md` does not exist or is empty (phase failed)
+- User explicitly requests to stop after specification
+
+**Do NOT prompt the user for confirmation**: this is a lightweight checkpoint, not an interactive gate. The user can always interrupt if needed.
+
+## Exit Criteria
+
+- [ ] `docs/specification.md` exists, is non-empty, and passes Quality Checks.
+- [ ] Every functional requirement has testable acceptance criteria.
+- [ ] Any design decision with real alternatives is recorded to
+  `docs/tradeoffs.md` (or there was no meaningful design fork).
+- [ ] The next phase is auto-invoked unless a bypass condition holds.
+
+## Related Skills
+
+- `Skill(spec-kit:spec-writing)` - Spec-kit methodology (if available)
+- `Skill(attune:project-brainstorming)` - Previous phase
+- `Skill(attune:project-planning)` - **AUTO-INVOKED** next phase after specification
+- `Skill(attune:mission-orchestrator)` - Full lifecycle orchestration
+
+## Related Commands
+
+- `/attune:specify` - Invoke this skill
+- `/attune:specify --clarify` - Run clarification workflow
+- `/attune:blueprint` - Next step in workflow
+
+## Examples
+
+See `/attune:specify` command documentation for complete examples.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/attune/skills/project-specification/SKILL.md`

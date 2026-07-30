@@ -1,0 +1,33 @@
+---
+name: nw-agent-builder
+description: "Use when creating new AI agents, validating agent specifications, optimizing command definitions, or ensuring compliance with Claude Code best practices. Creates focused, research-validated agents (200-400 lines) with Skills for domain knowledge. Also optimizes bloated command files into lean declarative definitions."
+category: ai-agents-and-harness
+source_repo: nWave-ai/nWave
+source_path: "docs/reference/agents/nw-agent-builder.md"
+source_url: https://github.com/nWave-ai/nWave/blob/HEAD/docs/reference/agents/nw-agent-builder.md
+---
+# nw-agent-builder
+
+Use when creating new AI agents, validating agent specifications, optimizing command definitions, or ensuring compliance with Claude Code best practices. Creates focused, research-validated agents (200-400 lines) with Skills for domain knowledge. Also optimizes bloated command files into lean declarative definitions.
+
+**Wave:** Other
+**Model:** inherit
+**Max turns:** 0
+**Tools:** Read, Write, Edit, Glob, Grep, Task
+
+## Commands
+
+- [`/nw-forge`](../commands/index.md)
+
+## Skills
+
+- [nw-ab-critique-dimensions](../skills/nw-ab-critique-dimensions.md) — Review dimensions for validating agent quality - template compliance, safety, testing, and priority validation
+- [nw-agent-creation-workflow](../skills/nw-agent-creation-workflow.md) — Detailed 5-phase workflow for creating agents - from requirements analysis through validation and iterative refinement
+- [nw-agent-testing](../skills/nw-agent-testing.md) — 5-layer testing approach for agent validation including adversarial testing, security validation, and prompt injection resistance
+- [nw-command-design-patterns](../skills/nw-command-design-patterns.md) — Best practices for command definition files - size targets, declarative template, anti-patterns, and canonical examples based on research evidence
+- [nw-command-optimization-workflow](../skills/nw-command-optimization-workflow.md) — Step-by-step workflow for converting bloated command files to lean declarative definitions
+- [nw-design-patterns](../skills/nw-design-patterns.md) — 7 agentic design patterns with decision tree for choosing the right pattern for each agent type
+
+---
+
+**Source:** [`nWave-ai/nWave`](https://github.com/nWave-ai/nWave) → `docs/reference/agents/nw-agent-builder.md`

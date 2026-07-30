@@ -1,0 +1,76 @@
+---
+name: architecture-paradigm-space-based
+description: "Applies data-grid architecture for high-traffic stateful workloads. Use when a single database cannot scale and in-memory partitioning is needed."
+allowed-tools: "[]"
+category: engineering-core
+source_repo: athola/claude-night-market
+source_path: "plugins/archetypes/skills/architecture-paradigm-space-based/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/archetypes/skills/architecture-paradigm-space-based/SKILL.md
+---
+
+# The Space-Based Architecture Paradigm
+
+
+## When To Use
+
+- High-traffic applications needing elastic scalability
+- Systems requiring in-memory data grids
+
+## When NOT To Use
+
+- Low-traffic applications where distributed caching is overkill
+- Systems with strong consistency requirements over availability
+
+## When to Employ This Paradigm
+- When traffic or state volume overwhelms a single database node.
+- When latency requirements demand in-memory data grids located close to processing units.
+- When linear scalability is required, achieved by partitioning workloads across many identical, self-sufficient units.
+
+## Adoption Steps
+1. **Partition Workloads**: Divide traffic and data into processing units, each backed by a replicated data cache.
+2. **Design the Data Grid**: Select the appropriate caching technology, replication strategy (synchronous vs. asynchronous), and data eviction policies.
+3. **Coordinate Persistence**: Implement a write-through or write-behind strategy to a durable data store, including reconciliation processes.
+4. **Implement Failover Handling**: Design a mechanism for leader election or heartbeats to validate recovery from node loss without data loss.
+5. **Validate Scalability**: Conduct load and chaos testing to confirm the system's elasticity and self-healing capabilities.
+
+## Key Deliverables
+- An Architecture Decision Record (ADR) detailing the chosen grid technology, partitioning scheme, and durability strategy.
+- Runbooks for scaling processing units and for recovering from "split-brain" scenarios.
+- A monitoring suite to track cache hit rates, replication lag, and failover events.
+
+## Risks & Mitigations
+- **Eventual Consistency Issues**:
+  - **Mitigation**: Formally document data-freshness Service Level Agreements (SLAs) and implement compensation logic for data that is not immediately consistent.
+- **Operational Complexity**:
+  - **Mitigation**: The orchestration of a data grid requires mature automation. Invest in production-grade tooling and automation early in the process.
+- **Cost**:
+  - **Mitigation**: In-memory grids can be resource-intensive. Implement aggressive monitoring of utilization and auto-scaling policies to manage costs effectively.
+
+## Concrete Components
+
+These vocabulary items name the concrete tools and abstractions
+that show up when the paradigm is implemented. They are not
+required dependencies and they are not part of the skill's
+``tools:`` frontmatter (which is reserved for Claude Code tool
+restrictions). Use this list to disambiguate during architecture
+discussions.
+
+- ``data-grid-platform``: Hazelcast, Apache Ignite, or similar; in-memory partitioned data store
+- ``replication-manager``: moves writes asynchronously to durable storage and across regions
+- ``load-tester``: drives the grid past its single-region ceiling to validate scale-out
+
+## Exit Criteria
+
+- [ ] An ADR documents the chosen grid technology, partitioning scheme, replication strategy
+  (sync vs. async), data eviction policies, and durability SLA before any processing unit
+  is deployed.
+- [ ] Runbooks for scaling processing units and recovering from split-brain scenarios exist and
+  have been exercised in a non-production environment.
+- [ ] Load and chaos testing confirms the system handles >= 2x expected peak traffic without
+  data loss, measured before production promotion.
+- [ ] A monitoring suite tracks cache hit rates, replication lag, and failover events with
+  alerting thresholds set before the system accepts live traffic.
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/archetypes/skills/architecture-paradigm-space-based/SKILL.md`

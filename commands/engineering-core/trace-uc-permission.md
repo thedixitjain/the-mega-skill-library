@@ -1,0 +1,54 @@
+---
+name: trace-uc-permission
+description: "Trace Unity Catalog's two-level access model for a user + error and return the exact missing group membership, grant, and who must run it."
+category: engineering-core
+source_repo: jeremylongshore/claude-code-plugins-plus-skills
+source_path: "skills/.curated/databricks-uc-migration-pilot/commands/trace-uc-permission.md"
+source_url: https://github.com/jeremylongshore/claude-code-plugins-plus-skills/blob/HEAD/skills/.curated/databricks-uc-migration-pilot/commands/trace-uc-permission.md
+---
+
+
+# /trace-uc-permission
+
+Diagnoses a Unity Catalog access failure by invoking the `uc-permission-tracer`
+subagent — turning a `PERMISSION_DENIED` / `AccessDenied` into a single actionable
+fix instead of an afternoon of doc-spelunking.
+
+## Usage
+
+```
+/trace-uc-permission <user> <error>
+```
+
+- `<user>` — the affected principal, e.g. `alice@corp.com`.
+- `<error>` — the verbatim error, e.g. `PERMISSION_DENIED: SELECT on main.sales.orders`
+  or `AccessDenied on s3://bucket/warehouse/orders`.
+
+## What it does
+
+Routes to the `uc-permission-tracer` subagent, which walks the model end to end:
+
+- **UC object error** → account-admin / metastore-admin short-circuit (admin roles
+  do NOT inherit `SELECT`) → the full grant chain (`USE CATALOG` → `USE SCHEMA` →
+  `SELECT`) → direct and **nested** group membership → the minimal fix.
+- **Cloud `AccessDenied`** → the external location + storage credential covering the
+  path → the IAM role's bucket trust/permission (read-only `aws` inspection) → the
+  credential fix.
+
+## Output
+
+One resolution line naming the exact fix and the grantor, e.g.:
+
+> Add `alice@corp.com` to `data-analysts` **AND** run
+> `GRANT SELECT ON TABLE main.sales.orders TO \`data-analysts\`` as metastore
+> admin `bob@corp.com`. (Alice is neither account- nor metastore-admin, so the
+> grant will not inherit.)
+
+The command diagnoses only — it never runs a `GRANT`; you hand the emitted command
+to a metastore admin.
+
+---
+
+**Source:** [`jeremylongshore/claude-code-plugins-plus-skills`](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) → `skills/.curated/databricks-uc-migration-pilot/commands/trace-uc-permission.md`
+
+**Also appears in:** `jeremylongshore/claude-code-plugins-plus-skills/plugins/saas-packs/databricks-pack/skills/databricks-uc-migration-pilot/commands/trace-uc-permission.md`

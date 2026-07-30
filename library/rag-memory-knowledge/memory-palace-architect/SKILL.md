@@ -1,0 +1,146 @@
+---
+name: memory-palace-architect
+description: "Designs memory palace structures with spatial layouts and domain organization. Use when creating a new palace or planning knowledge architecture by hand."
+category: rag-memory-knowledge
+source_repo: athola/claude-night-market
+source_path: "plugins/memory-palace/skills/memory-palace-architect/SKILL.md"
+source_url: https://github.com/athola/claude-night-market/blob/HEAD/plugins/memory-palace/skills/memory-palace-architect/SKILL.md
+---
+
+> **Status: unwired**. As of v1.9.4, no command or agent
+> invokes `Skill(memory-palace:memory-palace-architect)`.
+> The `/palace create` command does palace creation directly
+> without routing through this skill. The architectural
+> guidance below is reference material; consult it when
+> designing a new palace by hand. Tracked for follow-up in
+> the April 2026 skill audit.
+
+## Table of Contents
+
+- [What It Is](#what-it-is)
+- [Quick Start](#quick-start)
+- [Create a New Palace](#create-a-new-palace)
+- [List Existing Palaces](#list-existing-palaces)
+- [View Palace Status](#view-palace-status)
+- [When to Use](#when-to-use)
+- [Architectural Templates](#architectural-templates)
+- [Core Workflow](#core-workflow)
+- [Detailed Resources](#detailed-resources)
+- [Integration](#integration)
+- [Expected Outputs](#expected-outputs)
+
+
+# Memory Palace Architect
+
+Design and construct virtual memory palaces for spatial knowledge organization. This skill guides you through creating memorable spatial structures that enhance recall and organize complex information.
+
+## What It Is
+
+A memory palace is a mnemonic technique that uses spatial visualization to organize and recall information. This skill provides a systematic approach for:
+- Analyzing knowledge domains for optimal spatial mapping
+- Designing architectural layouts that reflect conceptual relationships
+- Creating multi-sensory associations for enhanced recall
+- Building navigable structures for knowledge retrieval
+
+## Quick Start
+
+### Create a New Palace
+```bash
+python scripts/palace_manager.py create "My Palace" "programming" --metaphor workshop
+```
+**Verification:** Run `python --version` to verify Python environment.
+
+### List Existing Palaces
+```bash
+python scripts/palace_manager.py list
+```
+**Verification:** Run `python --version` to verify Python environment.
+
+### View Palace Status
+```bash
+python scripts/palace_manager.py status
+```
+**Verification:** Run `python --version` to verify Python environment.
+
+## When To Use
+
+- Creating knowledge structures for complex topics
+- Organizing large amounts of related information
+- Building persistent, project-specific memory systems
+- Designing learning pathways for skill acquisition
+- Structuring documentation or reference material
+
+## When NOT To Use
+
+- Quick knowledge search
+  - use knowledge-locator instead
+- Session-specific context - use
+  session-palace-builder
+- Quick knowledge search
+  - use knowledge-locator instead
+- Session-specific context - use
+  session-palace-builder
+
+## Architectural Templates
+
+| Template | Best For | Key Features |
+|----------|----------|--------------|
+| **Fortress** | Security, defense, production-grade systems | Strong boundaries, layered access |
+| **Library** | Knowledge, research, documentation | Organized shelves, categorized sections |
+| **Workshop** | Practical skills, tools, techniques | Workbenches, tool areas, project spaces |
+| **Garden** | Organic growth, evolving knowledge | Plots, seasons, interconnected paths |
+| **Observatory** | Exploration, discovery, patterns | Viewing platforms, star maps, instruments |
+
+## Core Workflow
+
+1. **Analyze Domain** - Identify concepts, relationships, and hierarchy
+2. **Design Layout** - Choose metaphor and spatial organization
+3. **Map Associations** - Create memorable imagery and connections
+4. **Encode Details** - Add sensory attributes and ambient atmosphere
+5. **Validate Palace** - Test recall efficiency and navigation
+
+## Detailed Resources
+
+- **Domain Analysis Guide**: See `modules/domain-analysis.md`
+- **Layout Patterns**: See `modules/layout-patterns.md`
+- **Sensory Encoding**: See `modules/sensory-encoding.md`
+- **Validation Metrics**: See `modules/validation.md`
+- **Franklin Protocol**: See `modules/franklin-protocol.md` - Apply the original learning algorithm to palace design
+
+## Integration
+
+Works with:
+- `knowledge-locator` - For searching across palaces
+- `session-palace-builder` - For temporary session palaces
+- `digital-garden-cultivator` - For evolving knowledge bases
+
+## Expected Outputs
+
+- Complete palace schema with spatial coordinates
+- Sensory encoding profile for each location
+- Navigation guide and connection map
+- Recall testing results and optimization recommendations
+## Troubleshooting
+
+### Common Issues
+
+If palace creation fails, check that the `metaphor` argument matches one of the supported templates (Fortress, Library, Workshop, Garden, Observatory). For script errors, ensure the `palace_manager.py` script has executable permissions and that your Python environment meets the requirements listed in `pyproject.toml`.
+
+## Exit Criteria
+
+- [ ] `scripts/palace_manager.py create "<name>" "<domain>" --metaphor
+      <template>` completes without error and adds the palace to the
+      index
+- [ ] `scripts/palace_manager.py list` shows the newly created palace
+      by the name supplied during creation
+- [ ] Created palace schema includes spatial coordinates, a sensory
+      encoding profile, and a navigation guide
+- [ ] The `metaphor` argument resolves to one of the five supported
+      templates (Fortress, Library, Workshop, Garden, Observatory);
+      if not, error is reported with the valid list
+- [ ] Recall testing results or optimization recommendations are
+      produced as part of the Expected Outputs section
+
+---
+
+**Source:** [`athola/claude-night-market`](https://github.com/athola/claude-night-market) → `plugins/memory-palace/skills/memory-palace-architect/SKILL.md`

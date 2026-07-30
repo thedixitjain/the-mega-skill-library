@@ -1,0 +1,91 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+
+# Researcher loop runtime artifacts (do not commit)
+researcher/reports/logs/
+researcher/reports/jsonl-quarantine/
+researcher/reports/snapshots/
+researcher/reports/loop-events.jsonl
+researcher/reports/loop-failures.jsonl
+researcher/reports/status.md
+researcher/reports/parked-review.md
+researcher/reports/skill-health.json
+researcher/reports/skill-health-history.jsonl
+
+# Benchmark runner runtime artifacts (do not commit)
+researcher/benchmarks/router/results/
+researcher/benchmarks/effectiveness/results/
+researcher/benchmarks/sdk-runner/node_modules/
+researcher/benchmarks/sdk-runner/dist/
+researcher/reports/router-history.jsonl
+researcher/reports/effectiveness-history.jsonl
+researcher/queue/.locks/
+researcher/queue/inbox.jsonl
+researcher/queue/parked.jsonl
+researcher/queue/done.jsonl
+researcher/queue/quarantine.jsonl
+
+# Active research runs live under researcher/runs/; the seed run is kept as a
+# committed fixture, everything else is local runtime state.
+researcher/runs/*/
+!researcher/runs/20260515-035228-executable-autonomous-research-frameworks/
+
+# Temporary files
+*.tmp
+*.bak
+
+# Dashboard (separate private repo)
+dashboard/
+
+# Private folder - never push to public repo
+Private/
+
+# Cursor IDE
+.cursor/
+
+# Local history
+.specstory/

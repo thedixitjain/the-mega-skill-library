@@ -1,0 +1,35 @@
+Encountered 34 files that should have been pointers, but weren't:
+	apps/dojo/public/images/Bonsai_Tree_Potted_Japanese_Art_Green_Foliage.jpeg
+	apps/dojo/public/images/Cherry_Blossoms_Sakura_Night_View_City_Lights_Japan.jpg
+	apps/dojo/public/images/Ginkaku-ji_Silver_Pavilion_Kyoto_Japanese_Garden_Pond_Reflection.jpg
+	apps/dojo/public/images/Itsukushima_Shrine_Miyajima_Floating_Torii_Gate_Sunset_Long_Exposure.jpg
+	apps/dojo/public/images/Mount_Fuji_Lake_Reflection_Cherry_Blossoms_Sakura_Spring.jpg
+	apps/dojo/public/images/Osaka_Castle_Turret_Stone_Wall_Pine_Trees_Daytime.jpg
+	apps/dojo/public/images/Senso-ji_Temple_Asakusa_Cherry_Blossoms_Kimono_Umbrella.jpg
+	apps/dojo/public/images/Shirakawa-go_Gassho-zukuri_Thatched_Roof_Village_Aerial_View.jpg
+	apps/dojo/public/images/Takachiho_Gorge_Waterfall_River_Lush_Greenery_Japan.jpg
+	apps/dojo/public/images/Tokyo_Skyline_Night_Tokyo_Tower_Mount_Fuji_View.jpg
+	apps/dojo/public/logo_dark.webp
+	apps/dojo/public/logo_light.webp
+	apps/dojo/public/shared_state_background.png
+	apps/dojo/src/app/icon.png
+	docs/images/ag-ui-concept.png
+	docs/images/ag-ui-overview-with-partners-dark.png
+	docs/images/ag-ui-overview-with-partners.png
+	docs/images/ai-protocol-stack.png
+	docs/logo/AG-UI logo_dark.png
+	docs/logo/AG-UI logo_light.png
+	docs/logo/AG-UI logo_name_dark.png
+	docs/logo/AG-UI logo_name_light.png
+	docs/videos/Dojo-overview.mp4
+	sdks/community/dart/test/client/config_test.dill
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-hdpi/ic_launcher.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-hdpi/ic_launcher_round.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-mdpi/ic_launcher.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-mdpi/ic_launcher_round.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-xhdpi/ic_launcher.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-xhdpi/ic_launcher_round.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-xxhdpi/ic_launcher.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-xxxhdpi/ic_launcher.webp
+	sdks/community/kotlin/examples/chatapp/androidApp/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp

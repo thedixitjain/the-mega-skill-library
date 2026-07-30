@@ -1,0 +1,63 @@
+---
+name: scan-raptor-code-security-scan
+description: "Scan a repository with Semgrep and CodeQL"
+category: security-and-compliance
+source_repo: gadievron/raptor
+source_path: ".claude/commands/scan.md"
+source_url: https://github.com/gadievron/raptor/blob/HEAD/.claude/commands/scan.md
+---
+
+
+# /scan - RAPTOR Code Security Scan
+
+**`--help` / `-h`:** If the user passes only `--help` or `-h`, run `python3 raptor.py scan --help` and present its output. That command is side-effect-free (no run, lifecycle, output directory, or LLM dispatcher) and is the complete, authoritative flag list — do NOT start a scan or hand-summarise flags from this doc.
+
+You are helping the user run RAPTOR's autonomous security scanning on a code repository.
+
+## Your Task
+
+1. **Understand the user's request**: They want to scan code for security vulnerabilities
+2. **Identify the target**: Ask which directory/repository to scan if not specified
+3. **Run RAPTOR scan**: Execute the appropriate command based on what they need:
+   - For full autonomous scan (recommended): `python3 raptor.py agentic --repo <path>`
+   - For quick Semgrep scan: `python3 raptor.py scan --repo <path>`
+   - For CodeQL only: `python3 raptor.py codeql --repo <path>`
+
+4. **Analyze results**: After the scan completes:
+   - Read the output SARIF files and reports
+   - Summarize the vulnerabilities found
+   - Explain the severity and exploitability
+   - Show any generated exploits or patches
+
+5. **Help fix issues**: Offer to:
+   - Apply the generated patches
+   - Explain how to fix vulnerabilities manually
+   - Run additional analysis on specific findings
+
+## Example Commands
+
+Full autonomous workflow (Semgrep + CodeQL + LLM analysis):
+```bash
+python3 raptor.py agentic --repo /path/to/code --max-findings 10
+```
+
+Quick Semgrep scan:
+```bash
+python3 raptor.py scan --repo /path/to/code --policy-groups secrets,owasp
+```
+
+## Important Notes
+
+- Always use absolute paths for repositories
+- The scan outputs go to `out/` directory
+- RAPTOR generates:
+  - SARIF files with findings
+  - Exploit PoC code (in `exploits/` directory)
+  - Secure patches (in `patches/` directory)
+  - Detailed analysis reports
+
+Be helpful and explain security concepts clearly!
+
+---
+
+**Source:** [`gadievron/raptor`](https://github.com/gadievron/raptor) → `.claude/commands/scan.md`

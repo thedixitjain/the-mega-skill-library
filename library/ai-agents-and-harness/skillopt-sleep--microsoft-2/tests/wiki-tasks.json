@@ -1,0 +1,70 @@
+[
+  {
+    "id": "wk-01",
+    "reference": "1. What GEO is and isn't (define vs SEO/AEO, dispel the 'just add FAQ' myth)\n2. The 3 citation mechanisms LLMs use (RAG, fine-tuning, in-context; weight each)\n3. The 2026 citation data (real statistics from Profound/Otterly/Peec; what % of queries get citations)\n4. The action framework (a 5-step audit-and-fix process, concrete)\n5. Measurement (which metrics actually predict citation lift; vanity vs real)",
+    "rubric": "Score 1.0 if 5 sections, in a logical order, each with a substantive (not generic) purpose, and the section content is GEO-specific (not generic SEO). Score 0.5 if 5 sections but 1-2 are generic. Score 0.0 if wrong number of sections or wrong order.",
+    "project": "wiki-canonical-guide",
+    "intent": "Wiki canonical guide: 'GEO 2026 Standards'. Audience: a mid-level SEO specialist who has heard of GEO but not done it. Tone: technical, evidence-driven, no fluff. Length target: 1500-2200 words. Outline the 5 sections that should appear in order. For each, give a 1-sentence sub-purpose.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "wiki-canonical-guide"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  },
+  {
+    "id": "wk-02",
+    "reference": "Yes, add inbound links. (1) geo-2026-standards.md \u2192 '## Action Framework' section, anchor: 'platform-specific citation rules' \u2014 natural since GEO standards reference ChatGPT/Perplexity behavior. (2) seo-2026-standards.md \u2192 '## AI Overviews' section, anchor: 'AI platform citations' \u2014 links to the mechanism guide. (3) content-strategy.md \u2192 '## Content Types' section, anchor: 'per-platform citation' \u2014 content strategy needs to know which platform favors which content.",
+    "rubric": "Score 1.0 if all 3 inbound links proposed with specific section + natural anchor text, demonstrating the link solves a real navigational gap (not just SEO-link-building). Score 0.5 if 2 of 3 are well-placed. Score 0.0 if generic anchors like 'click here' or no specific sections named.",
+    "project": "wiki-canonical-guide",
+    "intent": "Cross-link audit. The wiki page 'ai-platform-citation-guide.md' has 4 outbound links to other wiki pages, but no inbound links from: 'geo-2026-standards.md', 'seo-2026-standards.md', 'content-strategy.md'. Should we add inbound links? In which page should each inbound link go, and what anchor text would be natural?",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "wiki-canonical-guide"
+    ],
+    "source_sessions": [],
+    "split": "val"
+  },
+  {
+    "id": "wk-03",
+    "reference": "Priorities:\n1. Refresh 'geo-glossary.md' (last update 2026-04-12, 63 days) \u2014 add new terms like RAG, in-context citation, agentic SEO.\n2. Refresh 'competitor-pricing.md' (last update 2026-05-01, 44 days) \u2014 Profound raised enterprise tier.\n3. No structural fixes needed.\n\nTelegram: 'Wiki lint: 2 stale pages flagged (geo-glossary 63d, competitor-pricing 44d). No broken links. Both need refresh this week.'",
+    "rubric": "Score 1.0 if both stale pages correctly identified with specific (not generic) refresh notes, and Telegram summary is under 40 words with the right action. Score 0.5 if stale pages identified but refresh notes are vague. Score 0.0 if missing stale pages or Telegram over 40 words.",
+    "project": "wiki-canonical-guide",
+    "intent": "Wiki lint report. Today's scan: 14 wiki pages, 2 with 'Updated' dates > 30 days old ('geo-glossary.md' and 'competitor-pricing.md'), 0 broken internal links, 0 missing YAML frontmatter. Output: 1) prioritized action list, 2) Telegram summary (max 40 words).",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "wiki-canonical-guide"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  },
+  {
+    "id": "wk-04",
+    "reference": "Index rebuilt: 14 wiki pages registered in _index.md (was 12 \u2014 added competitor-pricing-rev2 and citations-q2-2026).\nQuestion for Ethan: should 'competitor-pricing.md' and 'competitor-pricing-rev2.md' be merged? They're 78% similar in content.",
+    "rubric": "Score 1.0 if both sentences are accurate (count matches, names are plausible) and the question identifies a real consolidation opportunity (not a fabricated one). Score 0.5 if structure is right but content vague. Score 0.0 if wrong format or no question.",
+    "project": "wiki-canonical-guide",
+    "intent": "Index rebuild check. Run `python3 ~/agent-shared/scripts/update-index.py` (assume it works). After the run, the new wiki/_index.md should list all 14 pages. Generate a 2-sentence confirmation message + 1 question for Ethan to verify.",
+    "context_excerpt": "",
+    "attempted_solution": "",
+    "outcome": "unknown",
+    "reference_kind": "rubric",
+    "judge": {},
+    "tags": [
+      "wiki-canonical-guide"
+    ],
+    "source_sessions": [],
+    "split": "train"
+  }
+]
