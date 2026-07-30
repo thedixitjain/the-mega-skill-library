@@ -9,6 +9,7 @@ harvested, deduplicated and organized from **186 repositories** across the
 Claude Code / Cursor / Codex / Copilot skill ecosystem, so you never have to
 write one from scratch again.
 
+[![Validate catalog](https://github.com/thedixitjain/the-mega-skill-library/actions/workflows/validate-catalog.yml/badge.svg)](https://github.com/thedixitjain/the-mega-skill-library/actions/workflows/validate-catalog.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![GitHub stars](https://img.shields.io/github/stars/thedixitjain/the-mega-skill-library?style=social)](https://github.com/thedixitjain/the-mega-skill-library/stargazers)
