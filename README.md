@@ -17,7 +17,7 @@ write one from scratch again.
 ![Source repos](https://img.shields.io/badge/sourced%20from-186%20repos-informational)
 ![Categories](https://img.shields.io/badge/categories-22-informational)
 
-[Browse the index](INDEX.md) · [Search the catalog](CATALOG.tsv) · [Quick start](#-quick-start) · [Contribute](CONTRIBUTING.md)
+[Browse the index](INDEX.md) · [Search the catalog](CATALOG.tsv) · [Quick start](#-quick-start) · [Credits](CREDITS.md) · [Contribute](CONTRIBUTING.md)
 
 </div>
 
@@ -165,19 +165,26 @@ the-mega-skill-library/
 > aren't part of this repository — only the curated, deduplicated output above
 > is published. See [Refreshing](#-refreshing--regenerating) below.
 
-## 🔎 Provenance & licensing
+## 🔎 Provenance, credits & licensing
 
-Every single file carries `source_repo`, `source_path` and `source_url` in its
-frontmatter, plus a human-readable Source footer linking upstream. Duplicates
+**This is a curated aggregation, not original work.** Every skill, agent,
+command, prompt and rules file was written by its original author — full
+attribution for all 237 source repositories lives in **[CREDITS.md](CREDITS.md)**,
+linked directly to each one's GitHub page.
+
+Every single harvested file also carries `source_repo`, `source_path` and
+`source_url` in its own frontmatter, plus a human-readable Source footer
+linking upstream — open any file to see exactly where it came from. Duplicates
 across repos were collapsed by content hash, keeping the most authoritative
-copy (official vendor repos first, then by star count) — collapsed copies are
+copy (official vendor repos first, then by star count); collapsed copies are
 listed in each file's "Also appears in" footer, so nothing is silently lost.
 
 This repo's own layer — the categorization, indexing, catalog, router skill,
 and documentation — is [MIT licensed](LICENSE). The 35,802 harvested files
-themselves come from 186 different repositories under their **own original
-licenses** — check the upstream repo (linked in every file's footer) before
-redistributing or using an individual file commercially.
+themselves come from 186 different repositories (plus 51 more kept as
+reference material) under their **own original licenses** — check the
+upstream repo (linked in every file's footer, and in [CREDITS.md](CREDITS.md))
+before redistributing or using an individual file commercially.
 
 ## 🔄 Refreshing / regenerating
 
